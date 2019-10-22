@@ -1,30 +1,30 @@
 #include <cstdint>
 #include <stdio.h>
+#include <iostream>
 #include "MMU.h"
 #include "Z80.h"
-
-extern MMU mmu;
-        
-Z80::Z80():_r{0,0,0,0,0,0,0,0,0,0,0,0xfffe}, _clock{0,0}, mmu(1){
-
-    for(int i = 0; i < 0x10; i++){
-        printf("Reading bios at 0x%04x: 0x%02x\n", i, mmu.rb(i));
-    }
-            //memset(memory, 0, sizeof(memory));
-}
 
 Z80::Z80(uint8_t a = 0x00, uint8_t b = 0x00, uint8_t c = 0x00, uint8_t d = 0x00,
          uint8_t e = 0x00, uint8_t h = 0x00, uint8_t l = 0x00, uint8_t f = 0x00,
          uint8_t m = 0x00, uint8_t t = 0x00, uint16_t pc = 0x0000,
-         uint16_t sp = 0xfffe, uint8_t cm = 0x00, uint8_t ct = 0x00):
+         uint16_t sp = 0xfffe, uint64_t cm = 0x00, uint64_t ct = 0x00):
         _r{a,b,c,d,e,h,l,f,m,t,pc,sp}, _clock{cm,ct}, mmu(1){
 
-    for(int i = 0; i < 0x10; i++){
+    mmu.loadBios();
+    for(int i = 0; i < 0x100; i++){
         printf("Reading bios at 0x%04x: 0x%02x\n", i, mmu.rb(i));
+    }
+    for(int i = 0; i < 0x100; i++){
+        uint8_t j = mmu.rb(i);
+        std::cout << arr[j] << std::endl;
     }
             //memset(memory, 0, sizeof(memory));
 }
 
+//void Z80::nop(){
+//    this->_r.m = 1;
+//    this->_r.t = 4;
+//}
 
 void Z80::reset(){
     this->_r.a = 0x00;
@@ -57,8 +57,8 @@ void Z80::status(){
     printf("t = %02x\n", _r.t);
     printf("pc = %04x\n", _r.pc);
     printf("sp = %04x\n", _r.sp);
-    printf("cm = %04x\n", _clock.m);
-    printf("ct = %04x\n", _clock.t);
+    //printf("cm = %04x\n", _clock.m);
+    //printf("ct = %04x\n", _clock.t);
     printf("MMU = %01x\n", mmu._inbios);
 }
 

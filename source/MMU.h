@@ -23,7 +23,9 @@ class MMU{
 
         void wb(uint16_t addr, uint8_t val); //Write byte to given address
 
-        void ww(uint16_t addr, uint8_t val); //Write word to given address
+        void ww(uint16_t addr, uint16_t val); //Write word to given address
+
+		void dump_mem();
 
     private:
 

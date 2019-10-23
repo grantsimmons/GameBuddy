@@ -136,10 +136,11 @@ void MMU::wb(uint16_t addr, uint8_t val){ //Write byte to given address
                 }
         break;
     }
+    this->dump_mem(); //Currently broken
     return;
 }
 
-void MMU::ww(uint16_t addr, uint8_t val){ //Write word to given address
+void MMU::ww(uint16_t addr, uint16_t val){ //Write word to given address
     this->wb(addr, val & 0xFF);
     this->wb(addr + 1, val >> 8);
     return;
@@ -160,5 +161,28 @@ void MMU::loadBios(){ //Hard-code at some point
     printf("\n");
     in_file.close();
     //std::cout << "Loaded file" << std::endl;
+
+}
+
+void MMU::dump_mem(){
+    std::cout << "Dumping mem" << std::endl;
+    for(uint8_t i = 0; i < 0x0100; i++){
+        std::cout << _bios[i] << std::endl;
+    }
+    //for(uint8_t i : this->_rom){
+    //    std::cout << i << std::endl;
+    //}
+    //for(uint8_t i : this->_eram){
+    //    std::cout << i << std::endl;
+    //}
+    //for(uint8_t i : this->_wram){
+    //    std::cout << i << std::endl;
+    //}
+    //for(uint8_t i : this->_zram){
+    //    std::cout << i << std::endl;
+    //}
+    //for(uint8_t i : this->memory){
+    //    std::cout << i << std::endl;
+    //}
 
 }

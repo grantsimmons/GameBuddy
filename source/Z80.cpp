@@ -3,6 +3,7 @@
 #include <iostream>
 #include "MMU.h"
 #include "Z80.h"
+//#include "ops.h"
 
 Z80::Z80(uint8_t a = 0x00, uint8_t b = 0x00, uint8_t c = 0x00, uint8_t d = 0x00,
          uint8_t e = 0x00, uint8_t h = 0x00, uint8_t l = 0x00, uint8_t f = 0x00,
@@ -11,20 +12,20 @@ Z80::Z80(uint8_t a = 0x00, uint8_t b = 0x00, uint8_t c = 0x00, uint8_t d = 0x00,
         _r{a,b,c,d,e,h,l,f,m,t,pc,sp}, _clock{cm,ct}, mmu(1){
 
     mmu.loadBios();
-    for(int i = 0; i < 0x100; i++){
-        printf("Reading bios at 0x%04x: 0x%02x\n", i, mmu.rb(i));
-    }
-    for(int i = 0; i < 0x100; i++){
-        uint8_t j = mmu.rb(i);
-        std::cout << arr[j] << std::endl;
-    }
-            //memset(memory, 0, sizeof(memory));
 }
 
-//void Z80::nop(){
-//    this->_r.m = 1;
-//    this->_r.t = 4;
-//}
+void Z80::exec(){
+    while(this->_r.pc < 0x20){//ever
+        std::cout << "Executing function " << this->_r.pc << std::endl;
+        (this->*ops[mmu.rb(this->_r.pc++)].op_function)(); //Execute op at pc
+        this->_r.pc &= 0xFFFF;
+        if(mmu._inbios && this->_r.pc == 0x100){
+            mmu._inbios = 0;
+            std::cout << "Exiting BIOS" << std::endl;
+        }
+        this->status();
+    }
+}
 
 void Z80::reset(){
     this->_r.a = 0x00;
@@ -64,5 +65,6 @@ void Z80::status(){
 
 int main(){
     z80.status();
+    z80.exec();
     return 1;
 }

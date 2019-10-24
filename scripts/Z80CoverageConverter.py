@@ -1,0 +1,229 @@
+import re
+
+define = re.compile('^#define')
+LDBasic = re.compile('void\sZ80::LD([ABCDEFHL])([ABCDEFHL])\(')
+LDdectom = re.compile('void\sZ80::LDD(mHLA|AmHL)')
+LDtom = re.compile('void\sZ80::LDm([ABCDEFHL])([ABCDEFHL])([ABCDEFHL])') #Catch DEC case
+LDfromm = re.compile('void\sZ80::LD([ABCDEFHL])m([ABCDEFHL])([ABCDEFHL])')
+LDn = re.compile('void\sZ80::LD([ABCDEFHL])n')
+LDnn = re.compile('void\sZ80::LD[^m]*([ABCDEFHL])([ABCDEFHL])nn')
+INC8 = re.compile('void\sZ80::INC([ABCDEFHL])\(')
+DEC8 = re.compile('void\sZ80::DEC([ABCDEFHL])\(')
+INC16 = re.compile('void\sZ80::INC(([ABCDEFHL])([ABCDEFHL])|(SP))')
+DEC16 = re.compile('void\sZ80::DEC(([ABCDEFHL])([ABCDEFHL])|(SP))')
+INCmem = re.compile('void\sZ80::INCmHL')
+DECmem = re.compile('void\sZ80::DECmHL')
+RLCA = re.compile('void\sZ80::RLCA')
+ADDA = re.compile('void\sZ80::ADDA([ABCDEFHLn]|mHL)')
+ADD16 = re.compile('void\sZ80::ADD(HL|SP)(B|D|d)(C|E)*\(')
+AND = re.compile('void\sZ80::AND([ABCDEFHLn]|mHL)')
+OR = re.compile('void\sZ80::OR([ABCDEFHLn]|mHL)')
+XOR = re.compile('void\sZ80::XOR([ABCDEFHLn]|mHL)')
+
+with open("ops.cpp", 'w') as out_file:
+    with open("functions.cpp", 'r') as in_file:
+        counter = 1
+        match = False
+        for line in in_file:
+            if define.search(line): #Skip define statements
+                out_file.write(line)
+                continue
+
+            print(counter)
+            out_file.write(line[0:-2] + "{\n")
+            
+            basic = LDBasic.search(line)
+            if basic:
+                match = True
+                print("Basic")
+                out_file.write('    this->_r.{} = this->_r.{};\n'.format(basic.group(1).lower(), basic.group(2).lower()))
+                counter += 1
+
+            tom = LDtom.search(line)
+            if tom:
+                match = True
+                print("To Mem")
+                out_file.write('    this->mmu.wb(this->_r.{} << 8 + this->_r.{}, this->_r.{});\n'.format(tom.group(1).lower(), tom.group(2).lower(), tom.group(3).lower()))
+                counter += 1
+
+            dec = LDdectom.search(line)
+            fromm = LDfromm.search(line)
+            if dec:
+                match = True
+                print("Dec Mem")
+                if dec.group(1) == 'mHLA':
+                    out_file.write('    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.a);\n')
+                    out_file.write('    this->DECHL();\n')
+                if dec.group(1) == 'AmHL':
+                    out_file.write('    this->_r.a = this->mmu.rb(this->_r.h << 8 + this->_r.l);\n')
+                    out_file.write('    this->DECHL();\n')
+                counter += 1
+                
+            elif fromm:
+                match = True
+                print("From Mem")
+                out_file.write('    this->_r.{} = this->mmu.rb(this->_r.{} << 8 + this->_r.{});\n'.format(fromm.group(1).lower(), fromm.group(2).lower(), fromm.group(3).lower()))
+                counter += 1
+            
+            inc8 = INC8.search(line)
+            if inc8:
+                match = True
+                print("Inc 8 bit")
+                out_file.write('    this->_r.{} += 1;\n'.format(inc8.group(1).lower()))
+                out_file.write('    //Set OF, Z, etc.\n')
+                counter += 1
+
+            dec8 = DEC8.search(line)
+            if dec8:
+                match = True
+                print("Dec 8 bit")
+                out_file.write('    this->_r.{} -= 1;\n'.format(dec8.group(1).lower()))
+                out_file.write('    //Set UF, Z, etc.\n')
+                counter += 1
+
+            inc16 = INC16.search(line)
+            if inc16:
+                match = True
+                print("Inc 16 bit")
+                print(inc16.group(1))
+                if inc16.group(1) == 'SP':
+                    out_file.write('    this->_r.sp += 1;\n')
+                else:
+                    out_file.write('    this->_r.{} += 1;\n'.format(inc16.group(2).lower()))
+                    out_file.write('    this->_r.{} = this->_r.{} == 0x00 ? this->_r.{} + 1 : this->_r.{};\n'.format(inc16.group(3).lower(), inc16.group(2).lower(), inc16.group(3).lower(), inc16.group(3).lower()))
+                out_file.write('    //Set OF, Z, etc.\n')
+                counter += 1
+
+            dec16 = DEC16.search(line)
+            if dec16:
+                match = True
+                print("Dec 16 bit")
+                if dec16.group(1) == 'SP':
+                    out_file.write('    this->_r.sp -= 1;\n')
+                else:
+                    out_file.write('    this->_r.{} -= 1;\n'.format(dec16.group(2).lower()))
+                    out_file.write('    this->_r.{} = this->_r.{} == 0xFF ? this->_r.{} - 1 : this->_r.{};\n'.format(dec16.group(3).lower(), dec16.group(2).lower(), dec16.group(3).lower(), dec16.group(3).lower()))
+                out_file.write('    //Set UF, Z, etc.\n')
+                counter += 1
+
+            incmem = INCmem.search(line)
+            if incmem:
+                match = True
+                print("Inc mem location")
+                out_file.write('    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->mmu.rb(this->_r.h << 8 + this->_r.l) + 1);\n')
+                out_file.write('    //Set OF, Z, etc. if needed?\n')
+                counter += 1
+
+            decmem = DECmem.search(line)
+            if decmem:
+                match = True
+                print("Dec mem location")
+                out_file.write('    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->mmu.rb(this->_r.h << 8 + this->_r.l) - 1);\n')
+                out_file.write('    //Set UF, Z, etc. if needed?\n')
+                counter += 1
+
+            rlca = RLCA.search(line)
+            if rlca:
+                match = True
+                print("Rotate A left w/ carry")
+                out_file.write('    this->_r.f = this->_r.a & 0x80; //FIXME: Carry flag position\n')
+                out_file.write('    this->_r.a = this->_r.a << 1 + ((this->_r.a & 0x80) >> 7);\n')
+                counter += 1
+
+            ldn = LDn.search(line)
+            if ldn:
+                match = True
+                print("Load 8-bit immediate")
+                out_file.write('    this->_r.{} = this->mmu.rb(this->_r.pc);\n'.format(ldn.group(1).lower()))
+                out_file.write('    this->_r.pc += 1;\n')
+                counter += 1
+
+            ldnn = LDnn.search(line)
+            if ldnn:
+                match = True
+                print("Load 16-bit immediate")
+                out_file.write('    this->_r.{} = this->mmu.rb(this->_r.pc);\n'.format(ldnn.group(2).lower()))
+                out_file.write('    this->_r.{} = this->mmu.rb(this->_r.pc + 1);\n'.format(ldnn.group(1).lower()))
+                out_file.write('    this->_r.pc += 2;\n')
+                counter += 1
+
+            adda = ADDA.search(line)
+            if adda:
+                match = True
+                print("Accumulator add")
+                if adda.group(1) != 'mHL' and adda.group(1) != 'n':
+                    out_file.write('    this->_r.f = ((this->_r.a + this->_r.{}) >> 8) & 0x1;\n'.format(adda.group(1).lower()))
+                    out_file.write('    this->_r.a += this->_r.{};\n'.format(adda.group(1).lower()))
+                    out_file.write('    this->_r.a &= 0xFF;\n')
+                elif adda.group(1) == 'mHL':
+                    out_file.write('    this->_r.f = ((this->_r.a + this->mmu.rb(this->_r.h << 8 + this->_r.l)) >> 8) & 0x1;\n')
+                    out_file.write('    this->_r.a += this->mmu.rb(this->_r.h << 8 + this->_r.l);\n')
+                    out_file.write('    this->_r.a &= 0xFF;\n')
+                elif adda.group(1) == 'n':
+                    out_file.write('    this->_r.f = (this->_r.a + this->mmu.rb(this->_r.pc) >> 8) & 0x1;\n')
+                    out_file.write('    this->_r.a += this->mmu.rb(this->_r.pc);\n')
+                    out_file.write('    this->_r.a &= 0xFF;\n')
+                    out_file.write('    this->_r.pc += 1;\n')
+                out_file.write('    //Set 0, OF (above), etc.\n')
+                counter += 1
+
+            add16 = ADD16.search(line)
+            if add16:
+                match = True
+                print("16-bit add")
+                if add16.group(1) == 'SP':
+                    out_file.write('    this->_r.sp += this->mmu.rb(this->_r.pc) > 0x7F ? (~this->mmu.rb(this->_r.pc) + 1) & 0xFF : this->mmu.rb(this->_r.pc);\n')
+                    out_file.write('    this->_r.pc += 1;\n')
+                #else:
+            
+            anda = AND.search(line)
+            if anda:
+                match = True
+                print("Accumulator and")
+                if anda.group(1) != 'mHL' and anda.group(1) != 'n':
+                    out_file.write('    this->_r.a &= this->_r.{};\n'.format(anda.group(1).lower()))
+                elif anda.group(1) == 'mHL':
+                    out_file.write('    this->_r.a &= this->mmu.rb(this->_r.h << 8 + this->_r.l);\n')
+                elif anda.group(1) == 'n':
+                    out_file.write('    this->_r.a &= this->mmu.rb(this->_r.pc);\n')
+                    out_file.write('    this->_r.pc += 1;\n')
+                out_file.write('    //Set 0, carry, etc.\n')
+                counter += 1
+
+            xora = XOR.search(line)
+            if xora:
+                match = True
+                print("Accumulator xor")
+                if xora.group(1) != 'mHL' and xora.group(1) != 'n':
+                    out_file.write('    this->_r.a ^= this->_r.{};\n'.format(xora.group(1).lower()))
+                elif xora.group(1) == 'mHL':
+                    out_file.write('    this->_r.a ^= this->mmu.rb(this->_r.h << 8 + this->_r.l);\n')
+                elif xora.group(1) == 'n':
+                    out_file.write('    this->_r.a ^= this->mmu.rb(this->_r.pc);\n')
+                    out_file.write('    this->_r.pc += 1;\n')
+                out_file.write('    //Set 0, carry, etc.\n')
+                counter += 1
+
+            ora = OR.search(line)
+            if ora:
+                match = True
+                print("Accumulator xor")
+                if ora.group(1) != 'mHL' and ora.group(1) != 'n':
+                    out_file.write('    this->_r.a |= this->_r.{};\n'.format(ora.group(1).lower()))
+                elif ora.group(1) == 'mHL':
+                    out_file.write('    this->_r.a |= this->mmu.rb(this->_r.h << 8 + this->_r.l);\n')
+                elif ora.group(1) == 'n':
+                    out_file.write('    this->_r.a |= this->mmu.rb(this->_r.pc);\n')
+                    out_file.write('    this->_r.pc += 1;\n')
+                out_file.write('    //Set 0, carry, etc.\n')
+                counter += 1
+
+
+            if not match:    
+                out_file.write('    std::cout << "Uncovered Function" << std::endl;\n')
+            out_file.write("}\n\n")
+            match = False
+            print(line[0:-2])
+
+        print("Single-Byte Coverage: {:02d}%".format(int(100 * counter / 0x100)))
+        print("Total Coverage: {:02d}%".format(int(100 * counter / 0x200)))

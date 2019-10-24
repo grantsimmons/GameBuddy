@@ -136,7 +136,7 @@ void MMU::wb(uint16_t addr, uint8_t val){ //Write byte to given address
                 }
         break;
     }
-    this->dump_mem(); //Currently broken
+    //this->dump_mem(); //Currently broken
     return;
 }
 

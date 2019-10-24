@@ -573,871 +573,1999 @@ class Z80{
 		
 }z80(0,0,0,0,0,0,0,0,0,0,0,0x0000,0,0);
              
-void Z80::NOP(){
-	std::cout << "NOP" << std::endl;
-}
-void Z80::LDBCnn(){
-	std::cout << "LDBC" << std::endl;
-	this->_r.c = this->mmu.rb(this->_r.pc);
-	this->_r.b = this->mmu.rb(this->_r.pc + 1);
-	this->_r.pc += 2;
-}
-void Z80::LDmBCA(){
-	std::cout << "LDmBCA" << std::endl;
-	this->_r.a = this->mmu.rb(this->_r.b << 8 + this->_r.c);
-}
-void Z80::INCBC(){
-	std::cout << "INCBC" << std::endl;
-	this->_r.c += 1;
-	this->_r.b = this->_r.c == 0 ? this->_r.b + 1 : this->_r.b;
-}
-void Z80::INCB(){
-	std::cout << "INCB" << std::endl;
-	this->_r.b += 1;
-}
-void Z80::DECB(){
-	std::cout << "DECB" << std::endl;
-	this->_r.b -= 1;
-}
-void Z80::LDBn(){
-	std::cout << "LDBn" << std::endl;
-	this->_r.b = this->mmu.rb(this->_r.pc);
-	this->_r.pc++;
-}
-void Z80::RLCA(){
-	std::cout << "Test" << std::endl;
-}
-void Z80::LDmnnSP(){
-	std::cout << "LDmnnSP" << std::endl;
-	this->mmu.ww(this->mmu.rb(this->_r.pc) + (this->mmu.rb(this->_r.pc + 1) << 8), this->_r.sp);
-	this->_r.pc += 2;
-}
-void Z80::ADDHLBC(){
-	std::cout << "Test" << std::endl;
-}
-void Z80::LDAmBC(){
-	std::cout << "LDAmBC" << std::endl;
-	this->_r.a = this->mmu.rb(this->_r.b << 8 + this->_r.c);
-}
-void Z80::DECBC(){
-	std::cout << "DECBC" << std::endl;
-	this->_r.c -= 1;
-	this->_r.b = this->_r.c == 0xFF ? this->_r.b - 1 : this->_r.b;
-}
-void Z80::INCC(){
-	std::cout << "INCC" << std::endl;
-	this->_r.c += 1;
-}
-void Z80::DECC(){
-	std::cout << "DECC" << std::endl;
-	this->_r.c -= 1;
-}
-void Z80::LDCn(){
-	std::cout << "LDCn" << std::endl;
-	this->_r.c = this->mmu.rb(this->_r.pc);
-	this->_r.pc++;
-}
-void Z80::RRCA(){
-	std::cout << "Test" << std::endl;
-}
-void Z80::STOP(){
-	std::cout << "Test" << std::endl;
-}
-void Z80::LDDEnn(){
-	std::cout << "LDDEnn" << std::endl;
-	this->_r.e = this->mmu.rb(this->_r.pc);
-	this->_r.d = this->mmu.rb(this->_r.pc + 1);
-	this->_r.pc += 2;
-}
-void Z80::LDmDEA(){
-	std::cout << "LDmDEA" << std::endl;
-	this->mmu.wb(this->_r.d << 8 + this->_r.e, this->_r.a);
-}
-void Z80::INCDE(){
-	std::cout << "INCDE" << std::endl;
-	this->_r.e += 1;
-	this->_r.d = this->_r.e == 0 ? this->_r.d + 1 : this->_r.d;
-}
-void Z80::INCD(){
-	std::cout << "INCD" << std::endl;
-	this->_r.d += 1;
-}
-void Z80::DECD(){
-	std::cout << "DECD" << std::endl;
-	this->_r.d -= 1;
-}
-void Z80::LDDn(){
-	std::cout << "LDDn" << std::endl;
-	this->_r.d = this->mmu.rb(this->_r.pc);
-	this->_r.pc++;
-}
-void Z80::RLA(){
-	std::cout << "Test" << std::endl;
-}
-void Z80::JRn(){
-	std::cout << "Test" << std::endl;
-}
-void Z80::ADDHLDE(){
-	std::cout << "Test" << std::endl;
-}
-void Z80::LDAmDE(){
-	std::cout << "LDAmDE" << std::endl;
-	this->_r.a = this->mmu.rb(this->_r.d << 8 + this->_r.e);
-}
-void Z80::DECDE(){
-	std::cout << "DECDE" << std::endl;
-	this->_r.e -= 1;
-	this->_r.d = this->_r.e == 0xFF ? this->_r.d - 1 : this->_r.d;
-}
-void Z80::INCE(){
-	std::cout << "INCE" << std::endl;
-	this->_r.e += 1;
-}
-void Z80::DECE(){
-	std::cout << "DECE" << std::endl;
-	this->_r.e -= 1;
-}
-void Z80::LDEn(){
-	std::cout << "LDEn" << std::endl;
-	this->_r.e = this->mmu.rb(this->_r.pc);
-	this->_r.pc++;
-}
-void Z80::RRA(){
-	std::cout << "Test" << std::endl;
-}
-void Z80::JRNZn(){
-	std::cout << "Test" << std::endl;
-}
-void Z80::LDHLnn(){
-	std::cout << "LD HLnn" << std::endl;
-	this->_r.l = this->mmu.rb(this->_r.pc);
-	this->_r.h = this->mmu.rb(this->_r.pc + 1);
-	this->_r.pc += 2; //reading word
 
+void Z80::NOP(){
+    std::cout << "Uncovered Function" << std::endl;
 }
+
+void Z80::LDBCnn(){
+    this->_r.c = this->mmu.rb(this->_r.pc);
+    this->_r.b = this->mmu.rb(this->_r.pc + 1);
+    this->_r.pc += 2;
+}
+
+void Z80::LDmBCA(){
+    this->mmu.wb(this->_r.b << 8 + this->_r.c, this->_r.a);
+}
+
+void Z80::INCBC(){
+    this->_r.b += 1;
+    this->_r.c = this->_r.b == 0x00 ? this->_r.c + 1 : this->_r.c;
+    //Set OF, Z, etc.
+}
+
+void Z80::INCB(){
+    this->_r.b += 1;
+    //Set OF, Z, etc.
+}
+
+void Z80::DECB(){
+    this->_r.b -= 1;
+    //Set UF, Z, etc.
+}
+
+void Z80::LDBn(){
+    this->_r.b = this->mmu.rb(this->_r.pc);
+    this->_r.pc += 1;
+}
+
+void Z80::RLCA(){
+    this->_r.f = this->_r.a & 0x80; //FIXME: Carry flag position
+    this->_r.a = this->_r.a << 1 + ((this->_r.a & 0x80) >> 7);
+}
+
+void Z80::LDmnnSP(){
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ADDHLBC(){
+}
+
+void Z80::LDAmBC(){
+    this->_r.a = this->mmu.rb(this->_r.b << 8 + this->_r.c);
+}
+
+void Z80::DECBC(){
+    this->_r.b -= 1;
+    this->_r.c = this->_r.b == 0xFF ? this->_r.c - 1 : this->_r.c;
+    //Set UF, Z, etc.
+}
+
+void Z80::INCC(){
+    this->_r.c += 1;
+    //Set OF, Z, etc.
+}
+
+void Z80::DECC(){
+    this->_r.c -= 1;
+    //Set UF, Z, etc.
+}
+
+void Z80::LDCn(){
+    this->_r.c = this->mmu.rb(this->_r.pc);
+    this->_r.pc += 1;
+}
+
+void Z80::RRCA(){
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::STOP(){
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::LDDEnn(){
+    this->_r.e = this->mmu.rb(this->_r.pc);
+    this->_r.d = this->mmu.rb(this->_r.pc + 1);
+    this->_r.pc += 2;
+}
+
+void Z80::LDmDEA(){
+    this->mmu.wb(this->_r.d << 8 + this->_r.e, this->_r.a);
+}
+
+void Z80::INCDE(){
+    this->_r.d += 1;
+    this->_r.e = this->_r.d == 0x00 ? this->_r.e + 1 : this->_r.e;
+    //Set OF, Z, etc.
+}
+
+void Z80::INCD(){
+    this->_r.d += 1;
+    //Set OF, Z, etc.
+}
+
+void Z80::DECD(){
+    this->_r.d -= 1;
+    //Set UF, Z, etc.
+}
+
+void Z80::LDDn(){
+    this->_r.d = this->mmu.rb(this->_r.pc);
+    this->_r.pc += 1;
+}
+
+void Z80::RLA(){
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::JRn(){
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ADDHLDE(){
+}
+
+void Z80::LDAmDE(){
+    this->_r.a = this->mmu.rb(this->_r.d << 8 + this->_r.e);
+}
+
+void Z80::DECDE(){
+    this->_r.d -= 1;
+    this->_r.e = this->_r.d == 0xFF ? this->_r.e - 1 : this->_r.e;
+    //Set UF, Z, etc.
+}
+
+void Z80::INCE(){
+    this->_r.e += 1;
+    //Set OF, Z, etc.
+}
+
+void Z80::DECE(){
+    this->_r.e -= 1;
+    //Set UF, Z, etc.
+}
+
+void Z80::LDEn(){
+    this->_r.e = this->mmu.rb(this->_r.pc);
+    this->_r.pc += 1;
+}
+
+void Z80::RRA(){
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::JRNZn(){
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::LDHLnn(){
+    this->_r.l = this->mmu.rb(this->_r.pc);
+    this->_r.h = this->mmu.rb(this->_r.pc + 1);
+    this->_r.pc += 2;
+}
+
 void Z80::LDImHLA(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::INCHL(){
-	std::cout << "INCHL" << std::endl;
-	this->_r.l += 1;
-	this->_r.h = this->_r.l == 0x00 ? this->_r.h + 1 : this->_r.h;
+    this->_r.h += 1;
+    this->_r.l = this->_r.h == 0x00 ? this->_r.l + 1 : this->_r.l;
+    //Set OF, Z, etc.
 }
+
 void Z80::INCH(){
-	std::cout << "INCH" << std::endl;
-	this->_r.h += 1;
+    this->_r.h += 1;
+    //Set OF, Z, etc.
 }
+
 void Z80::DECH(){
-	std::cout << "DECH" << std::endl;
-	this->_r.h -= 1;
+    this->_r.h -= 1;
+    //Set UF, Z, etc.
 }
+
 void Z80::LDHn(){
-	std::cout << "LDHn" << std::endl;
-	this->_r.h = this->mmu.rb(this->_r.pc);
-	this->_r.pc++;
+    this->_r.h = this->mmu.rb(this->_r.pc);
+    this->_r.pc += 1;
 }
+
 void Z80::DAA(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::JRZn(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::ADDHLHL(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::LDImHL(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::DECHL(){
-	std::cout << "DECHL" << std::endl;
-	this->_r.l -= 1;
-	this->_r.h = this->_r.l == 0xFF ? this->_r.h - 1 : this->_r.h;
+    this->_r.h -= 1;
+    this->_r.l = this->_r.h == 0xFF ? this->_r.l - 1 : this->_r.l;
+    //Set UF, Z, etc.
 }
+
 void Z80::INCL(){
-	std::cout << "INCL" << std::endl;
-	this->_r.l += 1;
+    this->_r.l += 1;
+    //Set OF, Z, etc.
 }
+
 void Z80::DECL(){
-	std::cout << "DECL" << std::endl;
-	this->_r.l -= 1;
+    this->_r.l -= 1;
+    //Set UF, Z, etc.
 }
+
 void Z80::LDLn(){
-	std::cout << "LDLn" << std::endl;
-	this->_r.l = this->mmu.rb(this->_r.pc);
-	this->_r.pc++;
+    this->_r.l = this->mmu.rb(this->_r.pc);
+    this->_r.pc += 1;
 }
+
 void Z80::NOT(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::JRNCn(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::LDSPnn(){
-	std::cout << "Test" << std::endl;
-	this->_r.sp = mmu.rw(this->_r.pc); //already incremented pc
-	this->_r.pc += 2;
-	//this->_r.m = 3; //Timing
-	//this->_r.t = 12;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::LDDmHLA(){
-	std::cout << "LDDmHLA" << std::endl;
-	this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.a);
-	this->_r.l -= 1;
-	this->_r.h = this->_r.l == 0xFF ? this->_r.h - 1 : this->_r.h;
+    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.a);
+    this->DECHL();
 }
+
 void Z80::INCSP(){
-	std::cout << "INCSP" << std::endl;
-	this->_r.sp += 1;
+    this->_r.sp += 1;
+    //Set OF, Z, etc.
 }
+
 void Z80::INCmHL(){
-	std::cout << "INCmHL" << std::endl;
-	this->mmu.wb(this->_r.h << 8 + this->_r.l, this->mmu.rb(this->_r.h << 8 + this->_r.l) + 1);
+    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->mmu.rb(this->_r.h << 8 + this->_r.l) + 1);
+    //Set OF, Z, etc. if needed?
 }
+
 void Z80::DECmHL(){
-	std::cout << "DECmHL" << std::endl;
-	this->mmu.wb(this->_r.h << 8 + this->_r.l, this->mmu.rb(this->_r.h << 8 + this->_r.l) + 1);
+    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->mmu.rb(this->_r.h << 8 + this->_r.l) - 1);
+    //Set UF, Z, etc. if needed?
 }
+
 void Z80::LDmHLn(){
-	std::cout << "LDmHLn" << std::endl;
-	this->mmu.wb(this->_r.h << 8 + this->_r.l, this->mmu.rb(this->_r.pc));
-	this->_r.pc++;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::SCF(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::JRCn(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::ADDHLSP(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::LDDAmHL(){
-	std::cout << "Test" << std::endl;
+    this->_r.a = this->mmu.rb(this->_r.h << 8 + this->_r.l);
+    this->DECHL();
 }
+
 void Z80::DECSP(){
-	std::cout << "DECSP" << std::endl;
-	this->_r.sp -= 1;
+    this->_r.sp -= 1;
+    //Set UF, Z, etc.
 }
+
 void Z80::INCA(){
-	std::cout << "INCA" << std::endl;
-	this->_r.a += 1;
+    this->_r.a += 1;
+    //Set OF, Z, etc.
 }
+
 void Z80::DECA(){
-	std::cout << "DECA" << std::endl;
-	this->_r.a -= 1;
+    this->_r.a -= 1;
+    //Set UF, Z, etc.
 }
+
 void Z80::LDAn(){
-	std::cout << "LDAn" << std::endl;
-	this->_r.a = this->mmu.rb(this->_r.pc);
-	this->_r.pc++;
+    this->_r.a = this->mmu.rb(this->_r.pc);
+    this->_r.pc += 1;
 }
+
 void Z80::CCF(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::LDBB(){
-	std::cout << "LDBB" << std::endl;
-	this->_r.b = this->_r.b;
+    this->_r.b = this->_r.b;
 }
+
 void Z80::LDBC(){
-	std::cout << "LDBC" << std::endl;
-	this->_r.b = this->_r.c;
+    this->_r.b = this->_r.c;
 }
+
 void Z80::LDBD(){
-	std::cout << "LDBD" << std::endl;
-	this->_r.b = this->_r.d;
+    this->_r.b = this->_r.d;
 }
+
 void Z80::LDBE(){
-	std::cout << "LDBE" << std::endl;
-	this->_r.b = this->_r.e;
+    this->_r.b = this->_r.e;
 }
+
 void Z80::LDBH(){
-	std::cout << "LDBH" << std::endl;
-	this->_r.b = this->_r.h;
+    this->_r.b = this->_r.h;
 }
+
 void Z80::LDBL(){
-	std::cout << "LDBL" << std::endl;
-	this->_r.b = this->_r.l;
+    this->_r.b = this->_r.l;
 }
+
 void Z80::LDBmHL(){
-	std::cout << "LDBmHL" << std::endl;
-	this->_r.b = this->mmu.rb(this->_r.h << 8 + this->_r.l);
+    this->_r.b = this->mmu.rb(this->_r.h << 8 + this->_r.l);
 }
+
 void Z80::LDBA(){
-	std::cout << "LDBA" << std::endl;
-	this->_r.b = this->_r.a;
+    this->_r.b = this->_r.a;
 }
+
 void Z80::LDCB(){
-	std::cout << "LDCB" << std::endl;
-	this->_r.c = this->_r.b;
+    this->_r.c = this->_r.b;
 }
+
 void Z80::LDCC(){
-	std::cout << "LDCC" << std::endl;
-	this->_r.c = this->_r.c;
+    this->_r.c = this->_r.c;
 }
+
 void Z80::LDCD(){
-	std::cout << "LDCD" << std::endl;
-	this->_r.c = this->_r.d;
+    this->_r.c = this->_r.d;
 }
+
 void Z80::LDCE(){
-	std::cout << "LDCE" << std::endl;
-	this->_r.c = this->_r.e;
+    this->_r.c = this->_r.e;
 }
+
 void Z80::LDCH(){
-	std::cout << "LDCH" << std::endl;
-	this->_r.c = this->_r.h;
+    this->_r.c = this->_r.h;
 }
+
 void Z80::LDCL(){
-	std::cout << "LDCL" << std::endl;
-	this->_r.c = this->_r.l;
+    this->_r.c = this->_r.l;
 }
+
 void Z80::LDCmHL(){
-	std::cout << "LDCmHL" << std::endl;
-	this->_r.c = this->mmu.rb(this->_r.h << 8 + this->_r.l);
+    this->_r.c = this->mmu.rb(this->_r.h << 8 + this->_r.l);
 }
+
 void Z80::LDCA(){
-	std::cout << "LDCA" << std::endl;
-	this->_r.c = this->_r.a;
+    this->_r.c = this->_r.a;
 }
+
 void Z80::LDDB(){
-	std::cout << "LDDB" << std::endl;
-	this->_r.d = this->_r.b;
+    this->_r.d = this->_r.b;
 }
+
 void Z80::LDDC(){
-	std::cout << "LDDC" << std::endl;
-	this->_r.d = this->_r.c;
+    this->_r.d = this->_r.c;
 }
+
 void Z80::LDDD(){
-	std::cout << "LDDD" << std::endl;
-	this->_r.d = this->_r.d;
+    this->_r.d = this->_r.d;
 }
+
 void Z80::LDDE(){
-	std::cout << "LDDE" << std::endl;
-	this->_r.d = this->_r.e;
+    this->_r.d = this->_r.e;
 }
+
 void Z80::LDDH(){
-	std::cout << "LDDH" << std::endl;
-	this->_r.d = this->_r.h;
+    this->_r.d = this->_r.h;
 }
+
 void Z80::LDDL(){
-	std::cout << "LDDL" << std::endl;
-	this->_r.d = this->_r.l;
+    this->_r.d = this->_r.l;
 }
+
 void Z80::LDDmHL(){
-	std::cout << "Test" << std::endl;
+    this->_r.d = this->mmu.rb(this->_r.h << 8 + this->_r.l);
 }
+
 void Z80::LDDA(){
-	std::cout << "Test" << std::endl;
+    this->_r.d = this->_r.a;
 }
+
 void Z80::LDEB(){
-	std::cout << "Test" << std::endl;
+    this->_r.e = this->_r.b;
 }
+
 void Z80::LDEC(){
-	std::cout << "Test" << std::endl;
+    this->_r.e = this->_r.c;
 }
+
 void Z80::LDED(){
-	std::cout << "Test" << std::endl;
+    this->_r.e = this->_r.d;
 }
+
 void Z80::LDEE(){
-	std::cout << "Test" << std::endl;
+    this->_r.e = this->_r.e;
 }
+
 void Z80::LDEH(){
-	std::cout << "Test" << std::endl;
+    this->_r.e = this->_r.h;
 }
+
 void Z80::LDEL(){
-	std::cout << "Test" << std::endl;
+    this->_r.e = this->_r.l;
 }
+
 void Z80::LDEmHL(){
-	std::cout << "Test" << std::endl;
+    this->_r.e = this->mmu.rb(this->_r.h << 8 + this->_r.l);
 }
+
 void Z80::LDEA(){
-	std::cout << "Test" << std::endl;
+    this->_r.e = this->_r.a;
 }
+
 void Z80::LDHB(){
-	std::cout << "Test" << std::endl;
+    this->_r.h = this->_r.b;
 }
+
 void Z80::LDHC(){
-	std::cout << "Test" << std::endl;
+    this->_r.h = this->_r.c;
 }
+
 void Z80::LDHD(){
-	std::cout << "Test" << std::endl;
+    this->_r.h = this->_r.d;
 }
+
 void Z80::LDHE(){
-	std::cout << "Test" << std::endl;
+    this->_r.h = this->_r.e;
 }
+
 void Z80::LDHH(){
-	std::cout << "Test" << std::endl;
+    this->_r.h = this->_r.h;
 }
+
 void Z80::LDHL(){
-	std::cout << "Test" << std::endl;
+    this->_r.h = this->_r.l;
 }
+
 void Z80::LDHmHL(){
-	std::cout << "Test" << std::endl;
+    this->_r.h = this->mmu.rb(this->_r.h << 8 + this->_r.l);
 }
+
 void Z80::LDHA(){
-	std::cout << "Test" << std::endl;
+    this->_r.h = this->_r.a;
 }
+
 void Z80::LDLB(){
-	std::cout << "Test" << std::endl;
+    this->_r.l = this->_r.b;
 }
+
 void Z80::LDLC(){
-	std::cout << "Test" << std::endl;
+    this->_r.l = this->_r.c;
 }
+
 void Z80::LDLD(){
-	std::cout << "Test" << std::endl;
+    this->_r.l = this->_r.d;
 }
+
 void Z80::LDLE(){
-	std::cout << "Test" << std::endl;
+    this->_r.l = this->_r.e;
 }
+
 void Z80::LDLH(){
-	std::cout << "Test" << std::endl;
+    this->_r.l = this->_r.h;
 }
+
 void Z80::LDLL(){
-	std::cout << "Test" << std::endl;
+    this->_r.l = this->_r.l;
 }
+
 void Z80::LDLmHL(){
-	std::cout << "Test" << std::endl;
+    this->_r.l = this->mmu.rb(this->_r.h << 8 + this->_r.l);
 }
+
 void Z80::LDLA(){
-	std::cout << "Test" << std::endl;
+    this->_r.l = this->_r.a;
 }
+
 void Z80::LDmHLB(){
-	std::cout << "Test" << std::endl;
+    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.b);
 }
+
 void Z80::LDmHLC(){
-	std::cout << "Test" << std::endl;
+    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.c);
 }
+
 void Z80::LDmHLD(){
-	std::cout << "Test" << std::endl;
+    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.d);
 }
+
 void Z80::LDmHLE(){
-	std::cout << "Test" << std::endl;
+    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.e);
 }
+
 void Z80::LDmHLH(){
-	std::cout << "Test" << std::endl;
+    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.h);
 }
+
 void Z80::LDmHLL(){
-	std::cout << "Test" << std::endl;
+    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.l);
 }
+
 void Z80::HALT(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::LDmHLA(){
-	std::cout << "LDmHLA" << std::endl;
-	this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.a);
+    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.a);
 }
+
 void Z80::LDAB(){
-	std::cout << "Test" << std::endl;
+    this->_r.a = this->_r.b;
 }
+
 void Z80::LDAC(){
-	std::cout << "Test" << std::endl;
+    this->_r.a = this->_r.c;
 }
+
 void Z80::LDAD(){
-	std::cout << "Test" << std::endl;
+    this->_r.a = this->_r.d;
 }
+
 void Z80::LDAE(){
-	std::cout << "LDAE" << std::endl;
-	this->_r.a = this->_r.e;
+    this->_r.a = this->_r.e;
 }
+
 void Z80::LDAH(){
-	std::cout << "Test" << std::endl;
+    this->_r.a = this->_r.h;
 }
+
 void Z80::LDAL(){
-	std::cout << "Test" << std::endl;
+    this->_r.a = this->_r.l;
 }
+
 void Z80::LDAmHL(){
-	std::cout << "Test" << std::endl;
+    this->_r.a = this->mmu.rb(this->_r.h << 8 + this->_r.l);
 }
+
 void Z80::LDAA(){
-	std::cout << "Test" << std::endl;
+    this->_r.a = this->_r.a;
 }
+
 void Z80::ADDAB(){
-	std::cout << "Test" << std::endl;
+    this->_r.f = ((this->_r.a + this->_r.b) >> 8) & 0x1;
+    this->_r.a += this->_r.b;
+    this->_r.a &= 0xFF;
+    //Set 0, OF (above), etc.
 }
+
 void Z80::ADDAC(){
-	std::cout << "Test" << std::endl;
+    this->_r.f = ((this->_r.a + this->_r.c) >> 8) & 0x1;
+    this->_r.a += this->_r.c;
+    this->_r.a &= 0xFF;
+    //Set 0, OF (above), etc.
 }
+
 void Z80::ADDAD(){
-	std::cout << "Test" << std::endl;
+    this->_r.f = ((this->_r.a + this->_r.d) >> 8) & 0x1;
+    this->_r.a += this->_r.d;
+    this->_r.a &= 0xFF;
+    //Set 0, OF (above), etc.
 }
+
 void Z80::ADDAE(){
-	std::cout << "Test" << std::endl;
+    this->_r.f = ((this->_r.a + this->_r.e) >> 8) & 0x1;
+    this->_r.a += this->_r.e;
+    this->_r.a &= 0xFF;
+    //Set 0, OF (above), etc.
 }
+
 void Z80::ADDAH(){
-	std::cout << "Test" << std::endl;
+    this->_r.f = ((this->_r.a + this->_r.h) >> 8) & 0x1;
+    this->_r.a += this->_r.h;
+    this->_r.a &= 0xFF;
+    //Set 0, OF (above), etc.
 }
+
 void Z80::ADDAL(){
-	std::cout << "Test" << std::endl;
+    this->_r.f = ((this->_r.a + this->_r.l) >> 8) & 0x1;
+    this->_r.a += this->_r.l;
+    this->_r.a &= 0xFF;
+    //Set 0, OF (above), etc.
 }
+
 void Z80::ADDAmHL(){
-	std::cout << "Test" << std::endl;
+    this->_r.f = ((this->_r.a + this->mmu.rb(this->_r.h << 8 + this->_r.l)) >> 8) & 0x1;
+    this->_r.a += this->mmu.rb(this->_r.h << 8 + this->_r.l);
+    this->_r.a &= 0xFF;
+    //Set 0, OF (above), etc.
 }
+
 void Z80::ADDAA(){
-	std::cout << "Test" << std::endl;
+    this->_r.f = ((this->_r.a + this->_r.a) >> 8) & 0x1;
+    this->_r.a += this->_r.a;
+    this->_r.a &= 0xFF;
+    //Set 0, OF (above), etc.
 }
+
 void Z80::ADCAB(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::ADCAC(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::ADCAD(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::ADCAE(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::ADCAH(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::ADCAL(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::ADCAmHL(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::ADCAA(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::SUBAB(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::SUBAC(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::SUBAD(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::SUBAE(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::SUBAH(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::SUBAL(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::SUBAmHL(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::SUBAA(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::SBCAB(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::SBCAC(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::SBCAD(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::SBCAE(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::SBCAH(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::SBCAL(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::SBCAmHL(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::SBCAA(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::ANDB(){
-	std::cout << "Test" << std::endl;
+    this->_r.a &= this->_r.b;
+    //Set 0, carry, etc.
 }
+
 void Z80::ANDC(){
-	std::cout << "Test" << std::endl;
+    this->_r.a &= this->_r.c;
+    //Set 0, carry, etc.
 }
+
 void Z80::ANDD(){
-	std::cout << "Test" << std::endl;
+    this->_r.a &= this->_r.d;
+    //Set 0, carry, etc.
 }
+
 void Z80::ANDE(){
-	std::cout << "Test" << std::endl;
+    this->_r.a &= this->_r.e;
+    //Set 0, carry, etc.
 }
+
 void Z80::ANDH(){
-	std::cout << "Test" << std::endl;
+    this->_r.a &= this->_r.h;
+    //Set 0, carry, etc.
 }
+
 void Z80::ANDL(){
-	std::cout << "Test" << std::endl;
+    this->_r.a &= this->_r.l;
+    //Set 0, carry, etc.
 }
+
 void Z80::ANDmHL(){
-	std::cout << "Test" << std::endl;
+    this->_r.a &= this->mmu.rb(this->_r.h << 8 + this->_r.l);
+    //Set 0, carry, etc.
 }
+
 void Z80::ANDA(){
-	std::cout << "Test" << std::endl;
+    this->_r.a &= this->_r.a;
+    //Set 0, carry, etc.
 }
+
 void Z80::XORB(){
-	std::cout << "Test" << std::endl;
+    this->_r.a ^= this->_r.b;
+    //Set 0, carry, etc.
 }
+
 void Z80::XORC(){
-	std::cout << "Test" << std::endl;
+    this->_r.a ^= this->_r.c;
+    //Set 0, carry, etc.
 }
+
 void Z80::XORD(){
-	std::cout << "Test" << std::endl;
+    this->_r.a ^= this->_r.d;
+    //Set 0, carry, etc.
 }
+
 void Z80::XORE(){
-	std::cout << "Test" << std::endl;
+    this->_r.a ^= this->_r.e;
+    //Set 0, carry, etc.
 }
+
 void Z80::XORH(){
-	std::cout << "Test" << std::endl;
+    this->_r.a ^= this->_r.h;
+    //Set 0, carry, etc.
 }
+
 void Z80::XORL(){
-	std::cout << "Test" << std::endl;
+    this->_r.a ^= this->_r.l;
+    //Set 0, carry, etc.
 }
+
 void Z80::XORmHL(){
-	std::cout << "Test" << std::endl;
+    this->_r.a ^= this->mmu.rb(this->_r.h << 8 + this->_r.l);
+    //Set 0, carry, etc.
 }
+
 void Z80::XORA(){
-	std::cout << "XORA" << std::endl;
-	this->_r.a ^= this->_r.a;
-	//set flags
-	//timing
+    this->_r.a ^= this->_r.a;
+    //Set 0, carry, etc.
 }
+
 void Z80::ORB(){
-	std::cout << "Test" << std::endl;
+    this->_r.a |= this->_r.b;
+    //Set 0, carry, etc.
 }
+
 void Z80::ORC(){
-	std::cout << "Test" << std::endl;
+    this->_r.a |= this->_r.c;
+    //Set 0, carry, etc.
 }
+
 void Z80::ORD(){
-	std::cout << "Test" << std::endl;
+    this->_r.a |= this->_r.d;
+    //Set 0, carry, etc.
 }
+
 void Z80::ORE(){
-	std::cout << "Test" << std::endl;
+    this->_r.a |= this->_r.e;
+    //Set 0, carry, etc.
 }
+
 void Z80::ORH(){
-	std::cout << "Test" << std::endl;
+    this->_r.a |= this->_r.h;
+    //Set 0, carry, etc.
 }
+
 void Z80::ORL(){
-	std::cout << "Test" << std::endl;
+    this->_r.a |= this->_r.l;
+    //Set 0, carry, etc.
 }
+
 void Z80::ORmHL(){
-	std::cout << "Test" << std::endl;
+    this->_r.a |= this->mmu.rb(this->_r.h << 8 + this->_r.l);
+    //Set 0, carry, etc.
 }
+
 void Z80::ORA(){
-	std::cout << "Test" << std::endl;
+    this->_r.a |= this->_r.a;
+    //Set 0, carry, etc.
 }
+
 void Z80::CPB(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::CPC(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::CPD(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::CPE(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::CPH(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::CPL(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::CPmHL(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::CPA(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::RETNZ(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::POPBC(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::JPNZnn(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::JPnn(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::CALLNZnn(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::PUSHBC(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::ADDAn(){
-	std::cout << "Test" << std::endl;
+    this->_r.f = (this->_r.a + this->mmu.rb(this->_r.pc) >> 8) & 0x1;
+    this->_r.a += this->mmu.rb(this->_r.pc);
+    this->_r.a &= 0xFF;
+    this->_r.pc += 1;
+    //Set 0, OF (above), etc.
 }
+
 void Z80::RST0(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::RETZ(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::RET(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::JPZnn(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::Extops(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::CALLZnn(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::CALLnn(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::ADCAn(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::RST8(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::RETNC(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::POPDE(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::JPNCnn(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::XX1(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::CALLNCnn(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::PUSHDE(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::SUBAn(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::RST10(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::RETC(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::RETI(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::JPCnn(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::XX2(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::CALLCnn(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::XX3(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::SBCAn(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::RST18(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::LDHmnA(){
-	std::cout << "LDHmnA" << std::endl;
-	this->mmu.wb(this->mmu.rb(this->_r.pc) + 0xFF00, this->_r.a);
-	this->_r.pc++;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::POPHL(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::LDHmCA(){
-	std::cout << "LDHmCA" << std::endl;
-	this->mmu.wb(this->_r.c + 0xFF00, this->_r.a);
+    this->_r.h = this->mmu.rb(this->_r.c << 8 + this->_r.a);
 }
+
 void Z80::XX4(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::XX5(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::PUSHHL(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::ANDn(){
-	std::cout << "Test" << std::endl;
+    this->_r.a &= this->mmu.rb(this->_r.pc);
+    this->_r.pc += 1;
+    //Set 0, carry, etc.
 }
+
 void Z80::RST20(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::ADDSPd(){
-	std::cout << "Test" << std::endl;
+    this->_r.sp += this->mmu.rb(this->_r.pc) > 0x7F ? (~this->mmu.rb(this->_r.pc) + 1) & 0xFF : this->mmu.rb(this->_r.pc);
+    this->_r.pc += 1;
 }
+
 void Z80::JPmHL(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::LDmnnA(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::XX6(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::XX7(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::XX8(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::XORn(){
-	std::cout << "Test" << std::endl;
+    this->_r.a ^= this->mmu.rb(this->_r.pc);
+    this->_r.pc += 1;
+    //Set 0, carry, etc.
 }
+
 void Z80::RST28(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::LDHAmn(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::POPAF(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::XX9(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::DI(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::XXA(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::PUSHAF(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::ORn(){
-	std::cout << "Test" << std::endl;
+    this->_r.a |= this->mmu.rb(this->_r.pc);
+    this->_r.pc += 1;
+    //Set 0, carry, etc.
 }
+
 void Z80::RST30(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::LDHLSPd(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::LDSPHL(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::LDAmnn(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::EI(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::XXB(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::XXC(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::CPn(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
 void Z80::RST38(){
-	std::cout << "Test" << std::endl;
+    std::cout << "Uncovered Function" << std::endl;
 }
+
+//void Z80::NOP(){
+//	std::cout << "NOP" << std::endl;
+//}
+//void Z80::LDBCnn(){
+//	std::cout << "LDBC" << std::endl;
+//	this->_r.c = this->mmu.rb(this->_r.pc);
+//	this->_r.b = this->mmu.rb(this->_r.pc + 1);
+//	this->_r.pc += 2;
+//}
+//void Z80::LDmBCA(){
+//	std::cout << "LDmBCA" << std::endl;
+//	this->_r.a = this->mmu.rb(this->_r.b << 8 + this->_r.c);
+//}
+//void Z80::INCBC(){
+//	std::cout << "INCBC" << std::endl;
+//	this->_r.c += 1;
+//	this->_r.b = this->_r.c == 0 ? this->_r.b + 1 : this->_r.b;
+//}
+//void Z80::INCB(){
+//	std::cout << "INCB" << std::endl;
+//	this->_r.b += 1;
+//}
+//void Z80::DECB(){
+//	std::cout << "DECB" << std::endl;
+//	this->_r.b -= 1;
+//}
+//void Z80::LDBn(){
+//	std::cout << "LDBn" << std::endl;
+//	this->_r.b = this->mmu.rb(this->_r.pc);
+//	this->_r.pc++;
+//}
+//void Z80::RLCA(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDmnnSP(){
+//	std::cout << "LDmnnSP" << std::endl;
+//	this->mmu.ww(this->mmu.rb(this->_r.pc) + (this->mmu.rb(this->_r.pc + 1) << 8), this->_r.sp);
+//	this->_r.pc += 2;
+//}
+//void Z80::ADDHLBC(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDAmBC(){
+//	std::cout << "LDAmBC" << std::endl;
+//	this->_r.a = this->mmu.rb(this->_r.b << 8 + this->_r.c);
+//}
+//void Z80::DECBC(){
+//	std::cout << "DECBC" << std::endl;
+//	this->_r.c -= 1;
+//	this->_r.b = this->_r.c == 0xFF ? this->_r.b - 1 : this->_r.b;
+//}
+//void Z80::INCC(){
+//	std::cout << "INCC" << std::endl;
+//	this->_r.c += 1;
+//}
+//void Z80::DECC(){
+//	std::cout << "DECC" << std::endl;
+//	this->_r.c -= 1;
+//}
+//void Z80::LDCn(){
+//	std::cout << "LDCn" << std::endl;
+//	this->_r.c = this->mmu.rb(this->_r.pc);
+//	this->_r.pc++;
+//}
+//void Z80::RRCA(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::STOP(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDDEnn(){
+//	std::cout << "LDDEnn" << std::endl;
+//	this->_r.e = this->mmu.rb(this->_r.pc);
+//	this->_r.d = this->mmu.rb(this->_r.pc + 1);
+//	this->_r.pc += 2;
+//}
+//void Z80::LDmDEA(){
+//	std::cout << "LDmDEA" << std::endl;
+//	this->mmu.wb(this->_r.d << 8 + this->_r.e, this->_r.a);
+//}
+//void Z80::INCDE(){
+//	std::cout << "INCDE" << std::endl;
+//	this->_r.e += 1;
+//	this->_r.d = this->_r.e == 0 ? this->_r.d + 1 : this->_r.d;
+//}
+//void Z80::INCD(){
+//	std::cout << "INCD" << std::endl;
+//	this->_r.d += 1;
+//}
+//void Z80::DECD(){
+//	std::cout << "DECD" << std::endl;
+//	this->_r.d -= 1;
+//}
+//void Z80::LDDn(){
+//	std::cout << "LDDn" << std::endl;
+//	this->_r.d = this->mmu.rb(this->_r.pc);
+//	this->_r.pc++;
+//}
+//void Z80::RLA(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::JRn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ADDHLDE(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDAmDE(){
+//	std::cout << "LDAmDE" << std::endl;
+//	this->_r.a = this->mmu.rb(this->_r.d << 8 + this->_r.e);
+//}
+//void Z80::DECDE(){
+//	std::cout << "DECDE" << std::endl;
+//	this->_r.e -= 1;
+//	this->_r.d = this->_r.e == 0xFF ? this->_r.d - 1 : this->_r.d;
+//}
+//void Z80::INCE(){
+//	std::cout << "INCE" << std::endl;
+//	this->_r.e += 1;
+//}
+//void Z80::DECE(){
+//	std::cout << "DECE" << std::endl;
+//	this->_r.e -= 1;
+//}
+//void Z80::LDEn(){
+//	std::cout << "LDEn" << std::endl;
+//	this->_r.e = this->mmu.rb(this->_r.pc);
+//	this->_r.pc++;
+//}
+//void Z80::RRA(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::JRNZn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDHLnn(){
+//	std::cout << "LD HLnn" << std::endl;
+//	this->_r.l = this->mmu.rb(this->_r.pc);
+//	this->_r.h = this->mmu.rb(this->_r.pc + 1);
+//	this->_r.pc += 2; //reading word
+//
+//}
+//void Z80::LDImHLA(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::INCHL(){
+//	std::cout << "INCHL" << std::endl;
+//	this->_r.l += 1;
+//	this->_r.h = this->_r.l == 0x00 ? this->_r.h + 1 : this->_r.h;
+//}
+//void Z80::INCH(){
+//	std::cout << "INCH" << std::endl;
+//	this->_r.h += 1;
+//}
+//void Z80::DECH(){
+//	std::cout << "DECH" << std::endl;
+//	this->_r.h -= 1;
+//}
+//void Z80::LDHn(){
+//	std::cout << "LDHn" << std::endl;
+//	this->_r.h = this->mmu.rb(this->_r.pc);
+//	this->_r.pc++;
+//}
+//void Z80::DAA(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::JRZn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ADDHLHL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDImHL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::DECHL(){
+//	std::cout << "DECHL" << std::endl;
+//	this->_r.l -= 1;
+//	this->_r.h = this->_r.l == 0xFF ? this->_r.h - 1 : this->_r.h;
+//}
+//void Z80::INCL(){
+//	std::cout << "INCL" << std::endl;
+//	this->_r.l += 1;
+//}
+//void Z80::DECL(){
+//	std::cout << "DECL" << std::endl;
+//	this->_r.l -= 1;
+//}
+//void Z80::LDLn(){
+//	std::cout << "LDLn" << std::endl;
+//	this->_r.l = this->mmu.rb(this->_r.pc);
+//	this->_r.pc++;
+//}
+//void Z80::NOT(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::JRNCn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDSPnn(){
+//	std::cout << "Test" << std::endl;
+//	this->_r.sp = mmu.rw(this->_r.pc); //already incremented pc
+//	this->_r.pc += 2;
+//	//this->_r.m = 3; //Timing
+//	//this->_r.t = 12;
+//}
+//void Z80::LDDmHLA(){
+//	std::cout << "LDDmHLA" << std::endl;
+//	this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.a);
+//	this->_r.l -= 1;
+//	this->_r.h = this->_r.l == 0xFF ? this->_r.h - 1 : this->_r.h;
+//}
+//void Z80::INCSP(){
+//	std::cout << "INCSP" << std::endl;
+//	this->_r.sp += 1;
+//}
+//void Z80::INCmHL(){
+//	std::cout << "INCmHL" << std::endl;
+//	this->mmu.wb(this->_r.h << 8 + this->_r.l, this->mmu.rb(this->_r.h << 8 + this->_r.l) + 1);
+//}
+//void Z80::DECmHL(){
+//	std::cout << "DECmHL" << std::endl;
+//	this->mmu.wb(this->_r.h << 8 + this->_r.l, this->mmu.rb(this->_r.h << 8 + this->_r.l) + 1);
+//}
+//void Z80::LDmHLn(){
+//	std::cout << "LDmHLn" << std::endl;
+//	this->mmu.wb(this->_r.h << 8 + this->_r.l, this->mmu.rb(this->_r.pc));
+//	this->_r.pc++;
+//}
+//void Z80::SCF(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::JRCn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ADDHLSP(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDDAmHL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::DECSP(){
+//	std::cout << "DECSP" << std::endl;
+//	this->_r.sp -= 1;
+//}
+//void Z80::INCA(){
+//	std::cout << "INCA" << std::endl;
+//	this->_r.a += 1;
+//}
+//void Z80::DECA(){
+//	std::cout << "DECA" << std::endl;
+//	this->_r.a -= 1;
+//}
+//void Z80::LDAn(){
+//	std::cout << "LDAn" << std::endl;
+//	this->_r.a = this->mmu.rb(this->_r.pc);
+//	this->_r.pc++;
+//}
+//void Z80::CCF(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDBB(){
+//	std::cout << "LDBB" << std::endl;
+//	this->_r.b = this->_r.b;
+//}
+//void Z80::LDBC(){
+//	std::cout << "LDBC" << std::endl;
+//	this->_r.b = this->_r.c;
+//}
+//void Z80::LDBD(){
+//	std::cout << "LDBD" << std::endl;
+//	this->_r.b = this->_r.d;
+//}
+//void Z80::LDBE(){
+//	std::cout << "LDBE" << std::endl;
+//	this->_r.b = this->_r.e;
+//}
+//void Z80::LDBH(){
+//	std::cout << "LDBH" << std::endl;
+//	this->_r.b = this->_r.h;
+//}
+//void Z80::LDBL(){
+//	std::cout << "LDBL" << std::endl;
+//	this->_r.b = this->_r.l;
+//}
+//void Z80::LDBmHL(){
+//	std::cout << "LDBmHL" << std::endl;
+//	this->_r.b = this->mmu.rb(this->_r.h << 8 + this->_r.l);
+//}
+//void Z80::LDBA(){
+//	std::cout << "LDBA" << std::endl;
+//	this->_r.b = this->_r.a;
+//}
+//void Z80::LDCB(){
+//	std::cout << "LDCB" << std::endl;
+//	this->_r.c = this->_r.b;
+//}
+//void Z80::LDCC(){
+//	std::cout << "LDCC" << std::endl;
+//	this->_r.c = this->_r.c;
+//}
+//void Z80::LDCD(){
+//	std::cout << "LDCD" << std::endl;
+//	this->_r.c = this->_r.d;
+//}
+//void Z80::LDCE(){
+//	std::cout << "LDCE" << std::endl;
+//	this->_r.c = this->_r.e;
+//}
+//void Z80::LDCH(){
+//	std::cout << "LDCH" << std::endl;
+//	this->_r.c = this->_r.h;
+//}
+//void Z80::LDCL(){
+//	std::cout << "LDCL" << std::endl;
+//	this->_r.c = this->_r.l;
+//}
+//void Z80::LDCmHL(){
+//	std::cout << "LDCmHL" << std::endl;
+//	this->_r.c = this->mmu.rb(this->_r.h << 8 + this->_r.l);
+//}
+//void Z80::LDCA(){
+//	std::cout << "LDCA" << std::endl;
+//	this->_r.c = this->_r.a;
+//}
+//void Z80::LDDB(){
+//	std::cout << "LDDB" << std::endl;
+//	this->_r.d = this->_r.b;
+//}
+//void Z80::LDDC(){
+//	std::cout << "LDDC" << std::endl;
+//	this->_r.d = this->_r.c;
+//}
+//void Z80::LDDD(){
+//	std::cout << "LDDD" << std::endl;
+//	this->_r.d = this->_r.d;
+//}
+//void Z80::LDDE(){
+//	std::cout << "LDDE" << std::endl;
+//	this->_r.d = this->_r.e;
+//}
+//void Z80::LDDH(){
+//	std::cout << "LDDH" << std::endl;
+//	this->_r.d = this->_r.h;
+//}
+//void Z80::LDDL(){
+//	std::cout << "LDDL" << std::endl;
+//	this->_r.d = this->_r.l;
+//}
+//void Z80::LDDmHL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDDA(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDEB(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDEC(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDED(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDEE(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDEH(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDEL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDEmHL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDEA(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDHB(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDHC(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDHD(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDHE(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDHH(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDHL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDHmHL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDHA(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDLB(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDLC(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDLD(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDLE(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDLH(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDLL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDLmHL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDLA(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDmHLB(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDmHLC(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDmHLD(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDmHLE(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDmHLH(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDmHLL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::HALT(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDmHLA(){
+//	std::cout << "LDmHLA" << std::endl;
+//	this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.a);
+//}
+//void Z80::LDAB(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDAC(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDAD(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDAE(){
+//	std::cout << "LDAE" << std::endl;
+//	this->_r.a = this->_r.e;
+//}
+//void Z80::LDAH(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDAL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDAmHL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDAA(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ADDAB(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ADDAC(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ADDAD(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ADDAE(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ADDAH(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ADDAL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ADDAmHL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ADDAA(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ADCAB(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ADCAC(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ADCAD(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ADCAE(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ADCAH(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ADCAL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ADCAmHL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ADCAA(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::SUBAB(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::SUBAC(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::SUBAD(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::SUBAE(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::SUBAH(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::SUBAL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::SUBAmHL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::SUBAA(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::SBCAB(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::SBCAC(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::SBCAD(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::SBCAE(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::SBCAH(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::SBCAL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::SBCAmHL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::SBCAA(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ANDB(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ANDC(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ANDD(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ANDE(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ANDH(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ANDL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ANDmHL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ANDA(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::XORB(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::XORC(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::XORD(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::XORE(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::XORH(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::XORL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::XORmHL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::XORA(){
+//	std::cout << "XORA" << std::endl;
+//	this->_r.a ^= this->_r.a;
+//	//set flags
+//	//timing
+//}
+//void Z80::ORB(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ORC(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ORD(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ORE(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ORH(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ORL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ORmHL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ORA(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::CPB(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::CPC(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::CPD(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::CPE(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::CPH(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::CPL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::CPmHL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::CPA(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::RETNZ(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::POPBC(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::JPNZnn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::JPnn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::CALLNZnn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::PUSHBC(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ADDAn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::RST0(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::RETZ(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::RET(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::JPZnn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::Extops(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::CALLZnn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::CALLnn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ADCAn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::RST8(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::RETNC(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::POPDE(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::JPNCnn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::XX1(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::CALLNCnn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::PUSHDE(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::SUBAn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::RST10(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::RETC(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::RETI(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::JPCnn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::XX2(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::CALLCnn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::XX3(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::SBCAn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::RST18(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDHmnA(){
+//	std::cout << "LDHmnA" << std::endl;
+//	this->mmu.wb(this->mmu.rb(this->_r.pc) + 0xFF00, this->_r.a);
+//	this->_r.pc++;
+//}
+//void Z80::POPHL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDHmCA(){
+//	std::cout << "LDHmCA" << std::endl;
+//	this->mmu.wb(this->_r.c + 0xFF00, this->_r.a);
+//}
+//void Z80::XX4(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::XX5(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::PUSHHL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ANDn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::RST20(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ADDSPd(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::JPmHL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDmnnA(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::XX6(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::XX7(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::XX8(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::XORn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::RST28(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDHAmn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::POPAF(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::XX9(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::DI(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::XXA(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::PUSHAF(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::ORn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::RST30(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDHLSPd(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDSPHL(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::LDAmnn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::EI(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::XXB(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::XXC(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::CPn(){
+//	std::cout << "Test" << std::endl;
+//}
+//void Z80::RST38(){
+//	std::cout << "Test" << std::endl;
+//}
 #endif       

@@ -41,7 +41,7 @@ void Z80::LDHn();
 void Z80::DAA();
 void Z80::JRZn();
 void Z80::ADDHLHL();
-void Z80::LDImHL();
+void Z80::LDIAmHL();
 void Z80::DECHL();
 void Z80::INCL();
 void Z80::DECL();

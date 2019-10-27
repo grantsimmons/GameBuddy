@@ -40,7 +40,8 @@ void Z80::RLCA(){
 }
 
 void Z80::LDmnnSP(){
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.ww(this->mmu.rb(this->_r.pc) + (this->mmu.rb(this->_r.pc + 1) << 8), this->_r.sp);
+    this->_r.pc += 2;
 }
 
 void Z80::ADDHLBC(){
@@ -161,7 +162,8 @@ void Z80::LDHLnn(){
 }
 
 void Z80::LDImHLA(){
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.a);
+    this->INCHL();
 }
 
 void Z80::INCHL(){
@@ -197,8 +199,9 @@ void Z80::ADDHLHL(){
     std::cout << "Uncovered Function" << std::endl;
 }
 
-void Z80::LDImHL(){
-    std::cout << "Uncovered Function" << std::endl;
+void Z80::LDIAmHL(){
+    this->_r.a = this->mmu.rb(this->_r.h << 8 + this->_r.l);
+    this->INCHL();
 }
 
 void Z80::DECHL(){
@@ -231,7 +234,8 @@ void Z80::JRNCn(){
 }
 
 void Z80::LDSPnn(){
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.sp = this->mmu.rw(this->_r.pc)
+    this->_r.pc += 2;
 }
 
 void Z80::LDDmHLA(){
@@ -255,7 +259,8 @@ void Z80::DECmHL(){
 }
 
 void Z80::LDmHLn(){
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->mmu.rb(this->_r.pc));
+    this->_r.pc += 1;
 }
 
 void Z80::SCF(){
@@ -864,7 +869,9 @@ void Z80::RETNZ(){
 }
 
 void Z80::POPBC(){
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.c = this->mmu.rb(this->_r.sp);
+    this->_r.b = this->mmu.rb(this->_r.sp + 1);
+    this->_r.sp += 2;
 }
 
 void Z80::JPNZnn(){
@@ -880,7 +887,8 @@ void Z80::CALLNZnn(){
 }
 
 void Z80::PUSHBC(){
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.ww(this->_r.sp, (this->_r.b << 8) + this->_r.c);
+    this->_r.sp -= 2;
 }
 
 void Z80::ADDAn(){
@@ -932,7 +940,9 @@ void Z80::RETNC(){
 }
 
 void Z80::POPDE(){
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.e = this->mmu.rb(this->_r.sp);
+    this->_r.d = this->mmu.rb(this->_r.sp + 1);
+    this->_r.sp += 2;
 }
 
 void Z80::JPNCnn(){
@@ -948,7 +958,8 @@ void Z80::CALLNCnn(){
 }
 
 void Z80::PUSHDE(){
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.ww(this->_r.sp, (this->_r.d << 8) + this->_r.e);
+    this->_r.sp -= 2;
 }
 
 void Z80::SUBAn(){
@@ -996,7 +1007,9 @@ void Z80::LDHmnA(){
 }
 
 void Z80::POPHL(){
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.l = this->mmu.rb(this->_r.sp);
+    this->_r.h = this->mmu.rb(this->_r.sp + 1);
+    this->_r.sp += 2;
 }
 
 void Z80::LDHmCA(){
@@ -1012,7 +1025,8 @@ void Z80::XX5(){
 }
 
 void Z80::PUSHHL(){
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.ww(this->_r.sp, (this->_r.h << 8) + this->_r.l);
+    this->_r.sp -= 2;
 }
 
 void Z80::ANDn(){
@@ -1035,7 +1049,8 @@ void Z80::JPmHL(){
 }
 
 void Z80::LDmnnA(){
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.wb(this->mmu.rb(this->_r.pc) + (this->mmu.rb(this->_r.pc + 1) << 8), this->_r.a);
+    this->_r.pc += 2;
 }
 
 void Z80::XX6(){
@@ -1065,7 +1080,9 @@ void Z80::LDHAmn(){
 }
 
 void Z80::POPAF(){
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.f = this->mmu.rb(this->_r.sp);
+    this->_r.a = this->mmu.rb(this->_r.sp + 1);
+    this->_r.sp += 2;
 }
 
 void Z80::XX9(){
@@ -1081,7 +1098,8 @@ void Z80::XXA(){
 }
 
 void Z80::PUSHAF(){
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.ww(this->_r.sp, (this->_r.a << 8) + this->_r.f);
+    this->_r.sp -= 2;
 }
 
 void Z80::ORn(){

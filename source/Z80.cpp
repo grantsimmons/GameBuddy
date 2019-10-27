@@ -15,8 +15,9 @@ Z80::Z80(uint8_t a = 0x00, uint8_t b = 0x00, uint8_t c = 0x00, uint8_t d = 0x00,
 }
 
 void Z80::exec(){
-    while(this->_r.pc < 0x100){//ever
+    while(this->_r.pc < 0x20){
         std::cout << "Executing function " << this->_r.pc << std::endl;
+        //std::cout << (this->*ops[mmu.rb(this->_r.pc)].op_function)(); //Execute op at pc
         (this->*ops[mmu.rb(this->_r.pc++)].op_function)(); //Execute op at pc
         this->_r.pc &= 0xFFFF;
         if(mmu._inbios && this->_r.pc == 0x100){

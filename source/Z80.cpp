@@ -1,9 +1,6 @@
-#include <cstdint>
 #include <stdio.h>
-#include <iostream>
 #include "MMU.h"
 #include "Z80.h"
-//#include "ops.h"
 
 Z80::Z80(uint8_t a = 0x00, uint8_t b = 0x00, uint8_t c = 0x00, uint8_t d = 0x00,
          uint8_t e = 0x00, uint8_t h = 0x00, uint8_t l = 0x00, uint8_t f = 0x00,
@@ -16,16 +13,19 @@ Z80::Z80(uint8_t a = 0x00, uint8_t b = 0x00, uint8_t c = 0x00, uint8_t d = 0x00,
 
 void Z80::exec(){
     while(this->_r.pc < 0x20){
-        std::cout << "Executing function " << this->_r.pc << std::endl;
-        //std::cout << (this->*ops[mmu.rb(this->_r.pc)].op_function)(); //Execute op at pc
+        //std::cout << "Executing function " << this->_r.pc << std::endl;
         (this->*ops[mmu.rb(this->_r.pc++)].op_function)(); //Execute op at pc
         this->_r.pc &= 0xFFFF;
         if(mmu._inbios && this->_r.pc == 0x100){
             mmu._inbios = 0;
             std::cout << "Exiting BIOS" << std::endl;
         }
-        this->status();
+        //std::cout << this->mmu.rb(this->_r.pc) << std::endl;
+        if(this->_r.pc > 0x0a || this->_r.pc <= 0x06){
+            this->status();
+        }
     }
+    mmu.dump_mem();
     this->debug();
 }
 
@@ -69,8 +69,8 @@ void Z80::debug(){
     //customizable debug function
 }
 
-int main(){
-    z80.status();
-    z80.exec();
-    return 1;
-}
+//int main(){
+//    z80.status();
+//    z80.exec();
+//    return 1;
+//}

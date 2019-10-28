@@ -1,9 +1,15 @@
+#ifndef _OPS_
+#define _OPS_
+
+#include "Z80.h"
+
 #define CARRY (1<<0)
 #define ADD_SUB (1<<1)
 #define PARITY_OVERFLOW (1<<2)
 #define HALF_CARRY (1<<3)
 #define ZERO (1<<4)
 #define SIGN (1<<5)
+
 void Z80::NOP();
 void Z80::LDBCnn();
 void Z80::LDmBCA();
@@ -260,3 +266,4 @@ void Z80::XXB();
 void Z80::XXC();
 void Z80::CPn();
 void Z80::RST38();
+#endif

@@ -1,6 +1,8 @@
+#TODO: Fix LDH commands
 import re
 
-define = re.compile('^#define')
+define = re.compile('^\#')
+newline = re.compile('^\n')
 LDBasic = re.compile('void\sZ80::LD([ABCDEFHL])([ABCDEFHL])\(')
 LDdectom = re.compile('void\sZ80::LDD(mHLA|AmHL)')
 LDinctom = re.compile('void\sZ80::LDI(mHLA|AmHL)')
@@ -23,19 +25,24 @@ OR = re.compile('void\sZ80::OR([ABCDEFHLn]|mHL)')
 XOR = re.compile('void\sZ80::XOR([ABCDEFHLn]|mHL)')
 PUSH = re.compile('void\sZ80::PUSH([ABDH])([FCEL])')
 POP = re.compile('void\sZ80::POP([ABDH])([FCEL])')
+JP = re.compile('void\sZ80::JP(N)?(Cnn|Znn|mHL|nn)')
+JR = re.compile('void\sZ80::JR(N)?(Cn|Zn|n)')
+EXT = re.compile('void\sZ80::Extops')
+
 
 with open("uncovered.cpp", 'w') as uncovered:
-    with open("ops.cpp", 'w') as out_file:
+    with open("../source/ops_impl.cpp", 'w') as out_file:
         with open("functions.cpp", 'r') as in_file:
             counter = 1
             match = False
             for line in in_file:
-                if define.search(line): #Skip define statements
+                if define.search(line) or newline.search(line): #Skip define statements
                     out_file.write(line)
                     continue
 
                 print(counter)
                 out_file.write(line[0:-2] + "{\n")
+                out_file.write("    std::cout << \"{}\" <<std::endl;\n".format(line[10:-4]))
                 
                 basic = LDBasic.search(line)
                 if basic:
@@ -117,8 +124,8 @@ with open("uncovered.cpp", 'w') as uncovered:
                     if inc16.group(1) == 'SP':
                         out_file.write('    this->_r.sp += 1;\n')
                     else:
-                        out_file.write('    this->_r.{} += 1;\n'.format(inc16.group(2).lower()))
-                        out_file.write('    this->_r.{} = this->_r.{} == 0x00 ? this->_r.{} + 1 : this->_r.{};\n'.format(inc16.group(3).lower(), inc16.group(2).lower(), inc16.group(3).lower(), inc16.group(3).lower()))
+                        out_file.write('    this->_r.{} += 1;\n'.format(inc16.group(3).lower()))
+                        out_file.write('    this->_r.{} = this->_r.{} == 0x00 ? this->_r.{} + 1 : this->_r.{};\n'.format(inc16.group(2).lower(), inc16.group(3).lower(), inc16.group(2).lower(), inc16.group(2).lower()))
                     out_file.write('    //Set OF, Z, etc.\n')
                     counter += 1
 
@@ -129,8 +136,9 @@ with open("uncovered.cpp", 'w') as uncovered:
                     if dec16.group(1) == 'SP':
                         out_file.write('    this->_r.sp -= 1;\n')
                     else:
-                        out_file.write('    this->_r.{} -= 1;\n'.format(dec16.group(2).lower()))
-                        out_file.write('    this->_r.{} = this->_r.{} == 0xFF ? this->_r.{} - 1 : this->_r.{};\n'.format(dec16.group(3).lower(), dec16.group(2).lower(), dec16.group(3).lower(), dec16.group(3).lower()))
+                        out_file.write('    this->_r.{} -= 1;\n'.format(dec16.group(3).lower()))
+                        out_file.write('    this->_r.{} = this->_r.{} == 0xFF ? this->_r.{} - 1 : this->_r.{};\n'.format(dec16.group(2).lower(), dec16.group(3).lower(), dec16.group(2).lower(), dec16.group(2).lower()))
+                        out_file.write('    this->_r.f = (this->_r.h == 0x0 && this->_r.l == 0x0) ? this->_r.f | ZERO : this->_r.f;\n')
                     out_file.write('    //Set UF, Z, etc.\n')
                     counter += 1
 
@@ -203,7 +211,7 @@ with open("uncovered.cpp", 'w') as uncovered:
                     match = True
                     print("16-bit add")
                     if add16.group(1) == 'SP':
-                        out_file.write('    this->_r.sp += this->mmu.rb(this->_r.pc) > 0x7F ? (~this->mmu.rb(this->_r.pc) + 1) & 0xFF : this->mmu.rb(this->_r.pc);\n')
+                        out_file.write('    this->_r.sp += this->mmu.rb(this->_r.pc) > 0x7F ? ((int8_t)~this->mmu.rb(this->_r.pc) + 1) & 0xFF : this->mmu.rb(this->_r.pc);\n')
                         out_file.write('    this->_r.pc += 1;\n')
                     #else:
                 
@@ -278,6 +286,40 @@ with open("uncovered.cpp", 'w') as uncovered:
                     out_file.write('    this->_r.{} = this->mmu.rb(this->_r.sp + 1);\n'.format(pop.group(1).lower()))
                     out_file.write('    this->_r.sp += 2;\n')
                     counter += 1
+
+                jp = JP.search(line)
+                if jp:
+                    match = True
+                    print("Absolute Jump")
+                    if jp.group(2) == 'Cnn':
+                        out_file.write('    this->_r.pc = (this->_r.f & CARRY) ? {} : {};\n'.format('this->_r.pc' if jp.group(1) == 'N' else 'this->mmu.rw(this->_r.pc)', 'this->mmu.rw(this->_r.pc)' if jp.group(1) == 'N' else 'this->_r.pc'))
+                        out_file.write('    this->_r.pc += (this->_r.f & CARRY) ? {} : {};\n'.format(0 if jp.group(1) == 'N' else 2, 2 if jp.group(1) == 'N' else 0))
+                    elif jp.group(2) == 'Znn':
+                        out_file.write('    this->_r.pc = (this->_r.f & ZERO) ? {} : {};\n'.format('this->_r.pc' if jp.group(1) == 'N' else 'this->mmu.rw(this->_r.pc)', 'this->mmu.rw(this->_r.pc)' if jp.group(1) == 'N' else 'this->_r.pc'))
+                        out_file.write('    this->_r.pc += (this->_r.f & ZERO) ? {} : {};\n'.format(0 if jp.group(1) == 'N' else 2, 2 if jp.group(1) == 'N' else 0))
+                    elif jp.group(2) == 'mHL':
+                        out_file.write('    this->_r.pc = this->mmu.rw(this->_r.h << 8 + this->_r.l);\n')
+                        out_file.write('    this->_r.pc += 2;\n')
+                    counter += 1
+
+                jr = JR.search(line)
+                if jr:
+                    match = True
+                    print("Relative Jump")
+                    if jr.group(2) == 'Cn':
+                        out_file.write('    this->_r.pc += this->_r.f & CARRY ? {} : {};\n'.format('0' if jr.group(1) == 'N' else '(int8_t) this->mmu.rb(this->_r.pc)', '(int8_t) this->mmu.rb(this->_r.pc)' if jr.group(1) == 'N' else '0'))
+                    elif jr.group(2) == 'Zn':
+                        out_file.write('    this->_r.pc += this->_r.f & ZERO ? {} : {};\n'.format('0' if jr.group(1) == 'N' else '(int8_t) this->mmu.rb(this->_r.pc)', '(int8_t) this->mmu.rb(this->_r.pc)' if jr.group(1) == 'N' else '0'))
+                    elif jr.group(2) == 'n':
+                        out_file.write('    this->_r.pc += (int8_t) this->mmu.rb(this->_r.pc);\n')
+                    out_file.write('    this->_r.pc += 1;\n')
+                    counter += 1
+
+                ext = EXT.search(line)
+                if ext:
+                    print("CB Extension")
+                    out_file.write('    this->_r.pc += 1;\n')
+                    #Skips next instruction
 
                 if not match:    
                     out_file.write('    std::cout << "Uncovered Function" << std::endl;\n')

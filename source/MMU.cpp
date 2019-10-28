@@ -149,7 +149,7 @@ void MMU::ww(uint16_t addr, uint16_t val){ //Write word to given address
 void MMU::loadBios(){ //Hard-code at some point
     printf("Loading ROM...\n");
     std::ifstream in_file("dmg_boot.bin");
-    printf("Loaded file\n");
+    //printf("Loaded file\n");
     uint8_t c = in_file.get();
     uint16_t index = 0;
     while(in_file.good()){
@@ -160,13 +160,13 @@ void MMU::loadBios(){ //Hard-code at some point
     }
     printf("\n");
     in_file.close();
-    //std::cout << "Loaded file" << std::endl;
+    std::cout << "Loaded file" << std::endl;
 
 }
 
 void MMU::dump_mem(){
     std::cout << "Dumping mem" << std::endl;
-    for(uint8_t i = 0; i < 0x0100; i++){
+    for(int i = 0; i < 0x0100; i++){
         std::cout << _bios[i] << std::endl;
     }
     //for(uint8_t i : this->_rom){

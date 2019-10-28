@@ -1,9 +1,15 @@
+#ifndef _OPS_
+#define _OPS_
+
+#include "Z80.h"
+
 #define CARRY (1<<0)
 #define ADD_SUB (1<<1)
 #define PARITY_OVERFLOW (1<<2)
 #define HALF_CARRY (1<<3)
 #define ZERO (1<<4)
 #define SIGN (1<<5)
+
 void Z80::NOP(){
     std::cout << "NOP" <<std::endl;
     std::cout << "Uncovered Function" << std::endl;
@@ -1085,12 +1091,11 @@ void Z80::POPBC(){
 void Z80::JPNZnn(){
     std::cout << "JPNZnn" <<std::endl;
     this->_r.pc = (this->_r.f & ZERO) ? this->_r.pc : this->mmu.rw(this->_r.pc);
-    this->_r.pc += 2;
+    this->_r.pc += (this->_r.f & ZERO) ? 0 : 2;
 }
 
 void Z80::JPnn(){
     std::cout << "JPnn" <<std::endl;
-    this->_r.pc += 2;
 }
 
 void Z80::CALLNZnn(){
@@ -1132,7 +1137,7 @@ void Z80::RET(){
 void Z80::JPZnn(){
     std::cout << "JPZnn" <<std::endl;
     this->_r.pc = (this->_r.f & ZERO) ? this->mmu.rw(this->_r.pc) : this->_r.pc;
-    this->_r.pc += 2;
+    this->_r.pc += (this->_r.f & ZERO) ? 2 : 0;
 }
 
 void Z80::Extops(){
@@ -1176,7 +1181,7 @@ void Z80::POPDE(){
 void Z80::JPNCnn(){
     std::cout << "JPNCnn" <<std::endl;
     this->_r.pc = (this->_r.f & CARRY) ? this->_r.pc : this->mmu.rw(this->_r.pc);
-    this->_r.pc += 2;
+    this->_r.pc += (this->_r.f & CARRY) ? 0 : 2;
 }
 
 void Z80::XX1(){
@@ -1219,7 +1224,7 @@ void Z80::RETI(){
 void Z80::JPCnn(){
     std::cout << "JPCnn" <<std::endl;
     this->_r.pc = (this->_r.f & CARRY) ? this->mmu.rw(this->_r.pc) : this->_r.pc;
-    this->_r.pc += 2;
+    this->_r.pc += (this->_r.f & CARRY) ? 2 : 0;
 }
 
 void Z80::XX2(){
@@ -1424,3 +1429,4 @@ void Z80::RST38(){
     std::cout << "Uncovered Function" << std::endl;
 }
 
+#endif

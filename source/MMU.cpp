@@ -141,8 +141,8 @@ void MMU::wb(uint16_t addr, uint8_t val){ //Write byte to given address
 }
 
 void MMU::ww(uint16_t addr, uint16_t val){ //Write word to given address
-    this->wb(addr, val & 0xFF);
     this->wb(addr + 1, val >> 8);
+    this->wb(addr, val & 0xFF);
     return;
 }
 

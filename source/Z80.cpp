@@ -26,6 +26,7 @@ void Z80::exec(){
         }
         this->status();
     }
+    this->debug();
 }
 
 void Z80::reset(){
@@ -62,6 +63,10 @@ void Z80::status(){
     //printf("cm = %04x\n", _clock.m);
     //printf("ct = %04x\n", _clock.t);
     printf("MMU = %01x\n", mmu._inbios);
+}
+
+void Z80::debug(){
+    //customizable debug function
 }
 
 int main(){

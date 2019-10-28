@@ -21,6 +21,7 @@ class Z80{
 
 		//Debugging
 		void status();
+        void debug();
 
 		//OPs
 		void NOP();
@@ -573,7 +574,12 @@ class Z80{
 		
 }z80(0,0,0,0,0,0,0,0,0,0,0,0x0000,0,0);
              
-
+#define CARRY (1<<0)
+#define ADD_SUB (1<<1)
+#define PARITY_OVERFLOW (1<<2)
+#define HALF_CARRY (1<<3)
+#define ZERO (1<<4)
+#define SIGN (1<<5)
 void Z80::NOP(){
     std::cout << "Uncovered Function" << std::endl;
 }
@@ -1192,35 +1198,36 @@ void Z80::ADDAA(){
 }
 
 void Z80::ADCAB(){
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.a = this->_r.a + this->_r.b + (this->_r.f & CARRY);
 }
 
 void Z80::ADCAC(){
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.a = this->_r.a + this->_r.c + (this->_r.f & CARRY);
 }
 
 void Z80::ADCAD(){
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.a = this->_r.a + this->_r.d + (this->_r.f & CARRY);
 }
 
 void Z80::ADCAE(){
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.a = this->_r.a + this->_r.e + (this->_r.f & CARRY);
 }
 
 void Z80::ADCAH(){
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.a = this->_r.a + this->_r.h + (this->_r.f & CARRY);
 }
 
 void Z80::ADCAL(){
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.a = this->_r.a + this->_r.l + (this->_r.f & CARRY);
 }
 
 void Z80::ADCAmHL(){
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.a = this->_r.a + this->mmu.rb(this->_r.h << 8 + this->_r.l) + (this->_r.f & CARRY);
+    this->_r.pc += 1;
 }
 
 void Z80::ADCAA(){
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.a = this->_r.a + this->_r.a + (this->_r.f & CARRY);
 }
 
 void Z80::SUBAB(){
@@ -1462,7 +1469,8 @@ void Z80::CALLNZnn(){
 }
 
 void Z80::PUSHBC(){
-    this->mmu.ww(this->_r.sp, (this->_r.b << 8) + this->_r.c);
+    this->mmu.wb(this->_r.sp, this->_r.b);
+    this->mmu.wb(this->_r.sp - 1, this->_r.c);
     this->_r.sp -= 2;
 }
 
@@ -1503,7 +1511,7 @@ void Z80::CALLnn(){
 }
 
 void Z80::ADCAn(){
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.a = this->_r.a + this->mmu.rb(this->_r.pc) + (this->_r.f & CARRY);
 }
 
 void Z80::RST8(){
@@ -1533,7 +1541,8 @@ void Z80::CALLNCnn(){
 }
 
 void Z80::PUSHDE(){
-    this->mmu.ww(this->_r.sp, (this->_r.d << 8) + this->_r.e);
+    this->mmu.wb(this->_r.sp, this->_r.d);
+    this->mmu.wb(this->_r.sp - 1, this->_r.e);
     this->_r.sp -= 2;
 }
 
@@ -1600,7 +1609,8 @@ void Z80::XX5(){
 }
 
 void Z80::PUSHHL(){
-    this->mmu.ww(this->_r.sp, (this->_r.h << 8) + this->_r.l);
+    this->mmu.wb(this->_r.sp, this->_r.h);
+    this->mmu.wb(this->_r.sp - 1, this->_r.l);
     this->_r.sp -= 2;
 }
 
@@ -1673,7 +1683,8 @@ void Z80::XXA(){
 }
 
 void Z80::PUSHAF(){
-    this->mmu.ww(this->_r.sp, (this->_r.a << 8) + this->_r.f);
+    this->mmu.wb(this->_r.sp, this->_r.a);
+    this->mmu.wb(this->_r.sp - 1, this->_r.f);
     this->_r.sp -= 2;
 }
 
@@ -1718,5 +1729,4 @@ void Z80::CPn(){
 void Z80::RST38(){
     std::cout << "Uncovered Function" << std::endl;
 }
-
 #endif       

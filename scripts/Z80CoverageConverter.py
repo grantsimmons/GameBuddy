@@ -17,6 +17,7 @@ DECmem = re.compile('void\sZ80::DECmHL')
 RLCA = re.compile('void\sZ80::RLCA')
 ADDA = re.compile('void\sZ80::ADDA([ABCDEFHLn]|mHL)')
 ADD16 = re.compile('void\sZ80::ADD(HL|SP)(B|D|d)(C|E)*\(')
+ADC = re.compile('void\sZ80::ADCA([ABCDEHLn]|mHL)')
 AND = re.compile('void\sZ80::AND([ABCDEFHLn]|mHL)')
 OR = re.compile('void\sZ80::OR([ABCDEFHLn]|mHL)')
 XOR = re.compile('void\sZ80::XOR([ABCDEFHLn]|mHL)')
@@ -206,6 +207,18 @@ with open("uncovered.cpp", 'w') as uncovered:
                         out_file.write('    this->_r.pc += 1;\n')
                     #else:
                 
+                adc = ADC.search(line)
+                if adc:
+                    match = True
+                    print("Add with carry")
+                    if adc.group(1) == 'n':
+                        out_file.write('    this->_r.a = this->_r.a + this->mmu.rb(this->_r.pc) + (this->_r.f & CARRY);\n')
+                    elif adc.group(1) == 'mHL':
+                        out_file.write('    this->_r.a = this->_r.a + this->mmu.rb(this->_r.h << 8 + this->_r.l) + (this->_r.f & CARRY);\n')
+                        out_file.write('    this->_r.pc += 1;\n')
+                    else:
+                        out_file.write('    this->_r.a = this->_r.a + this->_r.{} + (this->_r.f & CARRY);\n'.format(adc.group(1).lower()))
+
                 anda = AND.search(line)
                 if anda:
                     match = True
@@ -252,7 +265,8 @@ with open("uncovered.cpp", 'w') as uncovered:
                 if push:
                     match = True
                     print("Push to stack")
-                    out_file.write('    this->mmu.ww(this->_r.sp, (this->_r.{} << 8) + this->_r.{});\n'.format(push.group(1).lower(), push.group(2).lower()))
+                    out_file.write('    this->mmu.wb(this->_r.sp, this->_r.{});\n'.format(push.group(1).lower()))
+                    out_file.write('    this->mmu.wb(this->_r.sp - 1, this->_r.{});\n'.format(push.group(2).lower()))
                     out_file.write('    this->_r.sp -= 2;\n')
                     counter += 1
 

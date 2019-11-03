@@ -1,18 +1,15 @@
 CXX = g++
+OUT = test.out
 CPU = Z80.cpp
 MMU = MMU.cpp
 OPS = ops_impl.cpp
-CPU_OBJ = Z80.o
-MMU_OBJ = MMU.o
-OPS_OBJ = ops_impl.o
 MAIN = main.cpp
-CPU_H = Z80.h
-MMU_H = MMU.h
 OP_GEN = ../scripts/Z80CoverageConverter.py
 FUNCS = ../scripts/functions.cpp
+OBJS = Z80.o MMU.o ops_impl.o
 
-default: ops obj
-	$(CXX) $(OPS_OBJ) $(CPU_OBJ) $(MMU_OBJ) $(MAIN) -o test.out
+$(OUT): ops obj
+	$(CXX) $(OBJS) $(MAIN) -o $@
 
 obj: $(CPU) $(MMU) $(OPS)
 	$(CXX) -c $^
@@ -21,4 +18,22 @@ ops: $(OP_GEN) $(FUNCS)
 	python $(OP_GEN)
 
 noops: obj
-	$(CXX) $(OPS_OBJ) $(CPU_OBJ) $(MMU_OBJ) $(MAIN) -o test.out
+	$(CXX) $(OBJS) $(MAIN) -o $(OUT)
+
+#INC = -I
+#ODIR = obj
+#SDIR = source
+#
+#_OBJS = Z80.o MMU.o ops_impl.o
+#
+#OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
+#
+#$(ODIR)/%.o: $(SDIR)/%.cpp
+#	$(CXX) -c -o $@ $<
+#
+#$(OUT): $(OBJS)
+#	ar rvs $(OUT) $^
+#.PHONY: clean
+#
+#clean:
+#	rm -f $(ODIR)/*.o 

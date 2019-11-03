@@ -22,11 +22,11 @@ void Z80::exec(){
         }
         //std::cout << this->mmu.rb(this->_r.pc) << std::endl;
         //if(this->_r.pc > 0x0a || this->_r.pc <= 0x06){
-            this->status();
+        //    this->status();
         //}
     }
     mmu.dump_mem();
-    this->debug();
+    //this->debug();
 }
 
 void Z80::reset(){
@@ -67,6 +67,12 @@ void Z80::status(){
 
 void Z80::debug(){
     //customizable debug function
+    for(uint16_t i = 0; i < 0xFF7F; i++){
+        if(mmu.rb(i) != 0){
+            printf("\n%04x: ", i);
+            printf("0x%02x ", mmu.rb(i));
+        }
+    }
 }
 
 //int main(){

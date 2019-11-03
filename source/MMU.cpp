@@ -3,6 +3,7 @@
 #include "MMU.h"
 #include <string>
 #include <iostream>
+#include <stdio.h>
 
 MMU::MMU(bool inbios = 0): _inbios(inbios), _bios{0x31, 0xFE, 0xFF, 0xAF, 0x21, 0xFF, 0x9F, 0x32, 0xCB, 0x7C, 0x20, 0xFB, 0x21, 0x26, 0xFF, 0x0E}
 {
@@ -166,9 +167,16 @@ void MMU::loadBios(){ //Hard-code at some point
 
 void MMU::dump_mem(){
     std::cout << "Dumping mem" << std::endl;
-    for(int i = 0; i < 0x0100; i++){
-        std::cout << _bios[i] << std::endl;
+    //for(uint16_t i = 0; i < 0x0100; i++){
+    for(uint8_t i : _bios){
+        printf("%02x ", i);
+        std::cout << i << std::endl;
+        //if(i % 0x20 == 0){
+        //    printf("\n0x%04x: ", i);
+        //}
+        //printf("%02x ", _bios[i]);
     }
+    printf("\n");
     //for(uint8_t i : this->_rom){
     //    std::cout << i << std::endl;
     //}

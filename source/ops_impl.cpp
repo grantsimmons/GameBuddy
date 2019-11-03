@@ -1718,37 +1718,31 @@ void Z80::ESRAA(){
 void Z80::ESWAPB(){
     std::cout << "ESWAPB" <<std::endl;
     this->_r.b = (((this->_r.b & 0xF0) >> 4) & 0x0F) | (((this->_r.b & 0x0F) << 4) & 0xF0);
-    std::cout << "Uncovered Function" << std::endl;
 }
 
 void Z80::ESWAPC(){
     std::cout << "ESWAPC" <<std::endl;
     this->_r.c = (((this->_r.c & 0xF0) >> 4) & 0x0F) | (((this->_r.c & 0x0F) << 4) & 0xF0);
-    std::cout << "Uncovered Function" << std::endl;
 }
 
 void Z80::ESWAPD(){
     std::cout << "ESWAPD" <<std::endl;
     this->_r.d = (((this->_r.d & 0xF0) >> 4) & 0x0F) | (((this->_r.d & 0x0F) << 4) & 0xF0);
-    std::cout << "Uncovered Function" << std::endl;
 }
 
 void Z80::ESWAPE(){
     std::cout << "ESWAPE" <<std::endl;
     this->_r.e = (((this->_r.e & 0xF0) >> 4) & 0x0F) | (((this->_r.e & 0x0F) << 4) & 0xF0);
-    std::cout << "Uncovered Function" << std::endl;
 }
 
 void Z80::ESWAPH(){
     std::cout << "ESWAPH" <<std::endl;
     this->_r.h = (((this->_r.h & 0xF0) >> 4) & 0x0F) | (((this->_r.h & 0x0F) << 4) & 0xF0);
-    std::cout << "Uncovered Function" << std::endl;
 }
 
 void Z80::ESWAPL(){
     std::cout << "ESWAPL" <<std::endl;
     this->_r.l = (((this->_r.l & 0xF0) >> 4) & 0x0F) | (((this->_r.l & 0x0F) << 4) & 0xF0);
-    std::cout << "Uncovered Function" << std::endl;
 }
 
 void Z80::ESWAPmHL(){
@@ -1759,7 +1753,6 @@ void Z80::ESWAPmHL(){
 void Z80::ESWAPA(){
     std::cout << "ESWAPA" <<std::endl;
     this->_r.a = (((this->_r.a & 0xF0) >> 4) & 0x0F) | (((this->_r.a & 0x0F) << 4) & 0xF0);
-    std::cout << "Uncovered Function" << std::endl;
 }
 
 void Z80::ESRLB(){

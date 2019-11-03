@@ -42,7 +42,7 @@ EXT_SET = re.compile('void\sZ80::ESET([0-7])([ABCDEHL]|mHL)') #Set bit
 
 
 
-with open("uncovered.cpp", 'w') as uncovered:
+with open("../scripts/uncovered.cpp", 'w') as uncovered:
     with open("../source/ops_impl.cpp", 'w') as out_file:
         with open("../scripts/functions.cpp", 'r') as in_file:
             counter = 0
@@ -411,6 +411,7 @@ with open("uncovered.cpp", 'w') as uncovered:
                 eswap = EXT_SWAP.search(line)
                 if eswap:
                     if eswap.group(1) != 'mHL':
+                        match = True
                         print("Extension Swap nibbles in byte")
                         out_file.write('    this->_r.{} = (((this->_r.{} & 0xF0) >> 4) & 0x0F) | (((this->_r.{} & 0x0F) << 4) & 0xF0);\n'.format(eswap.group(1).lower(), eswap.group(1).lower(), eswap.group(1).lower()))
                         counter2 += 1

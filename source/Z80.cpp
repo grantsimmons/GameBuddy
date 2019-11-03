@@ -21,9 +21,9 @@ void Z80::exec(){
             std::cout << "Exiting BIOS" << std::endl;
         }
         //std::cout << this->mmu.rb(this->_r.pc) << std::endl;
-        if(this->_r.pc > 0x0a || this->_r.pc <= 0x06){
+        //if(this->_r.pc > 0x0a || this->_r.pc <= 0x06){
             this->status();
-        }
+        //}
     }
     mmu.dump_mem();
     this->debug();

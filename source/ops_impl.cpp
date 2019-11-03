@@ -1142,8 +1142,7 @@ void Z80::JPZnn(){
 
 void Z80::Extops(){
     std::cout << "Extops" <<std::endl;
-    this->_r.pc += 1;
-    std::cout << "Uncovered Function" << std::endl;
+    (this->*ext_ops[mmu.rb(this->_r.pc++)].op_function)();
 }
 
 void Z80::CALLZnn(){
@@ -1427,6 +1426,1347 @@ void Z80::CPn(){
 void Z80::RST38(){
     std::cout << "RST38" <<std::endl;
     std::cout << "Uncovered Function" << std::endl;
+}
+
+
+void Z80::ERLCB(){
+    std::cout << "ERLCB" <<std::endl;
+    this->_r.f = ((this->_r.b & 0x80) >> 7) | (this->_r.f & 0xFE);
+    this->_r.b = (this->_r.b << 1) | ((this->_r.b & 0x80) >> 7);
+    this->_r.c = (this->_r.c << 1) | ((this->_r.c & 0x80) >> 7);
+}
+
+void Z80::ERLCC(){
+    std::cout << "ERLCC" <<std::endl;
+    this->_r.f = ((this->_r.c & 0x80) >> 7) | (this->_r.f & 0xFE);
+    this->_r.c = (this->_r.c << 1) | ((this->_r.c & 0x80) >> 7);
+    this->_r.c = (this->_r.c << 1) | ((this->_r.c & 0x80) >> 7);
+}
+
+void Z80::ERLCD(){
+    std::cout << "ERLCD" <<std::endl;
+    this->_r.f = ((this->_r.d & 0x80) >> 7) | (this->_r.f & 0xFE);
+    this->_r.d = (this->_r.d << 1) | ((this->_r.d & 0x80) >> 7);
+    this->_r.c = (this->_r.c << 1) | ((this->_r.c & 0x80) >> 7);
+}
+
+void Z80::ERLCE(){
+    std::cout << "ERLCE" <<std::endl;
+    this->_r.f = ((this->_r.e & 0x80) >> 7) | (this->_r.f & 0xFE);
+    this->_r.e = (this->_r.e << 1) | ((this->_r.e & 0x80) >> 7);
+    this->_r.c = (this->_r.c << 1) | ((this->_r.c & 0x80) >> 7);
+}
+
+void Z80::ERLCH(){
+    std::cout << "ERLCH" <<std::endl;
+    this->_r.f = ((this->_r.h & 0x80) >> 7) | (this->_r.f & 0xFE);
+    this->_r.h = (this->_r.h << 1) | ((this->_r.h & 0x80) >> 7);
+    this->_r.c = (this->_r.c << 1) | ((this->_r.c & 0x80) >> 7);
+}
+
+void Z80::ERLCL(){
+    std::cout << "ERLCL" <<std::endl;
+    this->_r.f = ((this->_r.l & 0x80) >> 7) | (this->_r.f & 0xFE);
+    this->_r.l = (this->_r.l << 1) | ((this->_r.l & 0x80) >> 7);
+    this->_r.c = (this->_r.c << 1) | ((this->_r.c & 0x80) >> 7);
+}
+
+void Z80::ERLCmHL(){
+    std::cout << "ERLCmHL" <<std::endl;
+    this->_r.f = ((this->mmu.rb((this->_r.h << 8) | this->_r.l) & 0x80) >> 7) | this->_r.f & 0xFE;
+    this->mmu.wb((this->_r.h << 8) | this->_r.l, (this->mmu.rb((this->_r.h << 8) | this->_r.l)) << 1 | ((this->mmu.rb((this->_r.h << 8) | this->_r.l) & 0x80) >> 7));
+    this->_r.c = (this->_r.c << 1) | ((this->_r.c & 0x80) >> 7);
+}
+
+void Z80::ERLCA(){
+    std::cout << "ERLCA" <<std::endl;
+    this->_r.f = ((this->_r.a & 0x80) >> 7) | (this->_r.f & 0xFE);
+    this->_r.a = (this->_r.a << 1) | ((this->_r.a & 0x80) >> 7);
+    this->_r.c = (this->_r.c << 1) | ((this->_r.c & 0x80) >> 7);
+}
+
+void Z80::ERRCB(){
+    std::cout << "ERRCB" <<std::endl;
+    this->_r.f = (this->_r.b & 0x1) | (this->_r.f & 0xFE);
+    this->_r.b = (this->_r.b >> 1) | ((this->_r.b & 0x1) << 7);
+    this->_r.c = (this->_r.c >> 1) | ((this->_r.c & 0x1) << 7);
+}
+
+void Z80::ERRCC(){
+    std::cout << "ERRCC" <<std::endl;
+    this->_r.f = (this->_r.c & 0x1) | (this->_r.f & 0xFE);
+    this->_r.c = (this->_r.c >> 1) | ((this->_r.c & 0x1) << 7);
+    this->_r.c = (this->_r.c >> 1) | ((this->_r.c & 0x1) << 7);
+}
+
+void Z80::ERRCD(){
+    std::cout << "ERRCD" <<std::endl;
+    this->_r.f = (this->_r.d & 0x1) | (this->_r.f & 0xFE);
+    this->_r.d = (this->_r.d >> 1) | ((this->_r.d & 0x1) << 7);
+    this->_r.c = (this->_r.c >> 1) | ((this->_r.c & 0x1) << 7);
+}
+
+void Z80::ERRCE(){
+    std::cout << "ERRCE" <<std::endl;
+    this->_r.f = (this->_r.e & 0x1) | (this->_r.f & 0xFE);
+    this->_r.e = (this->_r.e >> 1) | ((this->_r.e & 0x1) << 7);
+    this->_r.c = (this->_r.c >> 1) | ((this->_r.c & 0x1) << 7);
+}
+
+void Z80::ERRCH(){
+    std::cout << "ERRCH" <<std::endl;
+    this->_r.f = (this->_r.h & 0x1) | (this->_r.f & 0xFE);
+    this->_r.h = (this->_r.h >> 1) | ((this->_r.h & 0x1) << 7);
+    this->_r.c = (this->_r.c >> 1) | ((this->_r.c & 0x1) << 7);
+}
+
+void Z80::ERRCL(){
+    std::cout << "ERRCL" <<std::endl;
+    this->_r.f = (this->_r.l & 0x1) | (this->_r.f & 0xFE);
+    this->_r.l = (this->_r.l >> 1) | ((this->_r.l & 0x1) << 7);
+    this->_r.c = (this->_r.c >> 1) | ((this->_r.c & 0x1) << 7);
+}
+
+void Z80::ERRCmHL(){
+    std::cout << "ERRCmHL" <<std::endl;
+    this->_r.f = (this->mmu.rb((this->_r.h << 8) | this->_r.l) & 0x1) | this->_r.f & 0xFE;
+    this->mmu.wb((this->_r.h << 8) | this->_r.l, (this->mmu.rb((this->_r.h << 8) | this->_r.l)) >> 1 | ((this->mmu.rb((this->_r.h << 8) | this->_r.l) & 0x1) << 7));
+    this->_r.c = (this->_r.c >> 1) | ((this->_r.c & 0x1) << 7);
+}
+
+void Z80::ERRCA(){
+    std::cout << "ERRCA" <<std::endl;
+    this->_r.f = (this->_r.a & 0x1) | (this->_r.f & 0xFE);
+    this->_r.a = (this->_r.a >> 1) | ((this->_r.a & 0x1) << 7);
+    this->_r.c = (this->_r.c >> 1) | ((this->_r.c & 0x1) << 7);
+}
+
+void Z80::ERLB(){
+    std::cout << "ERLB" <<std::endl;
+    this->_r.b = (this->_r.b << 1) | ((this->_r.b & 0x80) >> 7);
+}
+
+void Z80::ERLC(){
+    std::cout << "ERLC" <<std::endl;
+    this->_r.c = (this->_r.c << 1) | ((this->_r.c & 0x80) >> 7);
+}
+
+void Z80::ERLD(){
+    std::cout << "ERLD" <<std::endl;
+    this->_r.d = (this->_r.d << 1) | ((this->_r.d & 0x80) >> 7);
+}
+
+void Z80::ERLE(){
+    std::cout << "ERLE" <<std::endl;
+    this->_r.e = (this->_r.e << 1) | ((this->_r.e & 0x80) >> 7);
+}
+
+void Z80::ERLH(){
+    std::cout << "ERLH" <<std::endl;
+    this->_r.h = (this->_r.h << 1) | ((this->_r.h & 0x80) >> 7);
+}
+
+void Z80::ERLL(){
+    std::cout << "ERLL" <<std::endl;
+    this->_r.l = (this->_r.l << 1) | ((this->_r.l & 0x80) >> 7);
+}
+
+void Z80::ERLmHL(){
+    std::cout << "ERLmHL" <<std::endl;
+    this->mmu.wb((this->_r.h << 8) | this->_r.l, (this->mmu.rb((this->_r.h << 8) | this->_r.l)) << 1 | ((this->mmu.rb((this->_r.h << 8) | this->_r.l) & 0x80) >> 7));
+}
+
+void Z80::ERLA(){
+    std::cout << "ERLA" <<std::endl;
+    this->_r.a = (this->_r.a << 1) | ((this->_r.a & 0x80) >> 7);
+}
+
+void Z80::ERRB(){
+    std::cout << "ERRB" <<std::endl;
+    this->_r.b = (this->_r.b >> 1) | ((this->_r.b & 0x1) << 7);
+}
+
+void Z80::ERRC(){
+    std::cout << "ERRC" <<std::endl;
+    this->_r.c = (this->_r.c >> 1) | ((this->_r.c & 0x1) << 7);
+}
+
+void Z80::ERRD(){
+    std::cout << "ERRD" <<std::endl;
+    this->_r.d = (this->_r.d >> 1) | ((this->_r.d & 0x1) << 7);
+}
+
+void Z80::ERRE(){
+    std::cout << "ERRE" <<std::endl;
+    this->_r.e = (this->_r.e >> 1) | ((this->_r.e & 0x1) << 7);
+}
+
+void Z80::ERRH(){
+    std::cout << "ERRH" <<std::endl;
+    this->_r.h = (this->_r.h >> 1) | ((this->_r.h & 0x1) << 7);
+}
+
+void Z80::ERRL(){
+    std::cout << "ERRL" <<std::endl;
+    this->_r.l = (this->_r.l >> 1) | ((this->_r.l & 0x1) << 7);
+}
+
+void Z80::ERRmHL(){
+    std::cout << "ERRmHL" <<std::endl;
+    this->mmu.wb((this->_r.h << 8) | this->_r.l, (this->mmu.rb((this->_r.h << 8) | this->_r.l)) >> 1 | ((this->mmu.rb((this->_r.h << 8) | this->_r.l) & 0x1) << 7));
+}
+
+void Z80::ERRA(){
+    std::cout << "ERRA" <<std::endl;
+    this->_r.a = (this->_r.a >> 1) | ((this->_r.a & 0x1) << 7);
+}
+
+void Z80::ESLAB(){
+    std::cout << "ESLAB" <<std::endl;
+    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.b & 0x80) >> 7 ? CARRY : 0x0);
+    this->_r.b <<= 1;
+}
+
+void Z80::ESLAC(){
+    std::cout << "ESLAC" <<std::endl;
+    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.c & 0x80) >> 7 ? CARRY : 0x0);
+    this->_r.c <<= 1;
+}
+
+void Z80::ESLAD(){
+    std::cout << "ESLAD" <<std::endl;
+    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.d & 0x80) >> 7 ? CARRY : 0x0);
+    this->_r.d <<= 1;
+}
+
+void Z80::ESLAE(){
+    std::cout << "ESLAE" <<std::endl;
+    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.e & 0x80) >> 7 ? CARRY : 0x0);
+    this->_r.e <<= 1;
+}
+
+void Z80::ESLAH(){
+    std::cout << "ESLAH" <<std::endl;
+    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.h & 0x80) >> 7 ? CARRY : 0x0);
+    this->_r.h <<= 1;
+}
+
+void Z80::ESLAL(){
+    std::cout << "ESLAL" <<std::endl;
+    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.l & 0x80) >> 7 ? CARRY : 0x0);
+    this->_r.l <<= 1;
+}
+
+void Z80::ESLAmHL(){
+    std::cout << "ESLAmHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ESLAA(){
+    std::cout << "ESLAA" <<std::endl;
+    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.a & 0x80) >> 7 ? CARRY : 0x0);
+    this->_r.a <<= 1;
+}
+
+void Z80::ESRAB(){
+    std::cout << "ESRAB" <<std::endl;
+    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.b & 0x1) ? CARRY : 0);
+    this->_r.b >>= 1;
+}
+
+void Z80::ESRAC(){
+    std::cout << "ESRAC" <<std::endl;
+    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.c & 0x1) ? CARRY : 0);
+    this->_r.c >>= 1;
+}
+
+void Z80::ESRAD(){
+    std::cout << "ESRAD" <<std::endl;
+    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.d & 0x1) ? CARRY : 0);
+    this->_r.d >>= 1;
+}
+
+void Z80::ESRAE(){
+    std::cout << "ESRAE" <<std::endl;
+    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.e & 0x1) ? CARRY : 0);
+    this->_r.e >>= 1;
+}
+
+void Z80::ESRAH(){
+    std::cout << "ESRAH" <<std::endl;
+    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.h & 0x1) ? CARRY : 0);
+    this->_r.h >>= 1;
+}
+
+void Z80::ESRAL(){
+    std::cout << "ESRAL" <<std::endl;
+    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.l & 0x1) ? CARRY : 0);
+    this->_r.l >>= 1;
+}
+
+void Z80::ESRAmHL(){
+    std::cout << "ESRAmHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ESRAA(){
+    std::cout << "ESRAA" <<std::endl;
+    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.a & 0x1) ? CARRY : 0);
+    this->_r.a >>= 1;
+}
+
+void Z80::ESWAPB(){
+    std::cout << "ESWAPB" <<std::endl;
+    this->_r.b = (((this->_r.b & 0xF0) >> 4) & 0x0F) | (((this->_r.b & 0x0F) << 4) & 0xF0);
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ESWAPC(){
+    std::cout << "ESWAPC" <<std::endl;
+    this->_r.c = (((this->_r.c & 0xF0) >> 4) & 0x0F) | (((this->_r.c & 0x0F) << 4) & 0xF0);
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ESWAPD(){
+    std::cout << "ESWAPD" <<std::endl;
+    this->_r.d = (((this->_r.d & 0xF0) >> 4) & 0x0F) | (((this->_r.d & 0x0F) << 4) & 0xF0);
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ESWAPE(){
+    std::cout << "ESWAPE" <<std::endl;
+    this->_r.e = (((this->_r.e & 0xF0) >> 4) & 0x0F) | (((this->_r.e & 0x0F) << 4) & 0xF0);
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ESWAPH(){
+    std::cout << "ESWAPH" <<std::endl;
+    this->_r.h = (((this->_r.h & 0xF0) >> 4) & 0x0F) | (((this->_r.h & 0x0F) << 4) & 0xF0);
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ESWAPL(){
+    std::cout << "ESWAPL" <<std::endl;
+    this->_r.l = (((this->_r.l & 0xF0) >> 4) & 0x0F) | (((this->_r.l & 0x0F) << 4) & 0xF0);
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ESWAPmHL(){
+    std::cout << "ESWAPmHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ESWAPA(){
+    std::cout << "ESWAPA" <<std::endl;
+    this->_r.a = (((this->_r.a & 0xF0) >> 4) & 0x0F) | (((this->_r.a & 0x0F) << 4) & 0xF0);
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ESRLB(){
+    std::cout << "ESRLB" <<std::endl;
+    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.b & 0x1) ? CARRY : 0);
+    this->_r.b = (this->_r.b >> 1) & 0x7F;
+}
+
+void Z80::ESRLC(){
+    std::cout << "ESRLC" <<std::endl;
+    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.c & 0x1) ? CARRY : 0);
+    this->_r.c = (this->_r.c >> 1) & 0x7F;
+}
+
+void Z80::ESRLD(){
+    std::cout << "ESRLD" <<std::endl;
+    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.d & 0x1) ? CARRY : 0);
+    this->_r.d = (this->_r.d >> 1) & 0x7F;
+}
+
+void Z80::ESRLE(){
+    std::cout << "ESRLE" <<std::endl;
+    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.e & 0x1) ? CARRY : 0);
+    this->_r.e = (this->_r.e >> 1) & 0x7F;
+}
+
+void Z80::ESRLH(){
+    std::cout << "ESRLH" <<std::endl;
+    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.h & 0x1) ? CARRY : 0);
+    this->_r.h = (this->_r.h >> 1) & 0x7F;
+}
+
+void Z80::ESRLL(){
+    std::cout << "ESRLL" <<std::endl;
+    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.l & 0x1) ? CARRY : 0);
+    this->_r.l = (this->_r.l >> 1) & 0x7F;
+}
+
+void Z80::ESRLmHL(){
+    std::cout << "ESRLmHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ESRLA(){
+    std::cout << "ESRLA" <<std::endl;
+    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.a & 0x1) ? CARRY : 0);
+    this->_r.a = (this->_r.a >> 1) & 0x7F;
+}
+
+void Z80::EBIT0B(){
+    std::cout << "EBIT0B" <<std::endl;
+    this->_r.f = (this->_r.b & (1<<0)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT0C(){
+    std::cout << "EBIT0C" <<std::endl;
+    this->_r.f = (this->_r.c & (1<<0)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT0D(){
+    std::cout << "EBIT0D" <<std::endl;
+    this->_r.f = (this->_r.d & (1<<0)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT0E(){
+    std::cout << "EBIT0E" <<std::endl;
+    this->_r.f = (this->_r.e & (1<<0)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT0H(){
+    std::cout << "EBIT0H" <<std::endl;
+    this->_r.f = (this->_r.h & (1<<0)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT0L(){
+    std::cout << "EBIT0L" <<std::endl;
+    this->_r.f = (this->_r.l & (1<<0)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT0mHL(){
+    std::cout << "EBIT0mHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::EBIT0A(){
+    std::cout << "EBIT0A" <<std::endl;
+    this->_r.f = (this->_r.a & (1<<0)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT1B(){
+    std::cout << "EBIT1B" <<std::endl;
+    this->_r.f = (this->_r.b & (1<<1)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT1C(){
+    std::cout << "EBIT1C" <<std::endl;
+    this->_r.f = (this->_r.c & (1<<1)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT1D(){
+    std::cout << "EBIT1D" <<std::endl;
+    this->_r.f = (this->_r.d & (1<<1)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT1E(){
+    std::cout << "EBIT1E" <<std::endl;
+    this->_r.f = (this->_r.e & (1<<1)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT1H(){
+    std::cout << "EBIT1H" <<std::endl;
+    this->_r.f = (this->_r.h & (1<<1)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT1L(){
+    std::cout << "EBIT1L" <<std::endl;
+    this->_r.f = (this->_r.l & (1<<1)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT1mHL(){
+    std::cout << "EBIT1mHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::EBIT1A(){
+    std::cout << "EBIT1A" <<std::endl;
+    this->_r.f = (this->_r.a & (1<<1)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT2B(){
+    std::cout << "EBIT2B" <<std::endl;
+    this->_r.f = (this->_r.b & (1<<2)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT2C(){
+    std::cout << "EBIT2C" <<std::endl;
+    this->_r.f = (this->_r.c & (1<<2)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT2D(){
+    std::cout << "EBIT2D" <<std::endl;
+    this->_r.f = (this->_r.d & (1<<2)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT2E(){
+    std::cout << "EBIT2E" <<std::endl;
+    this->_r.f = (this->_r.e & (1<<2)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT2H(){
+    std::cout << "EBIT2H" <<std::endl;
+    this->_r.f = (this->_r.h & (1<<2)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT2L(){
+    std::cout << "EBIT2L" <<std::endl;
+    this->_r.f = (this->_r.l & (1<<2)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT2mHL(){
+    std::cout << "EBIT2mHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::EBIT2A(){
+    std::cout << "EBIT2A" <<std::endl;
+    this->_r.f = (this->_r.a & (1<<2)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT3B(){
+    std::cout << "EBIT3B" <<std::endl;
+    this->_r.f = (this->_r.b & (1<<3)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT3C(){
+    std::cout << "EBIT3C" <<std::endl;
+    this->_r.f = (this->_r.c & (1<<3)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT3D(){
+    std::cout << "EBIT3D" <<std::endl;
+    this->_r.f = (this->_r.d & (1<<3)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT3E(){
+    std::cout << "EBIT3E" <<std::endl;
+    this->_r.f = (this->_r.e & (1<<3)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT3H(){
+    std::cout << "EBIT3H" <<std::endl;
+    this->_r.f = (this->_r.h & (1<<3)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT3L(){
+    std::cout << "EBIT3L" <<std::endl;
+    this->_r.f = (this->_r.l & (1<<3)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT3mHL(){
+    std::cout << "EBIT3mHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::EBIT3A(){
+    std::cout << "EBIT3A" <<std::endl;
+    this->_r.f = (this->_r.a & (1<<3)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT4B(){
+    std::cout << "EBIT4B" <<std::endl;
+    this->_r.f = (this->_r.b & (1<<4)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT4C(){
+    std::cout << "EBIT4C" <<std::endl;
+    this->_r.f = (this->_r.c & (1<<4)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT4D(){
+    std::cout << "EBIT4D" <<std::endl;
+    this->_r.f = (this->_r.d & (1<<4)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT4E(){
+    std::cout << "EBIT4E" <<std::endl;
+    this->_r.f = (this->_r.e & (1<<4)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT4H(){
+    std::cout << "EBIT4H" <<std::endl;
+    this->_r.f = (this->_r.h & (1<<4)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT4L(){
+    std::cout << "EBIT4L" <<std::endl;
+    this->_r.f = (this->_r.l & (1<<4)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT4mHL(){
+    std::cout << "EBIT4mHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::EBIT4A(){
+    std::cout << "EBIT4A" <<std::endl;
+    this->_r.f = (this->_r.a & (1<<4)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT5B(){
+    std::cout << "EBIT5B" <<std::endl;
+    this->_r.f = (this->_r.b & (1<<5)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT5C(){
+    std::cout << "EBIT5C" <<std::endl;
+    this->_r.f = (this->_r.c & (1<<5)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT5D(){
+    std::cout << "EBIT5D" <<std::endl;
+    this->_r.f = (this->_r.d & (1<<5)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT5E(){
+    std::cout << "EBIT5E" <<std::endl;
+    this->_r.f = (this->_r.e & (1<<5)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT5H(){
+    std::cout << "EBIT5H" <<std::endl;
+    this->_r.f = (this->_r.h & (1<<5)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT5L(){
+    std::cout << "EBIT5L" <<std::endl;
+    this->_r.f = (this->_r.l & (1<<5)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT5mHL(){
+    std::cout << "EBIT5mHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::EBIT5A(){
+    std::cout << "EBIT5A" <<std::endl;
+    this->_r.f = (this->_r.a & (1<<5)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT6B(){
+    std::cout << "EBIT6B" <<std::endl;
+    this->_r.f = (this->_r.b & (1<<6)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT6C(){
+    std::cout << "EBIT6C" <<std::endl;
+    this->_r.f = (this->_r.c & (1<<6)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT6D(){
+    std::cout << "EBIT6D" <<std::endl;
+    this->_r.f = (this->_r.d & (1<<6)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT6E(){
+    std::cout << "EBIT6E" <<std::endl;
+    this->_r.f = (this->_r.e & (1<<6)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT6H(){
+    std::cout << "EBIT6H" <<std::endl;
+    this->_r.f = (this->_r.h & (1<<6)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT6L(){
+    std::cout << "EBIT6L" <<std::endl;
+    this->_r.f = (this->_r.l & (1<<6)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT6mHL(){
+    std::cout << "EBIT6mHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::EBIT6A(){
+    std::cout << "EBIT6A" <<std::endl;
+    this->_r.f = (this->_r.a & (1<<6)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT7B(){
+    std::cout << "EBIT7B" <<std::endl;
+    this->_r.f = (this->_r.b & (1<<7)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT7C(){
+    std::cout << "EBIT7C" <<std::endl;
+    this->_r.f = (this->_r.c & (1<<7)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT7D(){
+    std::cout << "EBIT7D" <<std::endl;
+    this->_r.f = (this->_r.d & (1<<7)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT7E(){
+    std::cout << "EBIT7E" <<std::endl;
+    this->_r.f = (this->_r.e & (1<<7)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT7H(){
+    std::cout << "EBIT7H" <<std::endl;
+    this->_r.f = (this->_r.h & (1<<7)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT7L(){
+    std::cout << "EBIT7L" <<std::endl;
+    this->_r.f = (this->_r.l & (1<<7)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::EBIT7mHL(){
+    std::cout << "EBIT7mHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::EBIT7A(){
+    std::cout << "EBIT7A" <<std::endl;
+    this->_r.f = (this->_r.a & (1<<7)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+}
+
+void Z80::ERES0B(){
+    std::cout << "ERES0B" <<std::endl;
+    this->_r.b &= ~(1<<0);
+}
+
+void Z80::ERES0C(){
+    std::cout << "ERES0C" <<std::endl;
+    this->_r.c &= ~(1<<0);
+}
+
+void Z80::ERES0D(){
+    std::cout << "ERES0D" <<std::endl;
+    this->_r.d &= ~(1<<0);
+}
+
+void Z80::ERES0E(){
+    std::cout << "ERES0E" <<std::endl;
+    this->_r.e &= ~(1<<0);
+}
+
+void Z80::ERES0H(){
+    std::cout << "ERES0H" <<std::endl;
+    this->_r.h &= ~(1<<0);
+}
+
+void Z80::ERES0L(){
+    std::cout << "ERES0L" <<std::endl;
+    this->_r.l &= ~(1<<0);
+}
+
+void Z80::ERES0mHL(){
+    std::cout << "ERES0mHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ERES0A(){
+    std::cout << "ERES0A" <<std::endl;
+    this->_r.a &= ~(1<<0);
+}
+
+void Z80::ERES1B(){
+    std::cout << "ERES1B" <<std::endl;
+    this->_r.b &= ~(1<<1);
+}
+
+void Z80::ERES1C(){
+    std::cout << "ERES1C" <<std::endl;
+    this->_r.c &= ~(1<<1);
+}
+
+void Z80::ERES1D(){
+    std::cout << "ERES1D" <<std::endl;
+    this->_r.d &= ~(1<<1);
+}
+
+void Z80::ERES1E(){
+    std::cout << "ERES1E" <<std::endl;
+    this->_r.e &= ~(1<<1);
+}
+
+void Z80::ERES1H(){
+    std::cout << "ERES1H" <<std::endl;
+    this->_r.h &= ~(1<<1);
+}
+
+void Z80::ERES1L(){
+    std::cout << "ERES1L" <<std::endl;
+    this->_r.l &= ~(1<<1);
+}
+
+void Z80::ERES1mHL(){
+    std::cout << "ERES1mHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ERES1A(){
+    std::cout << "ERES1A" <<std::endl;
+    this->_r.a &= ~(1<<1);
+}
+
+void Z80::ERES2B(){
+    std::cout << "ERES2B" <<std::endl;
+    this->_r.b &= ~(1<<2);
+}
+
+void Z80::ERES2C(){
+    std::cout << "ERES2C" <<std::endl;
+    this->_r.c &= ~(1<<2);
+}
+
+void Z80::ERES2D(){
+    std::cout << "ERES2D" <<std::endl;
+    this->_r.d &= ~(1<<2);
+}
+
+void Z80::ERES2E(){
+    std::cout << "ERES2E" <<std::endl;
+    this->_r.e &= ~(1<<2);
+}
+
+void Z80::ERES2H(){
+    std::cout << "ERES2H" <<std::endl;
+    this->_r.h &= ~(1<<2);
+}
+
+void Z80::ERES2L(){
+    std::cout << "ERES2L" <<std::endl;
+    this->_r.l &= ~(1<<2);
+}
+
+void Z80::ERES2mHL(){
+    std::cout << "ERES2mHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ERES2A(){
+    std::cout << "ERES2A" <<std::endl;
+    this->_r.a &= ~(1<<2);
+}
+
+void Z80::ERES3B(){
+    std::cout << "ERES3B" <<std::endl;
+    this->_r.b &= ~(1<<3);
+}
+
+void Z80::ERES3C(){
+    std::cout << "ERES3C" <<std::endl;
+    this->_r.c &= ~(1<<3);
+}
+
+void Z80::ERES3D(){
+    std::cout << "ERES3D" <<std::endl;
+    this->_r.d &= ~(1<<3);
+}
+
+void Z80::ERES3E(){
+    std::cout << "ERES3E" <<std::endl;
+    this->_r.e &= ~(1<<3);
+}
+
+void Z80::ERES3H(){
+    std::cout << "ERES3H" <<std::endl;
+    this->_r.h &= ~(1<<3);
+}
+
+void Z80::ERES3L(){
+    std::cout << "ERES3L" <<std::endl;
+    this->_r.l &= ~(1<<3);
+}
+
+void Z80::ERES3mHL(){
+    std::cout << "ERES3mHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ERES3A(){
+    std::cout << "ERES3A" <<std::endl;
+    this->_r.a &= ~(1<<3);
+}
+
+void Z80::ERES4B(){
+    std::cout << "ERES4B" <<std::endl;
+    this->_r.b &= ~(1<<4);
+}
+
+void Z80::ERES4C(){
+    std::cout << "ERES4C" <<std::endl;
+    this->_r.c &= ~(1<<4);
+}
+
+void Z80::ERES4D(){
+    std::cout << "ERES4D" <<std::endl;
+    this->_r.d &= ~(1<<4);
+}
+
+void Z80::ERES4E(){
+    std::cout << "ERES4E" <<std::endl;
+    this->_r.e &= ~(1<<4);
+}
+
+void Z80::ERES4H(){
+    std::cout << "ERES4H" <<std::endl;
+    this->_r.h &= ~(1<<4);
+}
+
+void Z80::ERES4L(){
+    std::cout << "ERES4L" <<std::endl;
+    this->_r.l &= ~(1<<4);
+}
+
+void Z80::ERES4mHL(){
+    std::cout << "ERES4mHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ERES4A(){
+    std::cout << "ERES4A" <<std::endl;
+    this->_r.a &= ~(1<<4);
+}
+
+void Z80::ERES5B(){
+    std::cout << "ERES5B" <<std::endl;
+    this->_r.b &= ~(1<<5);
+}
+
+void Z80::ERES5C(){
+    std::cout << "ERES5C" <<std::endl;
+    this->_r.c &= ~(1<<5);
+}
+
+void Z80::ERES5D(){
+    std::cout << "ERES5D" <<std::endl;
+    this->_r.d &= ~(1<<5);
+}
+
+void Z80::ERES5E(){
+    std::cout << "ERES5E" <<std::endl;
+    this->_r.e &= ~(1<<5);
+}
+
+void Z80::ERES5H(){
+    std::cout << "ERES5H" <<std::endl;
+    this->_r.h &= ~(1<<5);
+}
+
+void Z80::ERES5L(){
+    std::cout << "ERES5L" <<std::endl;
+    this->_r.l &= ~(1<<5);
+}
+
+void Z80::ERES5mHL(){
+    std::cout << "ERES5mHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ERES5A(){
+    std::cout << "ERES5A" <<std::endl;
+    this->_r.a &= ~(1<<5);
+}
+
+void Z80::ERES6B(){
+    std::cout << "ERES6B" <<std::endl;
+    this->_r.b &= ~(1<<6);
+}
+
+void Z80::ERES6C(){
+    std::cout << "ERES6C" <<std::endl;
+    this->_r.c &= ~(1<<6);
+}
+
+void Z80::ERES6D(){
+    std::cout << "ERES6D" <<std::endl;
+    this->_r.d &= ~(1<<6);
+}
+
+void Z80::ERES6E(){
+    std::cout << "ERES6E" <<std::endl;
+    this->_r.e &= ~(1<<6);
+}
+
+void Z80::ERES6H(){
+    std::cout << "ERES6H" <<std::endl;
+    this->_r.h &= ~(1<<6);
+}
+
+void Z80::ERES6L(){
+    std::cout << "ERES6L" <<std::endl;
+    this->_r.l &= ~(1<<6);
+}
+
+void Z80::ERES6mHL(){
+    std::cout << "ERES6mHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ERES6A(){
+    std::cout << "ERES6A" <<std::endl;
+    this->_r.a &= ~(1<<6);
+}
+
+void Z80::ERES7B(){
+    std::cout << "ERES7B" <<std::endl;
+    this->_r.b &= ~(1<<7);
+}
+
+void Z80::ERES7C(){
+    std::cout << "ERES7C" <<std::endl;
+    this->_r.c &= ~(1<<7);
+}
+
+void Z80::ERES7D(){
+    std::cout << "ERES7D" <<std::endl;
+    this->_r.d &= ~(1<<7);
+}
+
+void Z80::ERES7E(){
+    std::cout << "ERES7E" <<std::endl;
+    this->_r.e &= ~(1<<7);
+}
+
+void Z80::ERES7H(){
+    std::cout << "ERES7H" <<std::endl;
+    this->_r.h &= ~(1<<7);
+}
+
+void Z80::ERES7L(){
+    std::cout << "ERES7L" <<std::endl;
+    this->_r.l &= ~(1<<7);
+}
+
+void Z80::ERES7mHL(){
+    std::cout << "ERES7mHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ERES7A(){
+    std::cout << "ERES7A" <<std::endl;
+    this->_r.a &= ~(1<<7);
+}
+
+void Z80::ESET0B(){
+    std::cout << "ESET0B" <<std::endl;
+    this->_r.b |= (1<<0);
+}
+
+void Z80::ESET0C(){
+    std::cout << "ESET0C" <<std::endl;
+    this->_r.c |= (1<<0);
+}
+
+void Z80::ESET0D(){
+    std::cout << "ESET0D" <<std::endl;
+    this->_r.d |= (1<<0);
+}
+
+void Z80::ESET0E(){
+    std::cout << "ESET0E" <<std::endl;
+    this->_r.e |= (1<<0);
+}
+
+void Z80::ESET0H(){
+    std::cout << "ESET0H" <<std::endl;
+    this->_r.h |= (1<<0);
+}
+
+void Z80::ESET0L(){
+    std::cout << "ESET0L" <<std::endl;
+    this->_r.l |= (1<<0);
+}
+
+void Z80::ESET0mHL(){
+    std::cout << "ESET0mHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ESET0A(){
+    std::cout << "ESET0A" <<std::endl;
+    this->_r.a |= (1<<0);
+}
+
+void Z80::ESET1B(){
+    std::cout << "ESET1B" <<std::endl;
+    this->_r.b |= (1<<1);
+}
+
+void Z80::ESET1C(){
+    std::cout << "ESET1C" <<std::endl;
+    this->_r.c |= (1<<1);
+}
+
+void Z80::ESET1D(){
+    std::cout << "ESET1D" <<std::endl;
+    this->_r.d |= (1<<1);
+}
+
+void Z80::ESET1E(){
+    std::cout << "ESET1E" <<std::endl;
+    this->_r.e |= (1<<1);
+}
+
+void Z80::ESET1H(){
+    std::cout << "ESET1H" <<std::endl;
+    this->_r.h |= (1<<1);
+}
+
+void Z80::ESET1L(){
+    std::cout << "ESET1L" <<std::endl;
+    this->_r.l |= (1<<1);
+}
+
+void Z80::ESET1mHL(){
+    std::cout << "ESET1mHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ESET1A(){
+    std::cout << "ESET1A" <<std::endl;
+    this->_r.a |= (1<<1);
+}
+
+void Z80::ESET2B(){
+    std::cout << "ESET2B" <<std::endl;
+    this->_r.b |= (1<<2);
+}
+
+void Z80::ESET2C(){
+    std::cout << "ESET2C" <<std::endl;
+    this->_r.c |= (1<<2);
+}
+
+void Z80::ESET2D(){
+    std::cout << "ESET2D" <<std::endl;
+    this->_r.d |= (1<<2);
+}
+
+void Z80::ESET2E(){
+    std::cout << "ESET2E" <<std::endl;
+    this->_r.e |= (1<<2);
+}
+
+void Z80::ESET2H(){
+    std::cout << "ESET2H" <<std::endl;
+    this->_r.h |= (1<<2);
+}
+
+void Z80::ESET2L(){
+    std::cout << "ESET2L" <<std::endl;
+    this->_r.l |= (1<<2);
+}
+
+void Z80::ESET2mHL(){
+    std::cout << "ESET2mHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ESET2A(){
+    std::cout << "ESET2A" <<std::endl;
+    this->_r.a |= (1<<2);
+}
+
+void Z80::ESET3B(){
+    std::cout << "ESET3B" <<std::endl;
+    this->_r.b |= (1<<3);
+}
+
+void Z80::ESET3C(){
+    std::cout << "ESET3C" <<std::endl;
+    this->_r.c |= (1<<3);
+}
+
+void Z80::ESET3D(){
+    std::cout << "ESET3D" <<std::endl;
+    this->_r.d |= (1<<3);
+}
+
+void Z80::ESET3E(){
+    std::cout << "ESET3E" <<std::endl;
+    this->_r.e |= (1<<3);
+}
+
+void Z80::ESET3H(){
+    std::cout << "ESET3H" <<std::endl;
+    this->_r.h |= (1<<3);
+}
+
+void Z80::ESET3L(){
+    std::cout << "ESET3L" <<std::endl;
+    this->_r.l |= (1<<3);
+}
+
+void Z80::ESET3mHL(){
+    std::cout << "ESET3mHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ESET3A(){
+    std::cout << "ESET3A" <<std::endl;
+    this->_r.a |= (1<<3);
+}
+
+void Z80::ESET4B(){
+    std::cout << "ESET4B" <<std::endl;
+    this->_r.b |= (1<<4);
+}
+
+void Z80::ESET4C(){
+    std::cout << "ESET4C" <<std::endl;
+    this->_r.c |= (1<<4);
+}
+
+void Z80::ESET4D(){
+    std::cout << "ESET4D" <<std::endl;
+    this->_r.d |= (1<<4);
+}
+
+void Z80::ESET4E(){
+    std::cout << "ESET4E" <<std::endl;
+    this->_r.e |= (1<<4);
+}
+
+void Z80::ESET4H(){
+    std::cout << "ESET4H" <<std::endl;
+    this->_r.h |= (1<<4);
+}
+
+void Z80::ESET4L(){
+    std::cout << "ESET4L" <<std::endl;
+    this->_r.l |= (1<<4);
+}
+
+void Z80::ESET4mHL(){
+    std::cout << "ESET4mHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ESET4A(){
+    std::cout << "ESET4A" <<std::endl;
+    this->_r.a |= (1<<4);
+}
+
+void Z80::ESET5B(){
+    std::cout << "ESET5B" <<std::endl;
+    this->_r.b |= (1<<5);
+}
+
+void Z80::ESET5C(){
+    std::cout << "ESET5C" <<std::endl;
+    this->_r.c |= (1<<5);
+}
+
+void Z80::ESET5D(){
+    std::cout << "ESET5D" <<std::endl;
+    this->_r.d |= (1<<5);
+}
+
+void Z80::ESET5E(){
+    std::cout << "ESET5E" <<std::endl;
+    this->_r.e |= (1<<5);
+}
+
+void Z80::ESET5H(){
+    std::cout << "ESET5H" <<std::endl;
+    this->_r.h |= (1<<5);
+}
+
+void Z80::ESET5L(){
+    std::cout << "ESET5L" <<std::endl;
+    this->_r.l |= (1<<5);
+}
+
+void Z80::ESET5mHL(){
+    std::cout << "ESET5mHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ESET5A(){
+    std::cout << "ESET5A" <<std::endl;
+    this->_r.a |= (1<<5);
+}
+
+void Z80::ESET6B(){
+    std::cout << "ESET6B" <<std::endl;
+    this->_r.b |= (1<<6);
+}
+
+void Z80::ESET6C(){
+    std::cout << "ESET6C" <<std::endl;
+    this->_r.c |= (1<<6);
+}
+
+void Z80::ESET6D(){
+    std::cout << "ESET6D" <<std::endl;
+    this->_r.d |= (1<<6);
+}
+
+void Z80::ESET6E(){
+    std::cout << "ESET6E" <<std::endl;
+    this->_r.e |= (1<<6);
+}
+
+void Z80::ESET6H(){
+    std::cout << "ESET6H" <<std::endl;
+    this->_r.h |= (1<<6);
+}
+
+void Z80::ESET6L(){
+    std::cout << "ESET6L" <<std::endl;
+    this->_r.l |= (1<<6);
+}
+
+void Z80::ESET6mHL(){
+    std::cout << "ESET6mHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ESET6A(){
+    std::cout << "ESET6A" <<std::endl;
+    this->_r.a |= (1<<6);
+}
+
+void Z80::ESET7B(){
+    std::cout << "ESET7B" <<std::endl;
+    this->_r.b |= (1<<7);
+}
+
+void Z80::ESET7C(){
+    std::cout << "ESET7C" <<std::endl;
+    this->_r.c |= (1<<7);
+}
+
+void Z80::ESET7D(){
+    std::cout << "ESET7D" <<std::endl;
+    this->_r.d |= (1<<7);
+}
+
+void Z80::ESET7E(){
+    std::cout << "ESET7E" <<std::endl;
+    this->_r.e |= (1<<7);
+}
+
+void Z80::ESET7H(){
+    std::cout << "ESET7H" <<std::endl;
+    this->_r.h |= (1<<7);
+}
+
+void Z80::ESET7L(){
+    std::cout << "ESET7L" <<std::endl;
+    this->_r.l |= (1<<7);
+}
+
+void Z80::ESET7mHL(){
+    std::cout << "ESET7mHL" <<std::endl;
+    std::cout << "Uncovered Function" << std::endl;
+}
+
+void Z80::ESET7A(){
+    std::cout << "ESET7A" <<std::endl;
+    this->_r.a |= (1<<7);
 }
 
 #endif

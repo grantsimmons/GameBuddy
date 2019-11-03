@@ -2,7 +2,7 @@
 import re
 
 define = re.compile('^\#')
-newline = re.compile('^\n')
+newline = re.compile('^\s*\n')
 LDBasic = re.compile('void\sZ80::LD([ABCDEFHL])([ABCDEFHL])\(')
 LDdectom = re.compile('void\sZ80::LDD(mHLA|AmHL)')
 LDinctom = re.compile('void\sZ80::LDI(mHLA|AmHL)')
@@ -28,21 +28,34 @@ POP = re.compile('void\sZ80::POP([ABDH])([FCEL])')
 JP = re.compile('void\sZ80::JP(N)?(Cnn|Znn|mHL|nn)')
 JR = re.compile('void\sZ80::JR(N)?(Cn|Zn|n)')
 EXT = re.compile('void\sZ80::Extops')
+EXT_RLC = re.compile('void\sZ80::ERLC([ABCDEHL]|mHL)') #Rotate Left w/ carry
+EXT_RRC = re.compile('void\sZ80::ERRC([ABCDEHL]|mHL)') #Rotate right w/ carry
+EXT_RL = re.compile('void\sZ80::ERL([ABCDEHL]|mHL)') #Rotate left, no carry
+EXT_RR = re.compile('void\sZ80::ERR([ABCDEHL]|mHL)') #Rotate Right, no carry
+EXT_SLA = re.compile('void\sZ80::ESLA([ABCDEHL]|mHL)') #Shift left preserving sign
+EXT_SRA = re.compile('void\sZ80::ESRA([ABCDEHL]|mHL)') #Shift right preserving sign
+EXT_SRL = re.compile('void\sZ80::ESRL([ABCDEHL]|mHL)') #Shift right no preserve
+EXT_SWAP = re.compile('void\sZ80::ESWAP([ABCDEHL]|mHL)') #Swap nibbles in register
+EXT_BIT = re.compile('void\sZ80::EBIT([0-7])([ABCDEHL]|mHL)') #Test bit
+EXT_RES = re.compile('void\sZ80::ERES([0-7])([ABCDEHL]|mHL)') #Reset bit
+EXT_SET = re.compile('void\sZ80::ESET([0-7])([ABCDEHL]|mHL)') #Set bit
+
 
 
 with open("uncovered.cpp", 'w') as uncovered:
     with open("../source/ops_impl.cpp", 'w') as out_file:
-        with open("functions.cpp", 'r') as in_file:
-            counter = 1
+        with open("../scripts/functions.cpp", 'r') as in_file:
+            counter = 0
+            counter2 = 0
             match = False
             for line in in_file:
-                if define.search(line) or newline.search(line): #Skip define statements
+                if define.search(line) or newline.search(line): #Skip define statements and newlines
                     out_file.write(line)
                     continue
 
                 print(counter)
-                out_file.write(line[0:-2] + "{\n")
-                out_file.write("    std::cout << \"{}\" <<std::endl;\n".format(line[10:-4]))
+                out_file.write(line[0:-3] + "{\n")
+                out_file.write("    std::cout << \"{}\" <<std::endl;\n".format(line[10:-5]))
                 
                 basic = LDBasic.search(line)
                 if basic:
@@ -317,9 +330,115 @@ with open("uncovered.cpp", 'w') as uncovered:
 
                 ext = EXT.search(line)
                 if ext:
+                    match = True
                     print("CB Extension")
-                    out_file.write('    this->_r.pc += 1;\n')
-                    #Skips next instruction
+                    out_file.write('    (this->*ext_ops[mmu.rb(this->_r.pc++)].op_function)();\n')
+                    counter += 1
+
+                erlc = EXT_RLC.search(line)
+                if erlc:
+                    print("Extension Rotate Left with carry")
+                    match = True
+                    if erlc.group(1) != 'mHL':
+                        out_file.write('    this->_r.f = ((this->_r.{} & 0x80) >> 7) | (this->_r.f & 0xFE);\n'.format(erlc.group(1).lower()))
+                        #FIXME: Hardcoded carry position                          ^
+                        out_file.write('    this->_r.{} = (this->_r.{} << 1) | ((this->_r.{} & 0x80) >> 7);\n'.format(erlc.group(1).lower(), erlc.group(1).lower(), erlc.group(1).lower()))
+                    else:
+                        out_file.write('    this->_r.f = ((this->mmu.rb((this->_r.h << 8) | this->_r.l) & 0x80) >> 7) | this->_r.f & 0xFE;\n')
+                        out_file.write('    this->mmu.wb((this->_r.h << 8) | this->_r.l, (this->mmu.rb((this->_r.h << 8) | this->_r.l)) << 1 | ((this->mmu.rb((this->_r.h << 8) | this->_r.l) & 0x80) >> 7));\n')
+                        #FIXME: Make all mHL accesses | instead of +
+                    counter2 += 1
+
+                errc = EXT_RRC.search(line)
+                if errc:
+                    print("Extension Rotate Right with carry")
+                    match = True
+                    if errc.group(1) != 'mHL':
+                        out_file.write('    this->_r.f = (this->_r.{} & 0x1) | (this->_r.f & 0xFE);\n'.format(errc.group(1).lower()))
+                        out_file.write('    this->_r.{} = (this->_r.{} >> 1) | ((this->_r.{} & 0x1) << 7);\n'.format(errc.group(1).lower(), errc.group(1).lower(), errc.group(1).lower()))
+                    else:
+                        out_file.write('    this->_r.f = (this->mmu.rb((this->_r.h << 8) | this->_r.l) & 0x1) | this->_r.f & 0xFE;\n')
+                        out_file.write('    this->mmu.wb((this->_r.h << 8) | this->_r.l, (this->mmu.rb((this->_r.h << 8) | this->_r.l)) >> 1 | ((this->mmu.rb((this->_r.h << 8) | this->_r.l) & 0x1) << 7));\n')
+                    counter2 += 1
+
+                erl = EXT_RL.search(line)
+                if erl:
+                    match = True
+                    print("Extension Rotate Left, no carry")
+                    if erl.group(1) != 'mHL':
+                        out_file.write('    this->_r.{} = (this->_r.{} << 1) | ((this->_r.{} & 0x80) >> 7);\n'.format(erl.group(1).lower(), erl.group(1).lower(), erl.group(1).lower()))
+                    else:
+                        out_file.write('    this->mmu.wb((this->_r.h << 8) | this->_r.l, (this->mmu.rb((this->_r.h << 8) | this->_r.l)) << 1 | ((this->mmu.rb((this->_r.h << 8) | this->_r.l) & 0x80) >> 7));\n')
+                    counter2 += 1
+
+                err = EXT_RR.search(line)
+                if err:
+                    match = True
+                    print("Extension Rotate Right, no carry")
+                    if err.group(1) != 'mHL':
+                        out_file.write('    this->_r.{} = (this->_r.{} >> 1) | ((this->_r.{} & 0x1) << 7);\n'.format(err.group(1).lower(), err.group(1).lower(), err.group(1).lower()))
+                    else:
+                        out_file.write('    this->mmu.wb((this->_r.h << 8) | this->_r.l, (this->mmu.rb((this->_r.h << 8) | this->_r.l)) >> 1 | ((this->mmu.rb((this->_r.h << 8) | this->_r.l) & 0x1) << 7));\n')
+                    counter2 += 1
+
+                esla = EXT_SLA.search(line)
+                if esla:
+                    if esla.group(1) != 'mHL':
+                        print("Extension Shift Left Preserving Sign")
+                        match = True
+                        out_file.write('    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.{} & 0x80) >> 7 ? CARRY : 0x0);\n'.format(esla.group(1).lower()))
+                        out_file.write('    this->_r.{} <<= 1;\n'.format(esla.group(1).lower()))
+                        counter2 += 1
+
+                esra = EXT_SRA.search(line)
+                if esra:
+                    if esra.group(1) != 'mHL':
+                        print("Extension Shift Right Preserving Sign")
+                        match = True
+                        out_file.write('    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.{} & 0x1) ? CARRY : 0);\n'.format(esra.group(1).lower()))
+                        out_file.write('    this->_r.{} >>= 1;\n'.format(esra.group(1).lower()))
+                        counter2 += 1
+
+                esrl = EXT_SRL.search(line)
+                if esrl:
+                    if esrl.group(1) != 'mHL':
+                        print("Extension Shift Right, no sign preservation")
+                        match = True
+                        out_file.write('    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.{} & 0x1) ? CARRY : 0);\n'.format(esrl.group(1).lower()))
+                        out_file.write('    this->_r.{} = (this->_r.{} >> 1) & 0x7F;\n'.format(esrl.group(1).lower(), esrl.group(1).lower()))
+                        counter2 += 1
+
+                eswap = EXT_SWAP.search(line)
+                if eswap:
+                    if eswap.group(1) != 'mHL':
+                        print("Extension Swap nibbles in byte")
+                        out_file.write('    this->_r.{} = (((this->_r.{} & 0xF0) >> 4) & 0x0F) | (((this->_r.{} & 0x0F) << 4) & 0xF0);\n'.format(eswap.group(1).lower(), eswap.group(1).lower(), eswap.group(1).lower()))
+                        counter2 += 1
+
+                ebit = EXT_BIT.search(line)
+                if ebit:
+                    if ebit.group(2) != 'mHL':
+                        match = True
+                        print("Extension Test Bit")
+                        out_file.write('    this->_r.f = (this->_r.{} & (1<<{})) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));\n'.format(ebit.group(2).lower(), ebit.group(1)))
+                        counter2 += 1
+
+                eres = EXT_RES.search(line)
+                if eres:
+                    if eres.group(2) != 'mHL':
+                        match = True
+                        print("Extension Reset Bit")
+                        out_file.write('    this->_r.{} &= ~(1<<{});\n'.format(eres.group(2).lower(), eres.group(1).lower()))
+                        counter2 += 1
+                
+
+                eset = EXT_SET.search(line)
+                if eset:
+                    if eset.group(2) != 'mHL':
+                        match = True
+                        print("Extension Set Bit")
+                        out_file.write('    this->_r.{} |= (1<<{});\n'.format(eset.group(2).lower(), eset.group(1).lower()))
+                        counter2 += 1
 
                 if not match:    
                     out_file.write('    std::cout << "Uncovered Function" << std::endl;\n')
@@ -329,4 +448,5 @@ with open("uncovered.cpp", 'w') as uncovered:
                 print(line[0:-2])
 
         print("Single-Byte Coverage: {:02d}%".format(int(100 * counter / 0x100)))
-        print("Total Coverage: {:02d}%".format(int(100 * counter / 0x200)))
+        print("Two-Byte Coverage: {:02d}%".format(int(100 * counter2 / 0x100)))
+        print("Total Coverage: {:02d}%".format(int(100 * (counter2 + counter) / 0x200)))

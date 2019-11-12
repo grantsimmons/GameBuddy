@@ -7,9 +7,10 @@ LDBasic = re.compile('void\sZ80::LD([ABCDEFHL])([ABCDEFHL])\(')
 LDdectom = re.compile('void\sZ80::LDD(mHLA|AmHL)')
 LDinctom = re.compile('void\sZ80::LDI(mHLA|AmHL)')
 LDtom = re.compile('void\sZ80::LDm([ABCDEFHL]|nn)([ABCDEFHL])?([ABCDEFHLn]|SP)') #Catch DEC case
-LDfromm = re.compile('void\sZ80::LD([ABCDEFHL])m([ABCDEFHL])([ABCDEFHL])')
+LDfromm = re.compile('void\sZ80::LD([ABCDEFHL])m([ABDEFHL]|C(?!A))([ABCDEFHL])') #FIXME: Make only valid couples
 LDn = re.compile('void\sZ80::LD([ABCDEFHL])n')
 LDnn = re.compile('void\sZ80::LD(?=[^m])([ABCDEFHL]|SP)([ABCDEFHL])?nn')
+LDH = re.compile('void\sZ80::LDH(mnA|mCA|Amn)')
 INC8 = re.compile('void\sZ80::INC([ABCDEFHL])\(')
 DEC8 = re.compile('void\sZ80::DEC([ABCDEFHL])\(')
 INC16 = re.compile('void\sZ80::INC(([ABCDEFHL])([ABCDEFHL])|(SP))')
@@ -39,6 +40,9 @@ EXT_SWAP = re.compile('void\sZ80::ESWAP([ABCDEHL]|mHL)') #Swap nibbles in regist
 EXT_BIT = re.compile('void\sZ80::EBIT([0-7])([ABCDEHL]|mHL)') #Test bit
 EXT_RES = re.compile('void\sZ80::ERES([0-7])([ABCDEHL]|mHL)') #Reset bit
 EXT_SET = re.compile('void\sZ80::ESET([0-7])([ABCDEHL]|mHL)') #Set bit
+CALL = re.compile('void\sZ80::CALL(N)?(C|Z)?nn') #Function Call
+RET = re.compile('void\sZ80::RET(N)?(I|C|Z)?')
+CP = re.compile('void\sZ80::CP([ABCDEHLn]|mHL)')
 
 
 
@@ -199,6 +203,32 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     out_file.write('    this->_r.pc += 2;\n')
                     counter += 1
 
+                ldh = LDH.search(line)
+                if ldh:
+                    match = True
+                    print("Load to FF00 w/ Offset")
+                    if ldh.group(1) == 'mnA':
+                        out_file.write('    this->mmu.wb(0xFF00 | this->mmu.rb(this->_r.pc), this->_r.a);\n')
+                        out_file.write('    this->_r.pc += 1;\n')
+                    elif ldh.group(1) == 'mCA':
+                        out_file.write('    this->mmu.wb(0xFF00 | this->_r.c, this->_r.a);\n')
+                    elif ldh.group(1) == 'Amn':
+                        out_file.write('    this->_r.a = this->mmu.rb(0xFF00 | this->mmu.rb(this->_r.pc));\n')
+                        out_file.write('    this->_r.pc += 1;\n')
+                    counter += 1
+                #cp = CP.search(line)
+                #if cp:
+                    #match = True
+                    #print("Compare")
+                    #out_file.write('    this->_r.f = ((int) {} >= 0 ? CARRY : 0) | ({} == 0 ? ZERO : 0) | ({} 
+                    #counter += 1
+
+
+
+
+
+
+
                 adda = ADDA.search(line)
                 if adda:
                     match = True
@@ -227,6 +257,7 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                         out_file.write('    this->_r.sp += this->mmu.rb(this->_r.pc) > 0x7F ? ((int8_t)~this->mmu.rb(this->_r.pc) + 1) & 0xFF : this->mmu.rb(this->_r.pc);\n')
                         out_file.write('    this->_r.pc += 1;\n')
                     #else:
+                    counter += 1
                 
                 adc = ADC.search(line)
                 if adc:
@@ -239,6 +270,7 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                         out_file.write('    this->_r.pc += 1;\n')
                     else:
                         out_file.write('    this->_r.a = this->_r.a + this->_r.{} + (this->_r.f & CARRY);\n'.format(adc.group(1).lower()))
+                    counter += 1
 
                 anda = AND.search(line)
                 if anda:
@@ -328,6 +360,40 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     out_file.write('    this->_r.pc += 1;\n')
                     counter += 1
 
+                call = CALL.search(line)
+                if call:
+                    match = True
+                    print("Function Call")
+                    if call.group(2) is not None:
+                        out_file.write('    if(this->_r.f & {} == {})'.format('CARRY' if call.group(2) == 'C' else 'ZERO', 0 if call.group(1) == 'N' else 1))
+                        out_file.write('{\n')
+                    out_file.write('        this->mmu.wb(this->_r.sp, (this->_r.pc + 2) & 0xFF00);\n') #Push pc MSB to stack
+                    out_file.write('        this->mmu.wb(this->_r.sp - 1, (this->_r.pc + 2) & 0x00FF);\n') #Push pc LSB to stack
+                    out_file.write('        this->_r.sp -= 2;\n')
+                    out_file.write('        this->_r.pc = this->mmu.rw(this->_r.pc);\n')
+                    if call.group(2) is not None:
+                        out_file.write('    }\n')
+                    counter += 1
+
+                ret = RET.search(line)
+                if ret:
+                    match = True
+                    print("Function Return")
+                    if ret.group(2) != 'I': #TODO: Enable interrupt coverage
+                        if ret.group(2) is not None: 
+                            out_file.write('    if(this->_r.f & {} == {})'.format('CARRY' if ret.group(2) == 'C' else 'ZERO', 0 if ret.group(1) == 'N' else 1))
+                            out_file.write('{\n')
+                        out_file.write('        this->_r.pc = this->mmu.rb(this->_r.sp) & this->mmu.rb(this->_r.sp + 1);\n')
+                        out_file.write('        this->_r.sp += 2;\n')
+                        if ret.group(2) is not None:
+                            out_file.write('    }\n')
+                        counter += 1
+
+
+
+
+
+#=================Extensions===================================================
                 ext = EXT.search(line)
                 if ext:
                     match = True

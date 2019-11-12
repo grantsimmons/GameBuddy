@@ -198,7 +198,7 @@ void Z80::RRA(){
 }
 
 void Z80::JRNZn(){
-    std::cout << "JRNZn" <<std::endl;
+    //std::cout << "JRNZn" <<std::endl;
     this->_r.pc += this->_r.f & ZERO ? 0 : (int8_t) this->mmu.rb(this->_r.pc);
     this->_r.pc += 1;
 }
@@ -264,7 +264,7 @@ void Z80::LDIAmHL(){
 }
 
 void Z80::DECHL(){
-    std::cout << "DECHL" <<std::endl;
+    //std::cout << "DECHL" <<std::endl;
     this->_r.l -= 1;
     this->_r.h = this->_r.l == 0xFF ? this->_r.h - 1 : this->_r.h;
     this->_r.f = (this->_r.h == 0x0 && this->_r.l == 0x0) ? this->_r.f | ZERO : this->_r.f;
@@ -307,7 +307,7 @@ void Z80::LDSPnn(){
 }
 
 void Z80::LDDmHLA(){
-    std::cout << "LDDmHLA" <<std::endl;
+    //std::cout << "LDDmHLA" <<std::endl;
     this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.a);
     this->DECHL();
 }
@@ -1078,7 +1078,10 @@ void Z80::CPA(){
 
 void Z80::RETNZ(){
     std::cout << "RETNZ" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    if(this->_r.f & ZERO == 0){
+        this->_r.pc = this->mmu.rb(this->_r.sp) & this->mmu.rb(this->_r.sp + 1);
+        this->_r.sp += 2;
+    }
 }
 
 void Z80::POPBC(){
@@ -1100,7 +1103,12 @@ void Z80::JPnn(){
 
 void Z80::CALLNZnn(){
     std::cout << "CALLNZnn" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    if(this->_r.f & ZERO == 0){
+        this->mmu.wb(this->_r.sp, (this->_r.pc + 2) & 0xFF00);
+        this->mmu.wb(this->_r.sp - 1, (this->_r.pc + 2) & 0x00FF);
+        this->_r.sp -= 2;
+        this->_r.pc = this->mmu.rw(this->_r.pc);
+    }
 }
 
 void Z80::PUSHBC(){
@@ -1126,12 +1134,16 @@ void Z80::RST0(){
 
 void Z80::RETZ(){
     std::cout << "RETZ" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    if(this->_r.f & ZERO == 1){
+        this->_r.pc = this->mmu.rb(this->_r.sp) & this->mmu.rb(this->_r.sp + 1);
+        this->_r.sp += 2;
+    }
 }
 
 void Z80::RET(){
     std::cout << "RET" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+        this->_r.pc = this->mmu.rb(this->_r.sp) & this->mmu.rb(this->_r.sp + 1);
+        this->_r.sp += 2;
 }
 
 void Z80::JPZnn(){
@@ -1141,18 +1153,26 @@ void Z80::JPZnn(){
 }
 
 void Z80::Extops(){
-    std::cout << "Extops" <<std::endl;
+    //std::cout << "Extops" <<std::endl;
     (this->*ext_ops[mmu.rb(this->_r.pc++)].op_function)();
 }
 
 void Z80::CALLZnn(){
     std::cout << "CALLZnn" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    if(this->_r.f & ZERO == 1){
+        this->mmu.wb(this->_r.sp, (this->_r.pc + 2) & 0xFF00);
+        this->mmu.wb(this->_r.sp - 1, (this->_r.pc + 2) & 0x00FF);
+        this->_r.sp -= 2;
+        this->_r.pc = this->mmu.rw(this->_r.pc);
+    }
 }
 
 void Z80::CALLnn(){
     std::cout << "CALLnn" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+        this->mmu.wb(this->_r.sp, (this->_r.pc + 2) & 0xFF00);
+        this->mmu.wb(this->_r.sp - 1, (this->_r.pc + 2) & 0x00FF);
+        this->_r.sp -= 2;
+        this->_r.pc = this->mmu.rw(this->_r.pc);
 }
 
 void Z80::ADCAn(){
@@ -1167,7 +1187,10 @@ void Z80::RST8(){
 
 void Z80::RETNC(){
     std::cout << "RETNC" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    if(this->_r.f & CARRY == 0){
+        this->_r.pc = this->mmu.rb(this->_r.sp) & this->mmu.rb(this->_r.sp + 1);
+        this->_r.sp += 2;
+    }
 }
 
 void Z80::POPDE(){
@@ -1190,7 +1213,12 @@ void Z80::XX1(){
 
 void Z80::CALLNCnn(){
     std::cout << "CALLNCnn" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    if(this->_r.f & CARRY == 0){
+        this->mmu.wb(this->_r.sp, (this->_r.pc + 2) & 0xFF00);
+        this->mmu.wb(this->_r.sp - 1, (this->_r.pc + 2) & 0x00FF);
+        this->_r.sp -= 2;
+        this->_r.pc = this->mmu.rw(this->_r.pc);
+    }
 }
 
 void Z80::PUSHDE(){
@@ -1212,12 +1240,14 @@ void Z80::RST10(){
 
 void Z80::RETC(){
     std::cout << "RETC" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    if(this->_r.f & CARRY == 1){
+        this->_r.pc = this->mmu.rb(this->_r.sp) & this->mmu.rb(this->_r.sp + 1);
+        this->_r.sp += 2;
+    }
 }
 
 void Z80::RETI(){
     std::cout << "RETI" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
 }
 
 void Z80::JPCnn(){
@@ -1233,7 +1263,12 @@ void Z80::XX2(){
 
 void Z80::CALLCnn(){
     std::cout << "CALLCnn" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    if(this->_r.f & CARRY == 1){
+        this->mmu.wb(this->_r.sp, (this->_r.pc + 2) & 0xFF00);
+        this->mmu.wb(this->_r.sp - 1, (this->_r.pc + 2) & 0x00FF);
+        this->_r.sp -= 2;
+        this->_r.pc = this->mmu.rw(this->_r.pc);
+    }
 }
 
 void Z80::XX3(){
@@ -1253,7 +1288,8 @@ void Z80::RST18(){
 
 void Z80::LDHmnA(){
     std::cout << "LDHmnA" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.wb(0xFF00 | this->mmu.rb(this->_r.pc), this->_r.a);
+    this->_r.pc += 1;
 }
 
 void Z80::POPHL(){
@@ -1265,7 +1301,7 @@ void Z80::POPHL(){
 
 void Z80::LDHmCA(){
     std::cout << "LDHmCA" <<std::endl;
-    this->_r.h = this->mmu.rb(this->_r.c << 8 + this->_r.a);
+    this->mmu.wb(0xFF00 | this->_r.c, this->_r.a);
 }
 
 void Z80::XX4(){
@@ -1344,7 +1380,8 @@ void Z80::RST28(){
 
 void Z80::LDHAmn(){
     std::cout << "LDHAmn" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.a = this->mmu.rb(0xFF00 | this->mmu.rb(this->_r.pc));
+    this->_r.pc += 1;
 }
 
 void Z80::POPAF(){
@@ -2103,7 +2140,7 @@ void Z80::EBIT7E(){
 }
 
 void Z80::EBIT7H(){
-    std::cout << "EBIT7H" <<std::endl;
+    //std::cout << "EBIT7H" <<std::endl;
     this->_r.f = (this->_r.h & (1<<7)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 

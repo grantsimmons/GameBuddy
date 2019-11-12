@@ -12,7 +12,9 @@ Z80::Z80(uint8_t a = 0x00, uint8_t b = 0x00, uint8_t c = 0x00, uint8_t d = 0x00,
 }
 
 void Z80::exec(){
-    while(this->_r.pc < 0x20){
+    static bool cont = false;
+    int counter = 0;
+    while(this->_r.pc < 0x100){
         //std::cout << "Executing function " << this->_r.pc << std::endl;
         (this->*ops[mmu.rb(this->_r.pc++)].op_function)(); //Execute op at pc
         this->_r.pc &= 0xFFFF;
@@ -21,9 +23,31 @@ void Z80::exec(){
             std::cout << "Exiting BIOS" << std::endl;
         }
         //std::cout << this->mmu.rb(this->_r.pc) << std::endl;
-        //if(this->_r.pc > 0x0a || this->_r.pc <= 0x06){
-        //    this->status();
-        //}
+        if(this->_r.pc > 0x0a || this->_r.pc <= 0x06){
+            this->status();
+            if(!cont){
+                if (counter > 0){
+                    counter--;
+                    continue;
+                }
+                std::cout << "p = print mem, x = continue, # = # of steps to continue, n = next instruction";
+                char* x;
+                std::cin >> *x;
+                switch(*x){
+                    case 'p':
+                        this->mmu.dump_mem();
+                        break;
+                    case 'n':
+                        break;
+                    case 'x':
+                        cont = true;
+                        break;
+                    default:
+                        counter = atoi(x);
+                }
+
+            }
+        }
     }
     mmu.dump_mem();
     //this->debug();

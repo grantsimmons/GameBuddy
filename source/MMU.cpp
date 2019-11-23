@@ -82,7 +82,7 @@ void MMU::wb(uint16_t addr, uint8_t val){ //Write byte to given address
     switch(addr&0xF000){
         case 0x0000:
             if(this->_inbios && addr<0x0100) 
-                return;
+                return; //Read-Only
         case 0x1000:
         case 0x2000:
         case 0x3000:
@@ -201,12 +201,12 @@ void MMU::dump_mem(){
     counter = 0;
     std::cout << "ZRAM" << std::endl;
     for(uint8_t i : _zram){
-        if (i != 0){
+        //if (i != 0){
             printf("%02x ", i);
             counter++;
             if (counter % 16 == 0)
                 std::cout << std::endl;
-        }
+        //}
     }
     //for(uint8_t i : this->_rom){
     //    std::cout << i << std::endl;

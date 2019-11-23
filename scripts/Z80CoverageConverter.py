@@ -58,8 +58,8 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     continue
 
                 print(counter)
-                out_file.write(line[0:-3] + "{\n")
-                out_file.write("    std::cout << \"{}\" <<std::endl;\n".format(line[10:-5]))
+                out_file.write(line[0:-2] + "{\n")
+                out_file.write("    std::cout << \"{}\" <<std::endl;\n".format(line[10:-4]))
                 
                 basic = LDBasic.search(line)
                 if basic:
@@ -318,8 +318,8 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                 if push:
                     match = True
                     print("Push to stack")
-                    out_file.write('    this->mmu.wb(this->_r.sp, this->_r.{});\n'.format(push.group(1).lower()))
-                    out_file.write('    this->mmu.wb(this->_r.sp - 1, this->_r.{});\n'.format(push.group(2).lower()))
+                    out_file.write('    this->mmu.wb(this->_r.sp - 1, this->_r.{});\n'.format(push.group(1).lower()))
+                    out_file.write('    this->mmu.wb(this->_r.sp - 2, this->_r.{});\n'.format(push.group(2).lower()))
                     out_file.write('    this->_r.sp -= 2;\n')
                     counter += 1
 
@@ -367,8 +367,8 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     if call.group(2) is not None:
                         out_file.write('    if(this->_r.f & {} == {})'.format('CARRY' if call.group(2) == 'C' else 'ZERO', 0 if call.group(1) == 'N' else 1))
                         out_file.write('{\n')
-                    out_file.write('        this->mmu.wb(this->_r.sp, (this->_r.pc + 2) & 0xFF00);\n') #Push pc MSB to stack
-                    out_file.write('        this->mmu.wb(this->_r.sp - 1, (this->_r.pc + 2) & 0x00FF);\n') #Push pc LSB to stack
+                    out_file.write('        this->mmu.wb(this->_r.sp - 1, (this->_r.pc + 2) & 0xFF00);\n') #Push pc MSB to stack
+                    out_file.write('        this->mmu.wb(this->_r.sp - 2, (this->_r.pc + 2) & 0x00FF);\n') #Push pc LSB to stack
                     out_file.write('        this->_r.sp -= 2;\n')
                     out_file.write('        this->_r.pc = this->mmu.rw(this->_r.pc);\n')
                     if call.group(2) is not None:
@@ -383,7 +383,7 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                         if ret.group(2) is not None: 
                             out_file.write('    if(this->_r.f & {} == {})'.format('CARRY' if ret.group(2) == 'C' else 'ZERO', 0 if ret.group(1) == 'N' else 1))
                             out_file.write('{\n')
-                        out_file.write('        this->_r.pc = this->mmu.rb(this->_r.sp) & this->mmu.rb(this->_r.sp + 1);\n')
+                        out_file.write('        this->_r.pc = this->mmu.rb(this->_r.sp) | this->mmu.rb(this->_r.sp + 1);\n')
                         out_file.write('        this->_r.sp += 2;\n')
                         if ret.group(2) is not None:
                             out_file.write('    }\n')

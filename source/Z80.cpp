@@ -31,19 +31,19 @@ void Z80::exec(){
                     continue;
                 }
                 std::cout << "p = print mem, x = continue, # = # of steps to continue, n = next instruction";
-                char* x;
-                std::cin >> *x;
-                switch(*x){
+                char* choice;
+                std::cin >> *choice;
+                switch(*choice){
                     case 'p':
                         this->mmu.dump_mem();
-                        break;
+                        std::cin >> *choice;
                     case 'n':
                         break;
                     case 'x':
                         cont = true;
                         break;
                     default:
-                        counter = atoi(x);
+                        counter = atoi(choice);
                 }
 
             }

@@ -15,7 +15,7 @@ obj: $(CPU) $(MMU) $(OPS)
 	$(CXX) -c $^
 
 ops: $(OP_GEN) $(FUNCS)
-	python $(OP_GEN)
+	python3 $(OP_GEN)
 
 noops: obj
 	$(CXX) $(OBJS) $(MAIN) -o $(OUT)

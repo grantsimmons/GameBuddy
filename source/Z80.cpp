@@ -30,13 +30,13 @@ void Z80::exec(){
                     counter--;
                     continue;
                 }
-                std::cout << "p = print mem, x = continue, # = # of steps to continue, n = next instruction";
-                char* x;
-                std::cin >> *x;
-                switch(*x){
+                std::cout << "p = print mem, x = continue, # = # of steps to continue, n = next instruction\n";
+                char* choice;
+                std::cin >> *choice;
+                switch(*choice){
                     case 'p':
                         this->mmu.dump_mem();
-                        break;
+                        std::cin >> *choice;
                     case 'n':
                         break;
                     case 'x':
@@ -46,7 +46,7 @@ void Z80::exec(){
                         this->reset();
                         break;
                     default:
-                        counter = atoi(x);
+                        counter = atoi(choice);
                 }
 
             }

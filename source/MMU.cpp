@@ -64,9 +64,9 @@ uint8_t MMU::rb(uint16_t addr){ //Read byte from given address
                     if(addr > 0xFF7F){
                         return this->_zram[addr&0x7F];
                     }
-                    else switch(addr&0xF0){
+                    //else switch(addr&0xF0){
                         //Unimplemented
-                    }
+                    //}
             }
         default:
             return 0x00;
@@ -82,7 +82,7 @@ void MMU::wb(uint16_t addr, uint8_t val){ //Write byte to given address
     switch(addr&0xF000){
         case 0x0000:
             if(this->_inbios && addr<0x0100) 
-                return;
+                return; //Read-Only
         case 0x1000:
         case 0x2000:
         case 0x3000:
@@ -124,7 +124,7 @@ void MMU::wb(uint16_t addr, uint8_t val){ //Write byte to given address
                 case 0xB00:
                 case 0xC00:
                 case 0xD00:
-                    //std::cout << "WRAM write" << std::endl;
+                    std::cout << "WRAM write" << std::endl;
                     this->_wram[addr&0x1FF] = val;
                     break;
 
@@ -132,10 +132,11 @@ void MMU::wb(uint16_t addr, uint8_t val){ //Write byte to given address
                     //if((addr&0xFF)<0xA0) gpu._oam[addr&0xFF] = val;
 
                 case 0xF00:
-                    //std::cout << "ZRAM write" << std::endl;
+                    std::cout << "ZRAM write" << std::endl;
                     if(addr > 0xFF7F) this->_zram[addr&0x7F] = val;
-                    else switch(addr&0xF0){
-                    }
+                    else this->_zram[addr&0xFF] = val;
+                    //else switch(addr&0xF0){
+                    //}
                     
                 }
         break;
@@ -190,23 +191,23 @@ void MMU::dump_mem(){
     counter = 0;
     std::cout << "WRAM" << std::endl;
     for(uint8_t i : _wram){
-        if (i != 0){
+        //if (i != 0){
             printf("%02x ", i);
             counter++;
             if (counter % 16 == 0)
                 std::cout << std::endl;
-        }
+        //}
     }
     printf("\n");
     counter = 0;
     std::cout << "ZRAM" << std::endl;
     for(uint8_t i : _zram){
-        if (i != 0){
+        //if (i != 0){
             printf("%02x ", i);
             counter++;
             if (counter % 16 == 0)
                 std::cout << std::endl;
-        }
+        //}
     }
     printf("\n");
     counter = 0;

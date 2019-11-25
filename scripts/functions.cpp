@@ -3,12 +3,10 @@
 
 #include "Z80.h"
 
-#define CARRY (1<<0)
-#define ADD_SUB (1<<1)
-#define PARITY_OVERFLOW (1<<2)
-#define HALF_CARRY (1<<3)
-#define ZERO (1<<4)
-#define SIGN (1<<5)
+#define CARRY (1<<4)
+#define HALF_CARRY (1<<5)
+#define ADD_SUB (1<<6)
+#define ZERO (1<<7)
 
 void Z80::NOP();
 void Z80::LDBCnn();

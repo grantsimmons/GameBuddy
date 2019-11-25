@@ -3,12 +3,10 @@
 
 #include "Z80.h"
 
-#define CARRY (1<<0)
-#define ADD_SUB (1<<1)
-#define PARITY_OVERFLOW (1<<2)
-#define HALF_CARRY (1<<3)
-#define ZERO (1<<4)
-#define SIGN (1<<5)
+#define CARRY (1<<4)
+#define HALF_CARRY (1<<5)
+#define ADD_SUB (1<<6)
+#define ZERO (1<<7)
 
 void Z80::NOP(){
     std::cout << "NOP" <<std::endl;
@@ -55,8 +53,8 @@ void Z80::LDBn(){
 
 void Z80::RLCA(){
     std::cout << "RLCA" <<std::endl;
-    this->_r.f = this->_r.a & 0x80; //FIXME: Carry flag position
-    this->_r.a = this->_r.a << 1 + ((this->_r.a & 0x80) >> 7);
+    this->_r.f |= (this->_r.a & 0x80) ? CARRY : 0;
+    this->_r.a = this->_r.a << 1 | (this->_r.f & CARRY) ? 1 : 0;
 }
 
 void Z80::LDmnnSP(){
@@ -151,7 +149,9 @@ void Z80::LDDn(){
 
 void Z80::RLA(){
     std::cout << "RLA" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    bool orig_carry = this->_r.f & CARRY ? 1 : 0;
+    this->_r.f &= (this->_r.a & 0x80) ? 0xFF : ~CARRY;
+    this->_r.a = ((this->_r.a << 1) | (int) orig_carry) & 0xFF;
 }
 
 void Z80::JRn(){
@@ -1046,42 +1046,50 @@ void Z80::ORA(){
 
 void Z80::CPB(){
     std::cout << "CPB" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    uint8_t val = this->_r.a - this->_r.b;
+    this->_r.f = (ADD_SUB) | ((this->_r.a & 0xF) - (this->_r.b & 0xF) < 0 ? HALF_CARRY : 0) | (val == 0 ? ZERO : 0) | (this->_r.a < val ? CARRY : 0);
 }
 
 void Z80::CPC(){
     std::cout << "CPC" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    uint8_t val = this->_r.a - this->_r.c;
+    this->_r.f = (ADD_SUB) | ((this->_r.a & 0xF) - (this->_r.c & 0xF) < 0 ? HALF_CARRY : 0) | (val == 0 ? ZERO : 0) | (this->_r.a < val ? CARRY : 0);
 }
 
 void Z80::CPD(){
     std::cout << "CPD" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    uint8_t val = this->_r.a - this->_r.d;
+    this->_r.f = (ADD_SUB) | ((this->_r.a & 0xF) - (this->_r.d & 0xF) < 0 ? HALF_CARRY : 0) | (val == 0 ? ZERO : 0) | (this->_r.a < val ? CARRY : 0);
 }
 
 void Z80::CPE(){
     std::cout << "CPE" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    uint8_t val = this->_r.a - this->_r.e;
+    this->_r.f = (ADD_SUB) | ((this->_r.a & 0xF) - (this->_r.e & 0xF) < 0 ? HALF_CARRY : 0) | (val == 0 ? ZERO : 0) | (this->_r.a < val ? CARRY : 0);
 }
 
 void Z80::CPH(){
     std::cout << "CPH" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    uint8_t val = this->_r.a - this->_r.h;
+    this->_r.f = (ADD_SUB) | ((this->_r.a & 0xF) - (this->_r.h & 0xF) < 0 ? HALF_CARRY : 0) | (val == 0 ? ZERO : 0) | (this->_r.a < val ? CARRY : 0);
 }
 
 void Z80::CPL(){
     std::cout << "CPL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    uint8_t val = this->_r.a - this->_r.l;
+    this->_r.f = (ADD_SUB) | ((this->_r.a & 0xF) - (this->_r.l & 0xF) < 0 ? HALF_CARRY : 0) | (val == 0 ? ZERO : 0) | (this->_r.a < val ? CARRY : 0);
 }
 
 void Z80::CPmHL(){
     std::cout << "CPmHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    uint8_t val = this->_r.a - this->mmu.rb(this->_r.h << 8 | this->_r.l);
+    this->_r.f = (ADD_SUB) | ((this->_r.a & 0xF) - (this->mmu.rb(this->_r.h << 8 | this->_r.l) & 0xF) < 0 ? HALF_CARRY : 0) | (val == 0 ? ZERO : 0) | (this->_r.a < val ? CARRY : 0);
 }
 
 void Z80::CPA(){
     std::cout << "CPA" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    uint8_t val = this->_r.a - this->_r.a;
+    this->_r.f = (ADD_SUB) | ((this->_r.a & 0xF) - (this->_r.a & 0xF) < 0 ? HALF_CARRY : 0) | (val == 0 ? ZERO : 0) | (this->_r.a < val ? CARRY : 0);
 }
 
 void Z80::RETNZ(){
@@ -1465,7 +1473,9 @@ void Z80::XXC(){
 
 void Z80::CPn(){
     std::cout << "CPn" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    uint8_t val = this->_r.a - this->mmu.rb(this->_r.pc);
+    this->_r.f = (ADD_SUB) | ((this->_r.a & 0xF) - (this->mmu.rb(this->_r.pc) & 0xF) < 0 ? HALF_CARRY : 0) | (val == 0 ? ZERO : 0) | (this->_r.a < val ? CARRY : 0);
+    this->_r.pc += 1;
 }
 
 void Z80::RST38(){

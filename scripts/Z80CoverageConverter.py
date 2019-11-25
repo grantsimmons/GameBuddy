@@ -2,7 +2,7 @@
 import re
 
 define = re.compile('^\#')
-newline = re.compile('^\s*\n')
+newline = re.compile('^\s*\/*\n')
 LDBasic = re.compile('void\sZ80::LD([ABCDEFHL])([ABCDEFHL])\(')
 LDdectom = re.compile('void\sZ80::LDD(mHLA|AmHL)')
 LDinctom = re.compile('void\sZ80::LDI(mHLA|AmHL)')
@@ -18,6 +18,7 @@ DEC16 = re.compile('void\sZ80::DEC(([ABCDEFHL])([ABCDEFHL])|(SP))')
 INCmem = re.compile('void\sZ80::INCmHL')
 DECmem = re.compile('void\sZ80::DECmHL')
 RLCA = re.compile('void\sZ80::RLCA')
+RLA = re.compile('void\sZ80::RLA')
 ADDA = re.compile('void\sZ80::ADDA([ABCDEFHLn]|mHL)')
 ADD16 = re.compile('void\sZ80::ADD(HL|SP)(B|D|d)(C|E)*\(')
 ADC = re.compile('void\sZ80::ADCA([ABCDEHLn]|mHL)')
@@ -31,7 +32,7 @@ JR = re.compile('void\sZ80::JR(N)?(Cn|Zn|n)')
 EXT = re.compile('void\sZ80::Extops')
 EXT_RLC = re.compile('void\sZ80::ERLC([ABCDEHL]|mHL)') #Rotate Left w/ carry
 EXT_RRC = re.compile('void\sZ80::ERRC([ABCDEHL]|mHL)') #Rotate right w/ carry
-EXT_RL = re.compile('void\sZ80::ERL([ABCDEHL]|mHL)') #Rotate left, no carry
+EXT_RL = re.compile('void\sZ80::ERL([ABCDEHL]|mHL)') #Rotate left, no carry #FIXME: Conflicts with ERLC*
 EXT_RR = re.compile('void\sZ80::ERR([ABCDEHL]|mHL)') #Rotate Right, no carry
 EXT_SLA = re.compile('void\sZ80::ESLA([ABCDEHL]|mHL)') #Shift left preserving sign
 EXT_SRA = re.compile('void\sZ80::ESRA([ABCDEHL]|mHL)') #Shift right preserving sign
@@ -181,9 +182,17 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                 if rlca:
                     match = True
                     print("Rotate A left w/ carry")
-                    out_file.write('    this->_r.f = this->_r.a & 0x80; //FIXME: Carry flag position\n')
-                    out_file.write('    this->_r.a = this->_r.a << 1 + ((this->_r.a & 0x80) >> 7);\n')
+                    out_file.write('    this->_r.f |= (this->_r.a & 0x80) ? CARRY : 0;\n')
+                    out_file.write('    this->_r.a = this->_r.a << 1 | (this->_r.f & CARRY) ? 1 : 0;\n')
                     counter += 1
+
+                rla = RLA.search(line)
+                if rla:
+                    match = True
+                    print("Rotate A left")
+                    out_file.write('    bool orig_carry = this->_r.f & CARRY ? 1 : 0;\n')
+                    out_file.write('    this->_r.f &= (this->_r.a & 0x80) ? 0xFF : ~CARRY;\n')
+                    out_file.write('    this->_r.a = ((this->_r.a << 1) | (int) orig_carry) & 0xFF;\n')
 
                 ldn = LDn.search(line)
                 if ldn:
@@ -218,21 +227,29 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                         out_file.write('    this->_r.a = this->mmu.rb(0xFF00 | this->mmu.rb(this->_r.pc));\n')
                         out_file.write('    this->_r.pc += 1;\n')
                     counter += 1
-                #cp = CP.search(line)
-                #if cp:
-                    #match = True
-                    #print("Compare")
-                    #out_file.write('    this->_r.f = ((int) {} >= 0 ? CARRY : 0) | ({} == 0 ? ZERO : 0) | ({} 
-                    #counter += 1
 
-
-
-
+                cp = CP.search(line)
+                if cp:
+                    match = True
+                    print("Compare")
+                    if cp.group(1) == 'n':
+                        reg = 'this->mmu.rb(this->_r.pc)'
+                    elif cp.group(1) == 'mHL':
+                        reg = 'this->mmu.rb(this->_r.h << 8 | this->_r.l)'
+                    else:
+                        reg = 'this->_r.{}'.format(cp.group(1).lower())
+                    out_file.write('    uint8_t val = this->_r.a - {};\n'.format(reg))
+                    out_file.write('    this->_r.f = (ADD_SUB) | ((this->_r.a & 0xF) - ({} & 0xF) < 0 ? HALF_CARRY : 0) | (val == 0 ? ZERO : 0) | (this->_r.a < val ? CARRY : 0);\n'.format(reg))
+                    if cp.group(1) == 'n':
+                        out_file.write('    this->_r.pc += 1;\n')
+                    #TODO: Check half-carry
+                    counter += 1
 
 
 
                 adda = ADDA.search(line)
                 if adda:
+                    #FIXME: Carry currently sucks here
                     match = True
                     print("Accumulator add")
                     if adda.group(1) != 'mHL' and adda.group(1) != 'n':

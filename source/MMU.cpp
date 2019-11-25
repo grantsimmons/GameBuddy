@@ -232,15 +232,15 @@ void MMU::dump_mem(){
         }
     }
     printf("\n");
-    counter = 0;
-    std::cout << "Memory" << std::endl;
-    for(uint8_t i : this->memory){
-        if (i != 0){
-            printf("%02x ", i);
-            counter++;
-            if (counter % 16 == 0)
-                std::cout << std::endl;
-        }
-    }
+    //counter = 0;
+    //std::cout << "Memory" << std::endl;
+    //for(uint8_t i : this->memory){
+    //    if (i != 0){
+    //        printf("%02x ", i);
+    //        counter++;
+    //        if (counter % 16 == 0)
+    //            std::cout << std::endl;
+    //    }
+    //}
 
 }

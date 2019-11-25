@@ -74,16 +74,16 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     print("To Mem")
                     if tom.group(1) == 'nn':
                         if tom.group(3) == 'SP':
-                            out_file.write('    this->mmu.ww(this->mmu.rb(this->_r.pc) + (this->mmu.rb(this->_r.pc + 1) << 8), this->_r.sp);\n')
+                            out_file.write('    this->mmu.ww(this->mmu.rb(this->_r.pc) | (this->mmu.rb(this->_r.pc + 1) << 8), this->_r.sp);\n')
                             out_file.write('    this->_r.pc += 2;\n')
                         elif tom.group(3) == 'A':
-                            out_file.write('    this->mmu.wb(this->mmu.rb(this->_r.pc) + (this->mmu.rb(this->_r.pc + 1) << 8), this->_r.a);\n')
+                            out_file.write('    this->mmu.wb(this->mmu.rb(this->_r.pc) | (this->mmu.rb(this->_r.pc + 1) << 8), this->_r.a);\n')
                             out_file.write('    this->_r.pc += 2;\n')
                     elif tom.group(3) == 'n':
-                        out_file.write('    this->mmu.wb(this->_r.{} << 8 + this->_r.{}, this->mmu.rb(this->_r.pc));\n'.format(tom.group(1).lower(), tom.group(2).lower()))
+                        out_file.write('    this->mmu.wb(this->_r.{} << 8 | this->_r.{}, this->mmu.rb(this->_r.pc));\n'.format(tom.group(1).lower(), tom.group(2).lower()))
                         out_file.write('    this->_r.pc += 1;\n')
                     else:
-                        out_file.write('    this->mmu.wb(this->_r.{} << 8 + this->_r.{}, this->_r.{});\n'.format(tom.group(1).lower(), tom.group(2).lower(), tom.group(3).lower()))
+                        out_file.write('    this->mmu.wb(this->_r.{} << 8 | this->_r.{}, this->_r.{});\n'.format(tom.group(1).lower(), tom.group(2).lower(), tom.group(3).lower()))
                     counter += 1
 
                 dec = LDdectom.search(line)
@@ -93,10 +93,11 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     match = True
                     print("Dec Mem")
                     if dec.group(1) == 'mHLA':
-                        out_file.write('    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.a);\n')
+                        out_file.write('    printf(\"Writing to address %04x\", this->_r.h << 8 | this->_r.l);\n')
+                        out_file.write('    this->mmu.wb(this->_r.h << 8 | this->_r.l, this->_r.a);\n')
                         out_file.write('    this->DECHL();\n')
                     if dec.group(1) == 'AmHL':
-                        out_file.write('    this->_r.a = this->mmu.rb(this->_r.h << 8 + this->_r.l);\n')
+                        out_file.write('    this->_r.a = this->mmu.rb(this->_r.h << 8 | this->_r.l);\n')
                         out_file.write('    this->DECHL();\n')
                     counter += 1
                     
@@ -130,6 +131,7 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     match = True
                     print("Dec 8 bit")
                     out_file.write('    this->_r.{} -= 1;\n'.format(dec8.group(1).lower()))
+                    out_file.write('    this->_r.f = this->_r.{} == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);\n'.format(dec8.group(1).lower()))
                     out_file.write('    //Set UF, Z, etc.\n')
                     counter += 1
 

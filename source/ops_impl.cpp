@@ -24,7 +24,7 @@ void Z80::LDBCnn(){
 
 void Z80::LDmBCA(){
     std::cout << "LDmBCA" <<std::endl;
-    this->mmu.wb(this->_r.b << 8 + this->_r.c, this->_r.a);
+    this->mmu.wb(this->_r.b << 8 | this->_r.c, this->_r.a);
 }
 
 void Z80::INCBC(){
@@ -43,6 +43,7 @@ void Z80::INCB(){
 void Z80::DECB(){
     std::cout << "DECB" <<std::endl;
     this->_r.b -= 1;
+    this->_r.f = this->_r.b == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);
     //Set UF, Z, etc.
 }
 
@@ -60,7 +61,7 @@ void Z80::RLCA(){
 
 void Z80::LDmnnSP(){
     std::cout << "LDmnnSP" <<std::endl;
-    this->mmu.ww(this->mmu.rb(this->_r.pc) + (this->mmu.rb(this->_r.pc + 1) << 8), this->_r.sp);
+    this->mmu.ww(this->mmu.rb(this->_r.pc) | (this->mmu.rb(this->_r.pc + 1) << 8), this->_r.sp);
     this->_r.pc += 2;
 }
 
@@ -90,6 +91,7 @@ void Z80::INCC(){
 void Z80::DECC(){
     std::cout << "DECC" <<std::endl;
     this->_r.c -= 1;
+    this->_r.f = this->_r.c == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);
     //Set UF, Z, etc.
 }
 
@@ -118,7 +120,7 @@ void Z80::LDDEnn(){
 
 void Z80::LDmDEA(){
     std::cout << "LDmDEA" <<std::endl;
-    this->mmu.wb(this->_r.d << 8 + this->_r.e, this->_r.a);
+    this->mmu.wb(this->_r.d << 8 | this->_r.e, this->_r.a);
 }
 
 void Z80::INCDE(){
@@ -137,6 +139,7 @@ void Z80::INCD(){
 void Z80::DECD(){
     std::cout << "DECD" <<std::endl;
     this->_r.d -= 1;
+    this->_r.f = this->_r.d == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);
     //Set UF, Z, etc.
 }
 
@@ -183,6 +186,7 @@ void Z80::INCE(){
 void Z80::DECE(){
     std::cout << "DECE" <<std::endl;
     this->_r.e -= 1;
+    this->_r.f = this->_r.e == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);
     //Set UF, Z, etc.
 }
 
@@ -232,6 +236,7 @@ void Z80::INCH(){
 void Z80::DECH(){
     std::cout << "DECH" <<std::endl;
     this->_r.h -= 1;
+    this->_r.f = this->_r.h == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);
     //Set UF, Z, etc.
 }
 
@@ -280,6 +285,7 @@ void Z80::INCL(){
 void Z80::DECL(){
     std::cout << "DECL" <<std::endl;
     this->_r.l -= 1;
+    this->_r.f = this->_r.l == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);
     //Set UF, Z, etc.
 }
 
@@ -308,7 +314,8 @@ void Z80::LDSPnn(){
 
 void Z80::LDDmHLA(){
     std::cout << "LDDmHLA" <<std::endl;
-    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.a);
+    printf("Writing to address %04x", this->_r.h << 8 | this->_r.l);
+    this->mmu.wb(this->_r.h << 8 | this->_r.l, this->_r.a);
     this->DECHL();
 }
 
@@ -332,7 +339,7 @@ void Z80::DECmHL(){
 
 void Z80::LDmHLn(){
     std::cout << "LDmHLn" <<std::endl;
-    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->mmu.rb(this->_r.pc));
+    this->mmu.wb(this->_r.h << 8 | this->_r.l, this->mmu.rb(this->_r.pc));
     this->_r.pc += 1;
 }
 
@@ -354,7 +361,7 @@ void Z80::ADDHLSP(){
 
 void Z80::LDDAmHL(){
     std::cout << "LDDAmHL" <<std::endl;
-    this->_r.a = this->mmu.rb(this->_r.h << 8 + this->_r.l);
+    this->_r.a = this->mmu.rb(this->_r.h << 8 | this->_r.l);
     this->DECHL();
 }
 
@@ -373,6 +380,7 @@ void Z80::INCA(){
 void Z80::DECA(){
     std::cout << "DECA" <<std::endl;
     this->_r.a -= 1;
+    this->_r.f = this->_r.a == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);
     //Set UF, Z, etc.
 }
 
@@ -629,32 +637,32 @@ void Z80::LDLA(){
 
 void Z80::LDmHLB(){
     std::cout << "LDmHLB" <<std::endl;
-    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.b);
+    this->mmu.wb(this->_r.h << 8 | this->_r.l, this->_r.b);
 }
 
 void Z80::LDmHLC(){
     std::cout << "LDmHLC" <<std::endl;
-    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.c);
+    this->mmu.wb(this->_r.h << 8 | this->_r.l, this->_r.c);
 }
 
 void Z80::LDmHLD(){
     std::cout << "LDmHLD" <<std::endl;
-    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.d);
+    this->mmu.wb(this->_r.h << 8 | this->_r.l, this->_r.d);
 }
 
 void Z80::LDmHLE(){
     std::cout << "LDmHLE" <<std::endl;
-    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.e);
+    this->mmu.wb(this->_r.h << 8 | this->_r.l, this->_r.e);
 }
 
 void Z80::LDmHLH(){
     std::cout << "LDmHLH" <<std::endl;
-    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.h);
+    this->mmu.wb(this->_r.h << 8 | this->_r.l, this->_r.h);
 }
 
 void Z80::LDmHLL(){
     std::cout << "LDmHLL" <<std::endl;
-    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.l);
+    this->mmu.wb(this->_r.h << 8 | this->_r.l, this->_r.l);
 }
 
 void Z80::HALT(){
@@ -664,7 +672,7 @@ void Z80::HALT(){
 
 void Z80::LDmHLA(){
     std::cout << "LDmHLA" <<std::endl;
-    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.a);
+    this->mmu.wb(this->_r.h << 8 | this->_r.l, this->_r.a);
 }
 
 void Z80::LDAB(){
@@ -1347,7 +1355,7 @@ void Z80::JPmHL(){
 
 void Z80::LDmnnA(){
     std::cout << "LDmnnA" <<std::endl;
-    this->mmu.wb(this->mmu.rb(this->_r.pc) + (this->mmu.rb(this->_r.pc + 1) << 8), this->_r.a);
+    this->mmu.wb(this->mmu.rb(this->_r.pc) | (this->mmu.rb(this->_r.pc + 1) << 8), this->_r.a);
     this->_r.pc += 2;
 }
 

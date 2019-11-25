@@ -30,7 +30,7 @@ void Z80::exec(){
                     counter--;
                     continue;
                 }
-                std::cout << "p = print mem, x = continue, # = # of steps to continue, n = next instruction";
+                std::cout << "p = print mem, x = continue, # = # of steps to continue, n = next instruction\n";
                 char* choice;
                 std::cin >> *choice;
                 switch(*choice){

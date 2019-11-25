@@ -42,6 +42,9 @@ void Z80::exec(){
                     case 'x':
                         cont = true;
                         break;
+                    case 'r':
+                        this->reset();
+                        break;
                     default:
                         counter = atoi(x);
                 }

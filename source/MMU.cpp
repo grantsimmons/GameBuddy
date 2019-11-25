@@ -208,20 +208,38 @@ void MMU::dump_mem(){
                 std::cout << std::endl;
         }
     }
-    //for(uint8_t i : this->_rom){
-    //    std::cout << i << std::endl;
-    //}
-    //for(uint8_t i : this->_eram){
-    //    std::cout << i << std::endl;
-    //}
-    //for(uint8_t i : this->_wram){
-    //    std::cout << i << std::endl;
-    //}
-    //for(uint8_t i : this->_zram){
-    //    std::cout << i << std::endl;
-    //}
-    //for(uint8_t i : this->memory){
-    //    std::cout << i << std::endl;
-    //}
+    printf("\n");
+    counter = 0;
+    std::cout << "ROM" << std::endl;
+    for(uint8_t i : this->_rom){
+        if (i != 0){
+            printf("%02x ", i);
+            counter++;
+            if (counter % 16 == 0)
+                std::cout << std::endl;
+        }
+    }
+    printf("\n");
+    counter = 0;
+    std::cout << "ERAM" << std::endl;
+    for(uint8_t i : this->_eram){
+        if (i != 0){
+            printf("%02x ", i);
+            counter++;
+            if (counter % 16 == 0)
+                std::cout << std::endl;
+        }
+    }
+    printf("\n");
+    counter = 0;
+    std::cout << "Memory" << std::endl;
+    for(uint8_t i : this->memory){
+        if (i != 0){
+            printf("%02x ", i);
+            counter++;
+            if (counter % 16 == 0)
+                std::cout << std::endl;
+        }
+    }
 
 }

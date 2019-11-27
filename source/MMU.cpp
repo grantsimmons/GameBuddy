@@ -175,39 +175,30 @@ void MMU::dump_mem(){
     int counter = 0;
     std::cout << "BIOS" << std::endl;
     for(uint8_t i : _bios){
+        printf("%02x ", i);
+        counter++;
+        if (counter % 16 == 0)
+            std::cout << std::endl;
+    }
+    printf("\n");
+    counter = 0;
+    std::cout << "WRAM" << std::endl;
+    for(uint8_t i : _wram){
         if (i != 0){
             printf("%02x ", i);
             counter++;
             if (counter % 16 == 0)
                 std::cout << std::endl;
         }
-        //std::cout << i << std::endl;
-        //if(i % 0x20 == 0){
-        //    printf("\n0x%04x: ", i);
-        //}
-        //printf("%02x ", _bios[i]);
-    }
-    printf("\n");
-    counter = 0;
-    std::cout << "WRAM" << std::endl;
-    for(uint8_t i : _wram){
-        //if (i != 0){
-            printf("%02x ", i);
-            counter++;
-            if (counter % 16 == 0)
-                std::cout << std::endl;
-        //}
     }
     printf("\n");
     counter = 0;
     std::cout << "ZRAM" << std::endl;
     for(uint8_t i : _zram){
-        //if (i != 0){
-            printf("%02x ", i);
-            counter++;
-            if (counter % 16 == 0)
-                std::cout << std::endl;
-        //}
+        printf("%02x ", i);
+        counter++;
+        if (counter % 16 == 0)
+            std::cout << std::endl;
     }
     printf("\n");
     counter = 0;

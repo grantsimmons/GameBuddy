@@ -120,20 +120,21 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     counter += 1
                 
                 inc8 = INC8.search(line)
-                if inc8:
+                if inc8: #Flags
                     match = True
                     print("Inc 8 bit")
                     out_file.write('    this->_r.{} += 1;\n'.format(inc8.group(1).lower()))
-                    out_file.write('    //Set OF, Z, etc.\n')
+                    out_file.write('    this->_r.f = (this->_r.f | (this->_r.{} == 0 ? ZERO : 0) | (this->_r.{} & 0x1F == 0x10 ? HALF_CARRY : 0)) & ~(ADD_SUB);\n'.format(inc8.group(1).lower(), inc8.group(1).lower()))
                     counter += 1
 
                 dec8 = DEC8.search(line)
-                if dec8:
+                if dec8: #Flags
                     match = True
                     print("Dec 8 bit")
                     out_file.write('    this->_r.{} -= 1;\n'.format(dec8.group(1).lower()))
                     out_file.write('    this->_r.f = this->_r.{} == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);\n'.format(dec8.group(1).lower()))
-                    out_file.write('    //Set UF, Z, etc.\n')
+                    out_file.write('    this->_r.f = this->_r.{} & 0x1F == 0x0F ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY));\n'.format(dec8.group(1).lower()))
+                    out_file.write('    this->_r.f |= ADD_SUB;\n')
                     counter += 1
 
                 inc16 = INC16.search(line)
@@ -229,7 +230,7 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     counter += 1
 
                 cp = CP.search(line)
-                if cp:
+                if cp: #Flags
                     match = True
                     print("Compare")
                     if cp.group(1) == 'n':
@@ -245,27 +246,24 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     #TODO: Check half-carry
                     counter += 1
 
-
-
                 adda = ADDA.search(line)
-                if adda:
-                    #FIXME: Carry currently sucks here
+                if adda: #Flags
                     match = True
                     print("Accumulator add")
                     if adda.group(1) != 'mHL' and adda.group(1) != 'n':
-                        out_file.write('    this->_r.f = ((this->_r.a + this->_r.{}) >> 8) & 0x1;\n'.format(adda.group(1).lower()))
-                        out_file.write('    this->_r.a += this->_r.{};\n'.format(adda.group(1).lower()))
-                        out_file.write('    this->_r.a &= 0xFF;\n')
+                        val = '_r.{}'.format(adda.group(1).lower())
                     elif adda.group(1) == 'mHL':
-                        out_file.write('    this->_r.f = ((this->_r.a + this->mmu.rb(this->_r.h << 8 + this->_r.l)) >> 8) & 0x1;\n')
-                        out_file.write('    this->_r.a += this->mmu.rb(this->_r.h << 8 + this->_r.l);\n')
-                        out_file.write('    this->_r.a &= 0xFF;\n')
+                        val = 'mmu.rb(this->_r.h << 8 | this->_r.l)'
                     elif adda.group(1) == 'n':
-                        out_file.write('    this->_r.f = (this->_r.a + this->mmu.rb(this->_r.pc) >> 8) & 0x1;\n')
-                        out_file.write('    this->_r.a += this->mmu.rb(this->_r.pc);\n')
-                        out_file.write('    this->_r.a &= 0xFF;\n')
+                        val = 'mmu.rb(this->_r.pc)'
+                    out_file.write('    this->_r.f = this->_r.a + this->{} > 0xFF ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY)); //Carry flag\n'.format(val))
+                    out_file.write('    this->_r.f = ((this->_r.a & 0xF) + (this->{} & 0xF)) & 0x10 ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY)); //Half-Carry flag\n'.format(val))
+                    out_file.write('    this->_r.f &= ~(ADD_SUB); //Clear Add_Sub flag;\n')
+                    out_file.write('    this->_r.a += this->{};\n'.format(val))
+                    out_file.write('    this->_r.a &= 0xFF;\n')
+                    out_file.write('    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));\n')
+                    if adda.group(1) == 'n':
                         out_file.write('    this->_r.pc += 1;\n')
-                    out_file.write('    //Set 0, OF (above), etc.\n')
                     counter += 1
 
                 add16 = ADD16.search(line)
@@ -279,58 +277,71 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     counter += 1
                 
                 adc = ADC.search(line)
-                if adc:
+                if adc: #Flags
                     match = True
                     print("Add with carry")
-                    if adc.group(1) == 'n':
-                        out_file.write('    this->_r.a = this->_r.a + this->mmu.rb(this->_r.pc) + (this->_r.f & CARRY);\n')
+                    if adc.group(1) != 'mHL' and adc.group(1) != 'n':
+                        val = '_r.{}'.format(adc.group(1).lower())
                     elif adc.group(1) == 'mHL':
-                        out_file.write('    this->_r.a = this->_r.a + this->mmu.rb(this->_r.h << 8 + this->_r.l) + (this->_r.f & CARRY);\n')
+                        val = 'mmu.rb(this->_r.h << 8 | this->_r.l)'
+                    elif adc.group(1) == 'n':
+                        val = 'mmu.rb(this->_r.pc)'
+                    out_file.write('    this->_r.f = this->_r.a + this->{} + (this->_r.f & CARRY ? 1 : 0) > 0xFF ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY)); //Carry flag\n'.format(val))
+                    out_file.write('    this->_r.f = ((this->_r.a & 0xF) + (this->{} & 0xF) + (this->_r.f & CARRY ? 1 : 0)) & 0x10 ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY)); //Half-Carry flag\n'.format(val))
+                    out_file.write('    this->_r.f &= ~(ADD_SUB); //Clear Add_Sub flag;\n')
+                    out_file.write('    this->_r.a += this->{} + (this->_r.f & CARRY ? 1 : 0);\n'.format(val))
+                    out_file.write('    this->_r.a &= 0xFF;\n')
+                    out_file.write('    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));\n')
+                    if adc.group(1) == 'n':
                         out_file.write('    this->_r.pc += 1;\n')
-                    else:
-                        out_file.write('    this->_r.a = this->_r.a + this->_r.{} + (this->_r.f & CARRY);\n'.format(adc.group(1).lower()))
                     counter += 1
 
                 anda = AND.search(line)
-                if anda:
+                if anda: #Flags
                     match = True
                     print("Accumulator and")
                     if anda.group(1) != 'mHL' and anda.group(1) != 'n':
-                        out_file.write('    this->_r.a &= this->_r.{};\n'.format(anda.group(1).lower()))
+                        val = '_r.{}'.format(anda.group(1).lower())
                     elif anda.group(1) == 'mHL':
-                        out_file.write('    this->_r.a &= this->mmu.rb(this->_r.h << 8 + this->_r.l);\n')
+                        val = 'mmu.rb(this->_r.h << 8 | this->_r.l)'
                     elif anda.group(1) == 'n':
-                        out_file.write('    this->_r.a &= this->mmu.rb(this->_r.pc);\n')
+                        val = 'mmu.rb(this->_r.pc)'
+                    out_file.write('    this->_r.a &= this->{};\n'.format(val))
+                    out_file.write('    this->_r.f = HALF_CARRY | this->_r.a == 0 ? ZERO : 0;\n')
+                    if anda.group(1) == 'n':
                         out_file.write('    this->_r.pc += 1;\n')
-                    out_file.write('    //Set 0, carry, etc.\n')
                     counter += 1
 
                 xora = XOR.search(line)
-                if xora:
+                if xora: #Flags
                     match = True
                     print("Accumulator xor")
                     if xora.group(1) != 'mHL' and xora.group(1) != 'n':
-                        out_file.write('    this->_r.a ^= this->_r.{};\n'.format(xora.group(1).lower()))
+                        val = '_r.{}'.format(xora.group(1).lower())
                     elif xora.group(1) == 'mHL':
-                        out_file.write('    this->_r.a ^= this->mmu.rb(this->_r.h << 8 + this->_r.l);\n')
+                        val = 'mmu.rb(this->_r.h << 8 | this->_r.l)'
                     elif xora.group(1) == 'n':
-                        out_file.write('    this->_r.a ^= this->mmu.rb(this->_r.pc);\n')
+                        val = 'mmu.rb(this->_r.pc)'
+                    out_file.write('    this->_r.a ^= this->{};\n'.format(val))
+                    out_file.write('    this->_r.f = this->_r.a == 0 ? ZERO : 0;\n')
+                    if xora.group(1) == 'n':
                         out_file.write('    this->_r.pc += 1;\n')
-                    out_file.write('    //Set 0, carry, etc.\n')
                     counter += 1
 
                 ora = OR.search(line)
-                if ora:
+                if ora: #Flags
                     match = True
                     print("Accumulator xor")
                     if ora.group(1) != 'mHL' and ora.group(1) != 'n':
-                        out_file.write('    this->_r.a |= this->_r.{};\n'.format(ora.group(1).lower()))
+                        val = '_r.{}'.format(ora.group(1).lower())
                     elif ora.group(1) == 'mHL':
-                        out_file.write('    this->_r.a |= this->mmu.rb(this->_r.h << 8 + this->_r.l);\n')
+                        val = 'mmu.rb(this->_r.h << 8 | this->_r.l)'
                     elif ora.group(1) == 'n':
-                        out_file.write('    this->_r.a |= this->mmu.rb(this->_r.pc);\n')
+                        val = 'mmu.rb(this->_r.pc)'
+                    out_file.write('    this->_r.a |= this->{};\n'.format(val))
+                    out_file.write('    this->_r.f = this->_r.a == 0 ? ZERO : 0;\n')
+                    if ora.group(1) == 'n':
                         out_file.write('    this->_r.pc += 1;\n')
-                    out_file.write('    //Set 0, carry, etc.\n')
                     counter += 1
 
                 push = PUSH.search(line)
@@ -503,28 +514,34 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
 
                 ebit = EXT_BIT.search(line)
                 if ebit:
+                    match = True
+                    print("Extension Test Bit")
                     if ebit.group(2) != 'mHL':
-                        match = True
-                        print("Extension Test Bit")
                         out_file.write('    this->_r.f = (this->_r.{} & (1<<{})) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));\n'.format(ebit.group(2).lower(), ebit.group(1)))
-                        counter2 += 1
+                    else:
+                        out_file.write('    this->_r.f = (this->mmu.rb(this->_r.h << 8 | this->_r.l) & (1<<{})) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));\n'.format(ebit.group(1).lower()))
+                    counter2 += 1
 
                 eres = EXT_RES.search(line)
                 if eres:
+                    match = True
+                    print("Extension Reset Bit")
                     if eres.group(2) != 'mHL':
-                        match = True
-                        print("Extension Reset Bit")
                         out_file.write('    this->_r.{} &= ~(1<<{});\n'.format(eres.group(2).lower(), eres.group(1).lower()))
-                        counter2 += 1
+                    else:
+                        out_file.write('    this->mmu.wb((this->_r.h << 8 | this->_r.l), (this->mmu.rb(this->_r.h << 8 | this->_r.l) & ~(1<<{})));\n'.format(eres.group(1).lower()))                        
+                    counter2 += 1
                 
 
                 eset = EXT_SET.search(line)
                 if eset:
+                    match = True
+                    print("Extension Set Bit")
                     if eset.group(2) != 'mHL':
-                        match = True
-                        print("Extension Set Bit")
                         out_file.write('    this->_r.{} |= (1<<{});\n'.format(eset.group(2).lower(), eset.group(1).lower()))
-                        counter2 += 1
+                    else:
+                        out_file.write('    this->mmu.wb((this->_r.h << 8 | this->_r.l), (this->mmu.rb(this->_r.h << 8 | this->_r.l) | (1<<{})));\n'.format(eset.group(1).lower()))                        
+                    counter2 += 1
 
                 if not match:    
                     out_file.write('    std::cout << "Uncovered Function" << std::endl;\n')

@@ -35,14 +35,15 @@ void Z80::INCBC(){
 void Z80::INCB(){
     std::cout << "INCB" <<std::endl;
     this->_r.b += 1;
-    //Set OF, Z, etc.
+    this->_r.f = (this->_r.f | (this->_r.b == 0 ? ZERO : 0) | (this->_r.b & 0x1F == 0x10 ? HALF_CARRY : 0)) & ~(ADD_SUB);
 }
 
 void Z80::DECB(){
     std::cout << "DECB" <<std::endl;
     this->_r.b -= 1;
     this->_r.f = this->_r.b == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);
-    //Set UF, Z, etc.
+    this->_r.f = this->_r.b & 0x1F == 0x0F ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY));
+    this->_r.f |= ADD_SUB;
 }
 
 void Z80::LDBn(){
@@ -83,14 +84,15 @@ void Z80::DECBC(){
 void Z80::INCC(){
     std::cout << "INCC" <<std::endl;
     this->_r.c += 1;
-    //Set OF, Z, etc.
+    this->_r.f = (this->_r.f | (this->_r.c == 0 ? ZERO : 0) | (this->_r.c & 0x1F == 0x10 ? HALF_CARRY : 0)) & ~(ADD_SUB);
 }
 
 void Z80::DECC(){
     std::cout << "DECC" <<std::endl;
     this->_r.c -= 1;
     this->_r.f = this->_r.c == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);
-    //Set UF, Z, etc.
+    this->_r.f = this->_r.c & 0x1F == 0x0F ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY));
+    this->_r.f |= ADD_SUB;
 }
 
 void Z80::LDCn(){
@@ -131,14 +133,15 @@ void Z80::INCDE(){
 void Z80::INCD(){
     std::cout << "INCD" <<std::endl;
     this->_r.d += 1;
-    //Set OF, Z, etc.
+    this->_r.f = (this->_r.f | (this->_r.d == 0 ? ZERO : 0) | (this->_r.d & 0x1F == 0x10 ? HALF_CARRY : 0)) & ~(ADD_SUB);
 }
 
 void Z80::DECD(){
     std::cout << "DECD" <<std::endl;
     this->_r.d -= 1;
     this->_r.f = this->_r.d == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);
-    //Set UF, Z, etc.
+    this->_r.f = this->_r.d & 0x1F == 0x0F ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY));
+    this->_r.f |= ADD_SUB;
 }
 
 void Z80::LDDn(){
@@ -180,14 +183,15 @@ void Z80::DECDE(){
 void Z80::INCE(){
     std::cout << "INCE" <<std::endl;
     this->_r.e += 1;
-    //Set OF, Z, etc.
+    this->_r.f = (this->_r.f | (this->_r.e == 0 ? ZERO : 0) | (this->_r.e & 0x1F == 0x10 ? HALF_CARRY : 0)) & ~(ADD_SUB);
 }
 
 void Z80::DECE(){
     std::cout << "DECE" <<std::endl;
     this->_r.e -= 1;
     this->_r.f = this->_r.e == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);
-    //Set UF, Z, etc.
+    this->_r.f = this->_r.e & 0x1F == 0x0F ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY));
+    this->_r.f |= ADD_SUB;
 }
 
 void Z80::LDEn(){
@@ -230,14 +234,15 @@ void Z80::INCHL(){
 void Z80::INCH(){
     std::cout << "INCH" <<std::endl;
     this->_r.h += 1;
-    //Set OF, Z, etc.
+    this->_r.f = (this->_r.f | (this->_r.h == 0 ? ZERO : 0) | (this->_r.h & 0x1F == 0x10 ? HALF_CARRY : 0)) & ~(ADD_SUB);
 }
 
 void Z80::DECH(){
     std::cout << "DECH" <<std::endl;
     this->_r.h -= 1;
     this->_r.f = this->_r.h == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);
-    //Set UF, Z, etc.
+    this->_r.f = this->_r.h & 0x1F == 0x0F ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY));
+    this->_r.f |= ADD_SUB;
 }
 
 void Z80::LDHn(){
@@ -279,14 +284,15 @@ void Z80::DECHL(){
 void Z80::INCL(){
     std::cout << "INCL" <<std::endl;
     this->_r.l += 1;
-    //Set OF, Z, etc.
+    this->_r.f = (this->_r.f | (this->_r.l == 0 ? ZERO : 0) | (this->_r.l & 0x1F == 0x10 ? HALF_CARRY : 0)) & ~(ADD_SUB);
 }
 
 void Z80::DECL(){
     std::cout << "DECL" <<std::endl;
     this->_r.l -= 1;
     this->_r.f = this->_r.l == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);
-    //Set UF, Z, etc.
+    this->_r.f = this->_r.l & 0x1F == 0x0F ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY));
+    this->_r.f |= ADD_SUB;
 }
 
 void Z80::LDLn(){
@@ -374,14 +380,15 @@ void Z80::DECSP(){
 void Z80::INCA(){
     std::cout << "INCA" <<std::endl;
     this->_r.a += 1;
-    //Set OF, Z, etc.
+    this->_r.f = (this->_r.f | (this->_r.a == 0 ? ZERO : 0) | (this->_r.a & 0x1F == 0x10 ? HALF_CARRY : 0)) & ~(ADD_SUB);
 }
 
 void Z80::DECA(){
     std::cout << "DECA" <<std::endl;
     this->_r.a -= 1;
     this->_r.f = this->_r.a == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);
-    //Set UF, Z, etc.
+    this->_r.f = this->_r.a & 0x1F == 0x0F ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY));
+    this->_r.f |= ADD_SUB;
 }
 
 void Z80::LDAn(){
@@ -717,107 +724,162 @@ void Z80::LDAA(){
 
 void Z80::ADDAB(){
     std::cout << "ADDAB" <<std::endl;
-    this->_r.f = ((this->_r.a + this->_r.b) >> 8) & 0x1;
+    this->_r.f = this->_r.a + this->_r.b > 0xFF ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY)); //Carry flag
+    this->_r.f = ((this->_r.a & 0xF) + (this->_r.b & 0xF)) & 0x10 ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY)); //Half-Carry flag
+    this->_r.f &= ~(ADD_SUB); //Clear Add_Sub flag;
     this->_r.a += this->_r.b;
     this->_r.a &= 0xFF;
-    //Set 0, OF (above), etc.
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::ADDAC(){
     std::cout << "ADDAC" <<std::endl;
-    this->_r.f = ((this->_r.a + this->_r.c) >> 8) & 0x1;
+    this->_r.f = this->_r.a + this->_r.c > 0xFF ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY)); //Carry flag
+    this->_r.f = ((this->_r.a & 0xF) + (this->_r.c & 0xF)) & 0x10 ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY)); //Half-Carry flag
+    this->_r.f &= ~(ADD_SUB); //Clear Add_Sub flag;
     this->_r.a += this->_r.c;
     this->_r.a &= 0xFF;
-    //Set 0, OF (above), etc.
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::ADDAD(){
     std::cout << "ADDAD" <<std::endl;
-    this->_r.f = ((this->_r.a + this->_r.d) >> 8) & 0x1;
+    this->_r.f = this->_r.a + this->_r.d > 0xFF ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY)); //Carry flag
+    this->_r.f = ((this->_r.a & 0xF) + (this->_r.d & 0xF)) & 0x10 ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY)); //Half-Carry flag
+    this->_r.f &= ~(ADD_SUB); //Clear Add_Sub flag;
     this->_r.a += this->_r.d;
     this->_r.a &= 0xFF;
-    //Set 0, OF (above), etc.
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::ADDAE(){
     std::cout << "ADDAE" <<std::endl;
-    this->_r.f = ((this->_r.a + this->_r.e) >> 8) & 0x1;
+    this->_r.f = this->_r.a + this->_r.e > 0xFF ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY)); //Carry flag
+    this->_r.f = ((this->_r.a & 0xF) + (this->_r.e & 0xF)) & 0x10 ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY)); //Half-Carry flag
+    this->_r.f &= ~(ADD_SUB); //Clear Add_Sub flag;
     this->_r.a += this->_r.e;
     this->_r.a &= 0xFF;
-    //Set 0, OF (above), etc.
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::ADDAH(){
     std::cout << "ADDAH" <<std::endl;
-    this->_r.f = ((this->_r.a + this->_r.h) >> 8) & 0x1;
+    this->_r.f = this->_r.a + this->_r.h > 0xFF ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY)); //Carry flag
+    this->_r.f = ((this->_r.a & 0xF) + (this->_r.h & 0xF)) & 0x10 ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY)); //Half-Carry flag
+    this->_r.f &= ~(ADD_SUB); //Clear Add_Sub flag;
     this->_r.a += this->_r.h;
     this->_r.a &= 0xFF;
-    //Set 0, OF (above), etc.
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::ADDAL(){
     std::cout << "ADDAL" <<std::endl;
-    this->_r.f = ((this->_r.a + this->_r.l) >> 8) & 0x1;
+    this->_r.f = this->_r.a + this->_r.l > 0xFF ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY)); //Carry flag
+    this->_r.f = ((this->_r.a & 0xF) + (this->_r.l & 0xF)) & 0x10 ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY)); //Half-Carry flag
+    this->_r.f &= ~(ADD_SUB); //Clear Add_Sub flag;
     this->_r.a += this->_r.l;
     this->_r.a &= 0xFF;
-    //Set 0, OF (above), etc.
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::ADDAmHL(){
     std::cout << "ADDAmHL" <<std::endl;
-    this->_r.f = ((this->_r.a + this->mmu.rb(this->_r.h << 8 + this->_r.l)) >> 8) & 0x1;
-    this->_r.a += this->mmu.rb(this->_r.h << 8 + this->_r.l);
+    this->_r.f = this->_r.a + this->mmu.rb(this->_r.h << 8 | this->_r.l) > 0xFF ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY)); //Carry flag
+    this->_r.f = ((this->_r.a & 0xF) + (this->mmu.rb(this->_r.h << 8 | this->_r.l) & 0xF)) & 0x10 ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY)); //Half-Carry flag
+    this->_r.f &= ~(ADD_SUB); //Clear Add_Sub flag;
+    this->_r.a += this->mmu.rb(this->_r.h << 8 | this->_r.l);
     this->_r.a &= 0xFF;
-    //Set 0, OF (above), etc.
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::ADDAA(){
     std::cout << "ADDAA" <<std::endl;
-    this->_r.f = ((this->_r.a + this->_r.a) >> 8) & 0x1;
+    this->_r.f = this->_r.a + this->_r.a > 0xFF ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY)); //Carry flag
+    this->_r.f = ((this->_r.a & 0xF) + (this->_r.a & 0xF)) & 0x10 ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY)); //Half-Carry flag
+    this->_r.f &= ~(ADD_SUB); //Clear Add_Sub flag;
     this->_r.a += this->_r.a;
     this->_r.a &= 0xFF;
-    //Set 0, OF (above), etc.
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::ADCAB(){
     std::cout << "ADCAB" <<std::endl;
-    this->_r.a = this->_r.a + this->_r.b + (this->_r.f & CARRY);
+    this->_r.f = this->_r.a + this->_r.b + (this->_r.f & CARRY ? 1 : 0) > 0xFF ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY)); //Carry flag
+    this->_r.f = ((this->_r.a & 0xF) + (this->_r.b & 0xF) + (this->_r.f & CARRY ? 1 : 0)) & 0x10 ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY)); //Half-Carry flag
+    this->_r.f &= ~(ADD_SUB); //Clear Add_Sub flag;
+    this->_r.a += this->_r.b + (this->_r.f & CARRY ? 1 : 0);
+    this->_r.a &= 0xFF;
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::ADCAC(){
     std::cout << "ADCAC" <<std::endl;
-    this->_r.a = this->_r.a + this->_r.c + (this->_r.f & CARRY);
+    this->_r.f = this->_r.a + this->_r.c + (this->_r.f & CARRY ? 1 : 0) > 0xFF ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY)); //Carry flag
+    this->_r.f = ((this->_r.a & 0xF) + (this->_r.c & 0xF) + (this->_r.f & CARRY ? 1 : 0)) & 0x10 ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY)); //Half-Carry flag
+    this->_r.f &= ~(ADD_SUB); //Clear Add_Sub flag;
+    this->_r.a += this->_r.c + (this->_r.f & CARRY ? 1 : 0);
+    this->_r.a &= 0xFF;
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::ADCAD(){
     std::cout << "ADCAD" <<std::endl;
-    this->_r.a = this->_r.a + this->_r.d + (this->_r.f & CARRY);
+    this->_r.f = this->_r.a + this->_r.d + (this->_r.f & CARRY ? 1 : 0) > 0xFF ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY)); //Carry flag
+    this->_r.f = ((this->_r.a & 0xF) + (this->_r.d & 0xF) + (this->_r.f & CARRY ? 1 : 0)) & 0x10 ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY)); //Half-Carry flag
+    this->_r.f &= ~(ADD_SUB); //Clear Add_Sub flag;
+    this->_r.a += this->_r.d + (this->_r.f & CARRY ? 1 : 0);
+    this->_r.a &= 0xFF;
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::ADCAE(){
     std::cout << "ADCAE" <<std::endl;
-    this->_r.a = this->_r.a + this->_r.e + (this->_r.f & CARRY);
+    this->_r.f = this->_r.a + this->_r.e + (this->_r.f & CARRY ? 1 : 0) > 0xFF ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY)); //Carry flag
+    this->_r.f = ((this->_r.a & 0xF) + (this->_r.e & 0xF) + (this->_r.f & CARRY ? 1 : 0)) & 0x10 ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY)); //Half-Carry flag
+    this->_r.f &= ~(ADD_SUB); //Clear Add_Sub flag;
+    this->_r.a += this->_r.e + (this->_r.f & CARRY ? 1 : 0);
+    this->_r.a &= 0xFF;
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::ADCAH(){
     std::cout << "ADCAH" <<std::endl;
-    this->_r.a = this->_r.a + this->_r.h + (this->_r.f & CARRY);
+    this->_r.f = this->_r.a + this->_r.h + (this->_r.f & CARRY ? 1 : 0) > 0xFF ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY)); //Carry flag
+    this->_r.f = ((this->_r.a & 0xF) + (this->_r.h & 0xF) + (this->_r.f & CARRY ? 1 : 0)) & 0x10 ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY)); //Half-Carry flag
+    this->_r.f &= ~(ADD_SUB); //Clear Add_Sub flag;
+    this->_r.a += this->_r.h + (this->_r.f & CARRY ? 1 : 0);
+    this->_r.a &= 0xFF;
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::ADCAL(){
     std::cout << "ADCAL" <<std::endl;
-    this->_r.a = this->_r.a + this->_r.l + (this->_r.f & CARRY);
+    this->_r.f = this->_r.a + this->_r.l + (this->_r.f & CARRY ? 1 : 0) > 0xFF ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY)); //Carry flag
+    this->_r.f = ((this->_r.a & 0xF) + (this->_r.l & 0xF) + (this->_r.f & CARRY ? 1 : 0)) & 0x10 ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY)); //Half-Carry flag
+    this->_r.f &= ~(ADD_SUB); //Clear Add_Sub flag;
+    this->_r.a += this->_r.l + (this->_r.f & CARRY ? 1 : 0);
+    this->_r.a &= 0xFF;
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::ADCAmHL(){
     std::cout << "ADCAmHL" <<std::endl;
-    this->_r.a = this->_r.a + this->mmu.rb(this->_r.h << 8 + this->_r.l) + (this->_r.f & CARRY);
-    this->_r.pc += 1;
+    this->_r.f = this->_r.a + this->mmu.rb(this->_r.h << 8 | this->_r.l) + (this->_r.f & CARRY ? 1 : 0) > 0xFF ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY)); //Carry flag
+    this->_r.f = ((this->_r.a & 0xF) + (this->mmu.rb(this->_r.h << 8 | this->_r.l) & 0xF) + (this->_r.f & CARRY ? 1 : 0)) & 0x10 ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY)); //Half-Carry flag
+    this->_r.f &= ~(ADD_SUB); //Clear Add_Sub flag;
+    this->_r.a += this->mmu.rb(this->_r.h << 8 | this->_r.l) + (this->_r.f & CARRY ? 1 : 0);
+    this->_r.a &= 0xFF;
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::ADCAA(){
     std::cout << "ADCAA" <<std::endl;
-    this->_r.a = this->_r.a + this->_r.a + (this->_r.f & CARRY);
+    this->_r.f = this->_r.a + this->_r.a + (this->_r.f & CARRY ? 1 : 0) > 0xFF ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY)); //Carry flag
+    this->_r.f = ((this->_r.a & 0xF) + (this->_r.a & 0xF) + (this->_r.f & CARRY ? 1 : 0)) & 0x10 ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY)); //Half-Carry flag
+    this->_r.f &= ~(ADD_SUB); //Clear Add_Sub flag;
+    this->_r.a += this->_r.a + (this->_r.f & CARRY ? 1 : 0);
+    this->_r.a &= 0xFF;
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::SUBAB(){
@@ -903,145 +965,145 @@ void Z80::SBCAA(){
 void Z80::ANDB(){
     std::cout << "ANDB" <<std::endl;
     this->_r.a &= this->_r.b;
-    //Set 0, carry, etc.
+    this->_r.f = HALF_CARRY | this->_r.a == 0 ? ZERO : 0;
 }
 
 void Z80::ANDC(){
     std::cout << "ANDC" <<std::endl;
     this->_r.a &= this->_r.c;
-    //Set 0, carry, etc.
+    this->_r.f = HALF_CARRY | this->_r.a == 0 ? ZERO : 0;
 }
 
 void Z80::ANDD(){
     std::cout << "ANDD" <<std::endl;
     this->_r.a &= this->_r.d;
-    //Set 0, carry, etc.
+    this->_r.f = HALF_CARRY | this->_r.a == 0 ? ZERO : 0;
 }
 
 void Z80::ANDE(){
     std::cout << "ANDE" <<std::endl;
     this->_r.a &= this->_r.e;
-    //Set 0, carry, etc.
+    this->_r.f = HALF_CARRY | this->_r.a == 0 ? ZERO : 0;
 }
 
 void Z80::ANDH(){
     std::cout << "ANDH" <<std::endl;
     this->_r.a &= this->_r.h;
-    //Set 0, carry, etc.
+    this->_r.f = HALF_CARRY | this->_r.a == 0 ? ZERO : 0;
 }
 
 void Z80::ANDL(){
     std::cout << "ANDL" <<std::endl;
     this->_r.a &= this->_r.l;
-    //Set 0, carry, etc.
+    this->_r.f = HALF_CARRY | this->_r.a == 0 ? ZERO : 0;
 }
 
 void Z80::ANDmHL(){
     std::cout << "ANDmHL" <<std::endl;
-    this->_r.a &= this->mmu.rb(this->_r.h << 8 + this->_r.l);
-    //Set 0, carry, etc.
+    this->_r.a &= this->mmu.rb(this->_r.h << 8 | this->_r.l);
+    this->_r.f = HALF_CARRY | this->_r.a == 0 ? ZERO : 0;
 }
 
 void Z80::ANDA(){
     std::cout << "ANDA" <<std::endl;
     this->_r.a &= this->_r.a;
-    //Set 0, carry, etc.
+    this->_r.f = HALF_CARRY | this->_r.a == 0 ? ZERO : 0;
 }
 
 void Z80::XORB(){
     std::cout << "XORB" <<std::endl;
     this->_r.a ^= this->_r.b;
-    //Set 0, carry, etc.
+    this->_r.f = this->_r.a == 0 ? ZERO : 0;
 }
 
 void Z80::XORC(){
     std::cout << "XORC" <<std::endl;
     this->_r.a ^= this->_r.c;
-    //Set 0, carry, etc.
+    this->_r.f = this->_r.a == 0 ? ZERO : 0;
 }
 
 void Z80::XORD(){
     std::cout << "XORD" <<std::endl;
     this->_r.a ^= this->_r.d;
-    //Set 0, carry, etc.
+    this->_r.f = this->_r.a == 0 ? ZERO : 0;
 }
 
 void Z80::XORE(){
     std::cout << "XORE" <<std::endl;
     this->_r.a ^= this->_r.e;
-    //Set 0, carry, etc.
+    this->_r.f = this->_r.a == 0 ? ZERO : 0;
 }
 
 void Z80::XORH(){
     std::cout << "XORH" <<std::endl;
     this->_r.a ^= this->_r.h;
-    //Set 0, carry, etc.
+    this->_r.f = this->_r.a == 0 ? ZERO : 0;
 }
 
 void Z80::XORL(){
     std::cout << "XORL" <<std::endl;
     this->_r.a ^= this->_r.l;
-    //Set 0, carry, etc.
+    this->_r.f = this->_r.a == 0 ? ZERO : 0;
 }
 
 void Z80::XORmHL(){
     std::cout << "XORmHL" <<std::endl;
-    this->_r.a ^= this->mmu.rb(this->_r.h << 8 + this->_r.l);
-    //Set 0, carry, etc.
+    this->_r.a ^= this->mmu.rb(this->_r.h << 8 | this->_r.l);
+    this->_r.f = this->_r.a == 0 ? ZERO : 0;
 }
 
 void Z80::XORA(){
     std::cout << "XORA" <<std::endl;
     this->_r.a ^= this->_r.a;
-    //Set 0, carry, etc.
+    this->_r.f = this->_r.a == 0 ? ZERO : 0;
 }
 
 void Z80::ORB(){
     std::cout << "ORB" <<std::endl;
     this->_r.a |= this->_r.b;
-    //Set 0, carry, etc.
+    this->_r.f = this->_r.a == 0 ? ZERO : 0;
 }
 
 void Z80::ORC(){
     std::cout << "ORC" <<std::endl;
     this->_r.a |= this->_r.c;
-    //Set 0, carry, etc.
+    this->_r.f = this->_r.a == 0 ? ZERO : 0;
 }
 
 void Z80::ORD(){
     std::cout << "ORD" <<std::endl;
     this->_r.a |= this->_r.d;
-    //Set 0, carry, etc.
+    this->_r.f = this->_r.a == 0 ? ZERO : 0;
 }
 
 void Z80::ORE(){
     std::cout << "ORE" <<std::endl;
     this->_r.a |= this->_r.e;
-    //Set 0, carry, etc.
+    this->_r.f = this->_r.a == 0 ? ZERO : 0;
 }
 
 void Z80::ORH(){
     std::cout << "ORH" <<std::endl;
     this->_r.a |= this->_r.h;
-    //Set 0, carry, etc.
+    this->_r.f = this->_r.a == 0 ? ZERO : 0;
 }
 
 void Z80::ORL(){
     std::cout << "ORL" <<std::endl;
     this->_r.a |= this->_r.l;
-    //Set 0, carry, etc.
+    this->_r.f = this->_r.a == 0 ? ZERO : 0;
 }
 
 void Z80::ORmHL(){
     std::cout << "ORmHL" <<std::endl;
-    this->_r.a |= this->mmu.rb(this->_r.h << 8 + this->_r.l);
-    //Set 0, carry, etc.
+    this->_r.a |= this->mmu.rb(this->_r.h << 8 | this->_r.l);
+    this->_r.f = this->_r.a == 0 ? ZERO : 0;
 }
 
 void Z80::ORA(){
     std::cout << "ORA" <<std::endl;
     this->_r.a |= this->_r.a;
-    //Set 0, carry, etc.
+    this->_r.f = this->_r.a == 0 ? ZERO : 0;
 }
 
 void Z80::CPB(){
@@ -1136,11 +1198,13 @@ void Z80::PUSHBC(){
 
 void Z80::ADDAn(){
     std::cout << "ADDAn" <<std::endl;
-    this->_r.f = (this->_r.a + this->mmu.rb(this->_r.pc) >> 8) & 0x1;
+    this->_r.f = this->_r.a + this->mmu.rb(this->_r.pc) > 0xFF ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY)); //Carry flag
+    this->_r.f = ((this->_r.a & 0xF) + (this->mmu.rb(this->_r.pc) & 0xF)) & 0x10 ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY)); //Half-Carry flag
+    this->_r.f &= ~(ADD_SUB); //Clear Add_Sub flag;
     this->_r.a += this->mmu.rb(this->_r.pc);
     this->_r.a &= 0xFF;
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
     this->_r.pc += 1;
-    //Set 0, OF (above), etc.
 }
 
 void Z80::RST0(){
@@ -1193,7 +1257,13 @@ void Z80::CALLnn(){
 
 void Z80::ADCAn(){
     std::cout << "ADCAn" <<std::endl;
-    this->_r.a = this->_r.a + this->mmu.rb(this->_r.pc) + (this->_r.f & CARRY);
+    this->_r.f = this->_r.a + this->mmu.rb(this->_r.pc) + (this->_r.f & CARRY ? 1 : 0) > 0xFF ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY)); //Carry flag
+    this->_r.f = ((this->_r.a & 0xF) + (this->mmu.rb(this->_r.pc) & 0xF) + (this->_r.f & CARRY ? 1 : 0)) & 0x10 ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY)); //Half-Carry flag
+    this->_r.f &= ~(ADD_SUB); //Clear Add_Sub flag;
+    this->_r.a += this->mmu.rb(this->_r.pc) + (this->_r.f & CARRY ? 1 : 0);
+    this->_r.a &= 0xFF;
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+    this->_r.pc += 1;
 }
 
 void Z80::RST8(){
@@ -1340,8 +1410,8 @@ void Z80::PUSHHL(){
 void Z80::ANDn(){
     std::cout << "ANDn" <<std::endl;
     this->_r.a &= this->mmu.rb(this->_r.pc);
+    this->_r.f = HALF_CARRY | this->_r.a == 0 ? ZERO : 0;
     this->_r.pc += 1;
-    //Set 0, carry, etc.
 }
 
 void Z80::RST20(){
@@ -1385,8 +1455,8 @@ void Z80::XX8(){
 void Z80::XORn(){
     std::cout << "XORn" <<std::endl;
     this->_r.a ^= this->mmu.rb(this->_r.pc);
+    this->_r.f = this->_r.a == 0 ? ZERO : 0;
     this->_r.pc += 1;
-    //Set 0, carry, etc.
 }
 
 void Z80::RST28(){
@@ -1432,8 +1502,8 @@ void Z80::PUSHAF(){
 void Z80::ORn(){
     std::cout << "ORn" <<std::endl;
     this->_r.a |= this->mmu.rb(this->_r.pc);
+    this->_r.f = this->_r.a == 0 ? ZERO : 0;
     this->_r.pc += 1;
-    //Set 0, carry, etc.
 }
 
 void Z80::RST30(){
@@ -1889,7 +1959,7 @@ void Z80::EBIT0L(){
 
 void Z80::EBIT0mHL(){
     std::cout << "EBIT0mHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.f = (this->mmu.rb(this->_r.h << 8 | this->_r.l) & (1<<0)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::EBIT0A(){
@@ -1929,7 +1999,7 @@ void Z80::EBIT1L(){
 
 void Z80::EBIT1mHL(){
     std::cout << "EBIT1mHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.f = (this->mmu.rb(this->_r.h << 8 | this->_r.l) & (1<<1)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::EBIT1A(){
@@ -1969,7 +2039,7 @@ void Z80::EBIT2L(){
 
 void Z80::EBIT2mHL(){
     std::cout << "EBIT2mHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.f = (this->mmu.rb(this->_r.h << 8 | this->_r.l) & (1<<2)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::EBIT2A(){
@@ -2009,7 +2079,7 @@ void Z80::EBIT3L(){
 
 void Z80::EBIT3mHL(){
     std::cout << "EBIT3mHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.f = (this->mmu.rb(this->_r.h << 8 | this->_r.l) & (1<<3)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::EBIT3A(){
@@ -2049,7 +2119,7 @@ void Z80::EBIT4L(){
 
 void Z80::EBIT4mHL(){
     std::cout << "EBIT4mHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.f = (this->mmu.rb(this->_r.h << 8 | this->_r.l) & (1<<4)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::EBIT4A(){
@@ -2089,7 +2159,7 @@ void Z80::EBIT5L(){
 
 void Z80::EBIT5mHL(){
     std::cout << "EBIT5mHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.f = (this->mmu.rb(this->_r.h << 8 | this->_r.l) & (1<<5)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::EBIT5A(){
@@ -2129,7 +2199,7 @@ void Z80::EBIT6L(){
 
 void Z80::EBIT6mHL(){
     std::cout << "EBIT6mHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.f = (this->mmu.rb(this->_r.h << 8 | this->_r.l) & (1<<6)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::EBIT6A(){
@@ -2169,7 +2239,7 @@ void Z80::EBIT7L(){
 
 void Z80::EBIT7mHL(){
     std::cout << "EBIT7mHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.f = (this->mmu.rb(this->_r.h << 8 | this->_r.l) & (1<<7)) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::EBIT7A(){
@@ -2209,7 +2279,7 @@ void Z80::ERES0L(){
 
 void Z80::ERES0mHL(){
     std::cout << "ERES0mHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.wb((this->_r.h << 8 | this->_r.l), (this->mmu.rb(this->_r.h << 8 | this->_r.l) & ~(1<<0)));
 }
 
 void Z80::ERES0A(){
@@ -2249,7 +2319,7 @@ void Z80::ERES1L(){
 
 void Z80::ERES1mHL(){
     std::cout << "ERES1mHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.wb((this->_r.h << 8 | this->_r.l), (this->mmu.rb(this->_r.h << 8 | this->_r.l) & ~(1<<1)));
 }
 
 void Z80::ERES1A(){
@@ -2289,7 +2359,7 @@ void Z80::ERES2L(){
 
 void Z80::ERES2mHL(){
     std::cout << "ERES2mHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.wb((this->_r.h << 8 | this->_r.l), (this->mmu.rb(this->_r.h << 8 | this->_r.l) & ~(1<<2)));
 }
 
 void Z80::ERES2A(){
@@ -2329,7 +2399,7 @@ void Z80::ERES3L(){
 
 void Z80::ERES3mHL(){
     std::cout << "ERES3mHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.wb((this->_r.h << 8 | this->_r.l), (this->mmu.rb(this->_r.h << 8 | this->_r.l) & ~(1<<3)));
 }
 
 void Z80::ERES3A(){
@@ -2369,7 +2439,7 @@ void Z80::ERES4L(){
 
 void Z80::ERES4mHL(){
     std::cout << "ERES4mHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.wb((this->_r.h << 8 | this->_r.l), (this->mmu.rb(this->_r.h << 8 | this->_r.l) & ~(1<<4)));
 }
 
 void Z80::ERES4A(){
@@ -2409,7 +2479,7 @@ void Z80::ERES5L(){
 
 void Z80::ERES5mHL(){
     std::cout << "ERES5mHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.wb((this->_r.h << 8 | this->_r.l), (this->mmu.rb(this->_r.h << 8 | this->_r.l) & ~(1<<5)));
 }
 
 void Z80::ERES5A(){
@@ -2449,7 +2519,7 @@ void Z80::ERES6L(){
 
 void Z80::ERES6mHL(){
     std::cout << "ERES6mHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.wb((this->_r.h << 8 | this->_r.l), (this->mmu.rb(this->_r.h << 8 | this->_r.l) & ~(1<<6)));
 }
 
 void Z80::ERES6A(){
@@ -2489,7 +2559,7 @@ void Z80::ERES7L(){
 
 void Z80::ERES7mHL(){
     std::cout << "ERES7mHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.wb((this->_r.h << 8 | this->_r.l), (this->mmu.rb(this->_r.h << 8 | this->_r.l) & ~(1<<7)));
 }
 
 void Z80::ERES7A(){
@@ -2529,7 +2599,7 @@ void Z80::ESET0L(){
 
 void Z80::ESET0mHL(){
     std::cout << "ESET0mHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.wb((this->_r.h << 8 | this->_r.l), (this->mmu.rb(this->_r.h << 8 | this->_r.l) | (1<<0)));
 }
 
 void Z80::ESET0A(){
@@ -2569,7 +2639,7 @@ void Z80::ESET1L(){
 
 void Z80::ESET1mHL(){
     std::cout << "ESET1mHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.wb((this->_r.h << 8 | this->_r.l), (this->mmu.rb(this->_r.h << 8 | this->_r.l) | (1<<1)));
 }
 
 void Z80::ESET1A(){
@@ -2609,7 +2679,7 @@ void Z80::ESET2L(){
 
 void Z80::ESET2mHL(){
     std::cout << "ESET2mHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.wb((this->_r.h << 8 | this->_r.l), (this->mmu.rb(this->_r.h << 8 | this->_r.l) | (1<<2)));
 }
 
 void Z80::ESET2A(){
@@ -2649,7 +2719,7 @@ void Z80::ESET3L(){
 
 void Z80::ESET3mHL(){
     std::cout << "ESET3mHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.wb((this->_r.h << 8 | this->_r.l), (this->mmu.rb(this->_r.h << 8 | this->_r.l) | (1<<3)));
 }
 
 void Z80::ESET3A(){
@@ -2689,7 +2759,7 @@ void Z80::ESET4L(){
 
 void Z80::ESET4mHL(){
     std::cout << "ESET4mHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.wb((this->_r.h << 8 | this->_r.l), (this->mmu.rb(this->_r.h << 8 | this->_r.l) | (1<<4)));
 }
 
 void Z80::ESET4A(){
@@ -2729,7 +2799,7 @@ void Z80::ESET5L(){
 
 void Z80::ESET5mHL(){
     std::cout << "ESET5mHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.wb((this->_r.h << 8 | this->_r.l), (this->mmu.rb(this->_r.h << 8 | this->_r.l) | (1<<5)));
 }
 
 void Z80::ESET5A(){
@@ -2769,7 +2839,7 @@ void Z80::ESET6L(){
 
 void Z80::ESET6mHL(){
     std::cout << "ESET6mHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.wb((this->_r.h << 8 | this->_r.l), (this->mmu.rb(this->_r.h << 8 | this->_r.l) | (1<<6)));
 }
 
 void Z80::ESET6A(){
@@ -2809,7 +2879,7 @@ void Z80::ESET7L(){
 
 void Z80::ESET7mHL(){
     std::cout << "ESET7mHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->mmu.wb((this->_r.h << 8 | this->_r.l), (this->mmu.rb(this->_r.h << 8 | this->_r.l) | (1<<7)));
 }
 
 void Z80::ESET7A(){

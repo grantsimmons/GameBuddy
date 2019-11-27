@@ -33,20 +33,22 @@ void Z80::exec(){
                 std::cout << "p = print mem, x = continue, # = # of steps to continue, n = next instruction\n";
                 char* choice;
                 std::cin >> *choice;
-                switch(*choice){
-                    case 'p':
-                        this->mmu.dump_mem();
-                        std::cin >> *choice;
-                    case 'n':
-                        break;
-                    case 'x':
-                        cont = true;
-                        break;
-                    case 'r':
-                        this->reset();
-                        break;
-                    default:
-                        counter = atoi(choice);
+                if(this->_debug){ //UNIMPLEMENTED
+                    switch(*choice){
+                        case 'p':
+                            this->mmu.dump_mem();
+                            std::cin >> *choice;
+                        case 'n':
+                            break;
+                        case 'x':
+                            cont = true;
+                            break;
+                        case 'r':
+                            this->reset();
+                            break;
+                        default:
+                            counter = atoi(choice);
+                    }
                 }
 
             }
@@ -101,9 +103,3 @@ void Z80::debug(){
         }
     }
 }
-
-//int main(){
-//    z80.status();
-//    z80.exec();
-//    return 1;
-//}

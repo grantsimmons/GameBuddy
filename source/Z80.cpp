@@ -44,13 +44,13 @@ void Z80::exec(){
                             cont = true;
                             break;
                         case 'r':
+                            std::cout << "Resetting..." << std::endl;
                             this->reset();
                             break;
                         default:
                             counter = atoi(choice);
                     }
                 }
-
             }
         }
     }

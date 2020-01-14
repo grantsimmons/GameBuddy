@@ -106,17 +106,17 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     match = True
                     print("Inc Mem")
                     if inc.group(1) == 'mHLA':
-                        out_file.write('    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->_r.a);\n')
+                        out_file.write('    this->mmu.wb(this->_r.h << 8 | this->_r.l, this->_r.a);\n')
                         out_file.write('    this->INCHL();\n')
                     if inc.group(1) == 'AmHL':
-                        out_file.write('    this->_r.a = this->mmu.rb(this->_r.h << 8 + this->_r.l);\n')
+                        out_file.write('    this->_r.a = this->mmu.rb(this->_r.h << 8 | this->_r.l);\n')
                         out_file.write('    this->INCHL();\n')
                     counter += 1
                     
                 elif fromm:
                     match = True
                     print("From Mem")
-                    out_file.write('    this->_r.{} = this->mmu.rb(this->_r.{} << 8 + this->_r.{});\n'.format(fromm.group(1).lower(), fromm.group(2).lower(), fromm.group(3).lower()))
+                    out_file.write('    this->_r.{} = this->mmu.rb(this->_r.{} << 8 | this->_r.{});\n'.format(fromm.group(1).lower(), fromm.group(2).lower(), fromm.group(3).lower()))
                     counter += 1
                 
                 inc8 = INC8.search(line)
@@ -167,7 +167,7 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                 if incmem:
                     match = True
                     print("Inc mem location")
-                    out_file.write('    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->mmu.rb(this->_r.h << 8 + this->_r.l) + 1);\n')
+                    out_file.write('    this->mmu.wb(this->_r.h << 8 | this->_r.l, this->mmu.rb(this->_r.h << 8 | this->_r.l) + 1);\n')
                     out_file.write('    //Set OF, Z, etc. if needed?\n')
                     counter += 1
 
@@ -175,7 +175,7 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                 if decmem:
                     match = True
                     print("Dec mem location")
-                    out_file.write('    this->mmu.wb(this->_r.h << 8 + this->_r.l, this->mmu.rb(this->_r.h << 8 + this->_r.l) - 1);\n')
+                    out_file.write('    this->mmu.wb(this->_r.h << 8 | this->_r.l, this->mmu.rb(this->_r.h << 8 | this->_r.l) - 1);\n')
                     out_file.write('    //Set UF, Z, etc. if needed?\n')
                     counter += 1
 
@@ -373,7 +373,7 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                         out_file.write('    this->_r.pc = (this->_r.f & ZERO) ? {} : {};\n'.format('this->_r.pc' if jp.group(1) == 'N' else 'this->mmu.rw(this->_r.pc)', 'this->mmu.rw(this->_r.pc)' if jp.group(1) == 'N' else 'this->_r.pc'))
                         out_file.write('    this->_r.pc += (this->_r.f & ZERO) ? {} : {};\n'.format(0 if jp.group(1) == 'N' else 2, 2 if jp.group(1) == 'N' else 0))
                     elif jp.group(2) == 'mHL':
-                        out_file.write('    this->_r.pc = this->mmu.rw(this->_r.h << 8 + this->_r.l);\n')
+                        out_file.write('    this->_r.pc = this->mmu.rw(this->_r.h << 8 | this->_r.l);\n')
                         out_file.write('    this->_r.pc += 2;\n')
                     counter += 1
 

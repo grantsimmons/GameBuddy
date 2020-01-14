@@ -17,7 +17,7 @@ class MMU{
 
         uint16_t rw(uint16_t addr); //Read word from given address
 
-		//void load(std::string file);
+		void loadRom(std::string file);
 
 		void loadBios();
 

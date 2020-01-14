@@ -16,8 +16,10 @@ uint8_t MMU::rb(uint16_t addr){ //Read byte from given address
             if(this->_inbios){
                 if(addr < 0x0100)
                     return this->_bios[addr];
-                else if(addr == 0x0100) //Z80._r.pc == 0x0100
+                else if(addr == 0x0100){ //Z80._r.pc == 0x0100
+                    printf("Exiting BIOS. Addr: %02x\n", addr);
                     this->_inbios = 0;
+                }
             }
             else //BIOS reassigned after use
                 return this->_rom[addr];
@@ -151,6 +153,23 @@ void MMU::ww(uint16_t addr, uint16_t val){ //Write word to given address
     return;
 }
 
+void MMU::loadRom(std::string file){
+    printf("Loading Game ROM...\n");
+    std::ifstream in_file(file);
+    uint8_t c = in_file.get();
+    uint16_t index = 0;
+    while(in_file.good()){
+        //printf("0x%02x, ",c);
+        this->_rom[index] = c;
+        c = in_file.get();
+        index++;
+    }
+    printf("\n");
+    in_file.close();
+    std::cout << "Loaded Game ROM" << std::endl;
+
+}
+
 void MMU::loadBios(){ //Hard-code at some point
     printf("Loading ROM...\n");
     std::ifstream in_file("dmg_boot.bin");
@@ -158,8 +177,8 @@ void MMU::loadBios(){ //Hard-code at some point
     uint8_t c = in_file.get();
     uint16_t index = 0;
     while(in_file.good()){
-        printf("0x%02x, ",c);
         this->_bios[index] = c;
+        printf("0x%02x, ",c);
         c = in_file.get();
         index++;
     }

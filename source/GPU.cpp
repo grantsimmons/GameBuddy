@@ -82,7 +82,7 @@ uint8_t GPU::rb(uint16_t addr){
             break;
 
         case 0xFF44:
-            printf("Accessing line register\n");
+            //printf("Accessing line register\n");
             return this->_line;
             break;
     }

@@ -17,6 +17,9 @@ uint8_t MMU::rb(uint16_t addr){ //Read byte from given address
                     printf("Exiting BIOS. Addr: %02x\n", addr);
                     this->_inbios = 0;
                 }
+                else if(addr > 0x100){
+                    return this->_rom[addr];
+                }
             }
             else //BIOS reassigned after use
                 return this->_rom[addr];

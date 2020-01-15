@@ -2,16 +2,17 @@ CXX = g++
 OUT = test.out
 CPU = Z80.cpp
 MMU = MMU.cpp
+GPU = GPU.cpp
 OPS = ops_impl.cpp
 MAIN = main.cpp
 OP_GEN = ../scripts/Z80CoverageConverter.py
 FUNCS = ../scripts/functions.cpp
-OBJS = Z80.o MMU.o ops_impl.o
+OBJS = Z80.o MMU.o ops_impl.o GPU.o
 
 $(OUT): ops obj
 	$(CXX) $(OBJS) $(MAIN) -o $@
 
-obj: $(CPU) $(MMU) $(OPS)
+obj: $(CPU) $(MMU) $(GPU) $(OPS)
 	$(CXX) -c $^
 
 ops: $(OP_GEN) $(FUNCS)

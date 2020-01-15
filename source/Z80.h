@@ -2,544 +2,16 @@
 #define _CPU_
 
 #include "MMU.h"
-//#include "GPU.h"
+#include "GPU.h"
 
 class Z80{
-	public:
-
-		Z80(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e,  uint8_t h,
-			uint8_t l, uint8_t f, uint8_t m, uint16_t t, uint16_t pc, uint16_t sp,
-			uint64_t cm, uint64_t ct); //Initial State
-
-		void exec();
-
-		void reset();
-
-		//Debugging
-		void status();
-        void debug();
-
-		//OPs
-		void NOP();
-		void LDBCnn();
-		void LDmBCA();
-		void INCBC();
-		void INCB();
-		void DECB();
-		void LDBn();
-		void RLCA();
-		void LDmnnSP();
-		void ADDHLBC();
-		void LDAmBC();
-		void DECBC();
-		void INCC();
-		void DECC();
-		void LDCn();
-		void RRCA();
-		void STOP();
-		void LDDEnn();
-		void LDmDEA();
-		void INCDE();
-		void INCD();
-		void DECD();
-		void LDDn();
-		void RLA();
-		void JRn();
-		void ADDHLDE();
-		void LDAmDE();
-		void DECDE();
-		void INCE();
-		void DECE();
-		void LDEn();
-		void RRA();
-		void JRNZn();
-		void LDHLnn();
-		void LDImHLA();
-		void INCHL();
-		void INCH();
-		void DECH();
-		void LDHn();
-		void DAA();
-		void JRZn();
-		void ADDHLHL();
-		void LDIAmHL();
-		void DECHL();
-		void INCL();
-		void DECL();
-		void LDLn();
-		void NOT();
-		void JRNCn();
-		void LDSPnn();
-		void LDDmHLA();
-		void INCSP();
-		void INCmHL();
-		void DECmHL();
-		void LDmHLn();
-		void SCF();
-		void JRCn();
-		void ADDHLSP();
-		void LDDAmHL();
-		void DECSP();
-		void INCA();
-		void DECA();
-		void LDAn();
-		void CCF();
-		void LDBB();
-		void LDBC();
-		void LDBD();
-		void LDBE();
-		void LDBH();
-		void LDBL();
-		void LDBmHL();
-		void LDBA();
-		void LDCB();
-		void LDCC();
-		void LDCD();
-		void LDCE();
-		void LDCH();
-		void LDCL();
-		void LDCmHL();
-		void LDCA();
-		void LDDB();
-		void LDDC();
-		void LDDD();
-		void LDDE();
-		void LDDH();
-		void LDDL();
-		void LDDmHL();
-		void LDDA();
-		void LDEB();
-		void LDEC();
-		void LDED();
-		void LDEE();
-		void LDEH();
-		void LDEL();
-		void LDEmHL();
-		void LDEA();
-		void LDHB();
-		void LDHC();
-		void LDHD();
-		void LDHE();
-		void LDHH();
-		void LDHL();
-		void LDHmHL();
-		void LDHA();
-		void LDLB();
-		void LDLC();
-		void LDLD();
-		void LDLE();
-		void LDLH();
-		void LDLL();
-		void LDLmHL();
-		void LDLA();
-		void LDmHLB();
-		void LDmHLC();
-		void LDmHLD();
-		void LDmHLE();
-		void LDmHLH();
-		void LDmHLL();
-		void HALT();
-		void LDmHLA();
-		void LDAB();
-		void LDAC();
-		void LDAD();
-		void LDAE();
-		void LDAH();
-		void LDAL();
-		void LDAmHL();
-		void LDAA();
-		void ADDAB();
-		void ADDAC();
-		void ADDAD();
-		void ADDAE();
-		void ADDAH();
-		void ADDAL();
-		void ADDAmHL();
-		void ADDAA();
-		void ADCAB();
-		void ADCAC();
-		void ADCAD();
-		void ADCAE();
-		void ADCAH();
-		void ADCAL();
-		void ADCAmHL();
-		void ADCAA();
-		void SUBAB();
-		void SUBAC();
-		void SUBAD();
-		void SUBAE();
-		void SUBAH();
-		void SUBAL();
-		void SUBAmHL();
-		void SUBAA();
-		void SBCAB();
-		void SBCAC();
-		void SBCAD();
-		void SBCAE();
-		void SBCAH();
-		void SBCAL();
-		void SBCAmHL();
-		void SBCAA();
-		void ANDB();
-		void ANDC();
-		void ANDD();
-		void ANDE();
-		void ANDH();
-		void ANDL();
-		void ANDmHL();
-		void ANDA();
-		void XORB();
-		void XORC();
-		void XORD();
-		void XORE();
-		void XORH();
-		void XORL();
-		void XORmHL();
-		void XORA();
-		void ORB();
-		void ORC();
-		void ORD();
-		void ORE();
-		void ORH();
-		void ORL();
-		void ORmHL();
-		void ORA();
-		void CPB();
-		void CPC();
-		void CPD();
-		void CPE();
-		void CPH();
-		void CPL();
-		void CPmHL();
-		void CPA();
-		void RETNZ();
-		void POPBC();
-		void JPNZnn();
-		void JPnn();
-		void CALLNZnn();
-		void PUSHBC();
-		void ADDAn();
-		void RST0();
-		void RETZ();
-		void RET();
-		void JPZnn();
-		void Extops();
-		void CALLZnn();
-		void CALLnn();
-		void ADCAn();
-		void RST8();
-		void RETNC();
-		void POPDE();
-		void JPNCnn();
-		void XX1();
-		void CALLNCnn();
-		void PUSHDE();
-		void SUBAn();
-		void RST10();
-		void RETC();
-		void RETI();
-		void JPCnn();
-		void XX2();
-		void CALLCnn();
-		void XX3();
-		void SBCAn();
-		void RST18();
-		void LDHmnA();
-		void POPHL();
-		void LDHmCA();
-		void XX4();
-		void XX5();
-		void PUSHHL();
-		void ANDn();
-		void RST20();
-		void ADDSPd();
-		void JPmHL();
-		void LDmnnA();
-		void XX6();
-		void XX7();
-		void XX8();
-		void XORn();
-		void RST28();
-		void LDHAmn();
-		void POPAF();
-		void XX9();
-		void DI();
-		void XXA();
-		void PUSHAF();
-		void ORn();
-		void RST30();
-		void LDHLSPd();
-		void LDSPHL();
-		void LDAmnn();
-		void EI();
-		void XXB();
-		void XXC();
-		void CPn();
-		void RST38();
-
-        //Extension ops
-        void ERLCB(); //0x00
-        void ERLCC();
-        void ERLCD();
-        void ERLCE();
-        void ERLCH();
-        void ERLCL();
-        void ERLCmHL();
-        void ERLCA();
-        void ERRCB();
-        void ERRCC();
-        void ERRCD();
-        void ERRCE();
-        void ERRCH();
-        void ERRCL();
-        void ERRCmHL();
-        void ERRCA();
-        void ERLB(); //0x10
-        void ERLC();
-        void ERLD();
-        void ERLE();
-        void ERLH();
-        void ERLL();
-        void ERLmHL();
-        void ERLA();
-        void ERRB();
-        void ERRC();
-        void ERRD();
-        void ERRE();
-        void ERRH();
-        void ERRL();
-        void ERRmHL();
-        void ERRA();
-        void ESLAB(); //0x20
-        void ESLAC();
-        void ESLAD();
-        void ESLAE();
-        void ESLAH();
-        void ESLAL();
-        void ESLAmHL();
-        void ESLAA();
-        void ESRAB();
-        void ESRAC();
-        void ESRAD();
-        void ESRAE();
-        void ESRAH();
-        void ESRAL();
-        void ESRAmHL();
-        void ESRAA();
-        void ESWAPB(); //0x30
-        void ESWAPC();
-        void ESWAPD();
-        void ESWAPE();
-        void ESWAPH();
-        void ESWAPL();
-        void ESWAPmHL();
-        void ESWAPA();
-        void ESRLB();
-        void ESRLC();
-        void ESRLD();
-        void ESRLE();
-        void ESRLH();
-        void ESRLL();
-        void ESRLmHL();
-        void ESRLA();
-        void EBIT0B(); //0x40
-        void EBIT0C();
-        void EBIT0D();
-        void EBIT0E();
-        void EBIT0H();
-        void EBIT0L();
-        void EBIT0mHL();
-        void EBIT0A();
-        void EBIT1B(); //0x48
-        void EBIT1C();
-        void EBIT1D();
-        void EBIT1E();
-        void EBIT1H();
-        void EBIT1L();
-        void EBIT1mHL();
-        void EBIT1A();
-        void EBIT2B(); //0x50
-        void EBIT2C();
-        void EBIT2D();
-        void EBIT2E();
-        void EBIT2H();
-        void EBIT2L();
-        void EBIT2mHL();
-        void EBIT2A();
-        void EBIT3B(); //0x58
-        void EBIT3C();
-        void EBIT3D();
-        void EBIT3E();
-        void EBIT3H();
-        void EBIT3L();
-        void EBIT3mHL();
-        void EBIT3A();
-        void EBIT4B(); //0x60
-        void EBIT4C();
-        void EBIT4D();
-        void EBIT4E();
-        void EBIT4H();
-        void EBIT4L();
-        void EBIT4mHL();
-        void EBIT4A();
-        void EBIT5B(); //0x68
-        void EBIT5C();
-        void EBIT5D();
-        void EBIT5E();
-        void EBIT5H();
-        void EBIT5L();
-        void EBIT5mHL();
-        void EBIT5A();
-        void EBIT6B(); //0x70
-        void EBIT6C();
-        void EBIT6D();
-        void EBIT6E();
-        void EBIT6H();
-        void EBIT6L();
-        void EBIT6mHL();
-        void EBIT6A();
-        void EBIT7B(); //0x78
-        void EBIT7C();
-        void EBIT7D();
-        void EBIT7E();
-        void EBIT7H();
-        void EBIT7L();
-        void EBIT7mHL();
-        void EBIT7A(); //
-        void ERES0B(); //0x80
-        void ERES0C();
-        void ERES0D();
-        void ERES0E();
-        void ERES0H();
-        void ERES0L();
-        void ERES0mHL();
-        void ERES0A();
-        void ERES1B(); //0x88
-        void ERES1C();
-        void ERES1D();
-        void ERES1E();
-        void ERES1H();
-        void ERES1L();
-        void ERES1mHL();
-        void ERES1A();
-        void ERES2B(); //0x90
-        void ERES2C();
-        void ERES2D();
-        void ERES2E();
-        void ERES2H();
-        void ERES2L();
-        void ERES2mHL();
-        void ERES2A();
-        void ERES3B(); //0x98
-        void ERES3C();
-        void ERES3D();
-        void ERES3E();
-        void ERES3H();
-        void ERES3L();
-        void ERES3mHL();
-        void ERES3A();
-        void ERES4B(); //0xA0
-        void ERES4C();
-        void ERES4D();
-        void ERES4E();
-        void ERES4H();
-        void ERES4L();
-        void ERES4mHL();
-        void ERES4A();
-        void ERES5B(); //0xA8
-        void ERES5C();
-        void ERES5D();
-        void ERES5E();
-        void ERES5H();
-        void ERES5L();
-        void ERES5mHL();
-        void ERES5A();
-        void ERES6B(); //0xB0
-        void ERES6C();
-        void ERES6D();
-        void ERES6E();
-        void ERES6H();
-        void ERES6L();
-        void ERES6mHL();
-        void ERES6A();
-        void ERES7B(); //0xB8
-        void ERES7C();
-        void ERES7D();
-        void ERES7E();
-        void ERES7H();
-        void ERES7L();
-        void ERES7mHL();
-        void ERES7A();
-        void ESET0B(); //0xC0
-        void ESET0C();
-        void ESET0D();
-        void ESET0E();
-        void ESET0H();
-        void ESET0L();
-        void ESET0mHL();
-        void ESET0A();
-        void ESET1B(); //0xC8
-        void ESET1C();
-        void ESET1D();
-        void ESET1E();
-        void ESET1H();
-        void ESET1L();
-        void ESET1mHL();
-        void ESET1A();
-        void ESET2B(); //0xD0
-        void ESET2C();
-        void ESET2D();
-        void ESET2E();
-        void ESET2H();
-        void ESET2L();
-        void ESET2mHL();
-        void ESET2A();
-        void ESET3B(); //0xD8
-        void ESET3C();
-        void ESET3D();
-        void ESET3E();
-        void ESET3H();
-        void ESET3L();
-        void ESET3mHL();
-        void ESET3A();
-        void ESET4B(); //0xE0
-        void ESET4C();
-        void ESET4D();
-        void ESET4E();
-        void ESET4H();
-        void ESET4L();
-        void ESET4mHL();
-        void ESET4A();
-        void ESET5B(); //0xE8
-        void ESET5C();
-        void ESET5D();
-        void ESET5E();
-        void ESET5H();
-        void ESET5L();
-        void ESET5mHL();
-        void ESET5A();
-        void ESET6B(); //0xF0
-        void ESET6C();
-        void ESET6D();
-        void ESET6E();
-        void ESET6H();
-        void ESET6L();
-        void ESET6mHL();
-        void ESET6A();
-        void ESET7B(); //0xF8
-        void ESET7C();
-        void ESET7D();
-        void ESET7E();
-        void ESET7H();
-        void ESET7L();
-        void ESET7mHL();
-        void ESET7A();
-
-
 	private:
+
+        GPU gpu;
+        MMU mmu;
+
         struct{
             uint64_t m, t;
-            //uint32_t m, t;
         }_clock;
 
         struct{
@@ -1097,7 +569,7 @@ class Z80{
             1,1,1,1,1,1,2,1,1,1,1,1,1,1,2,1,
             1,1,1,1,1,1,2,1,1,1,1,1,1,1,2,1,
             1,1,1,1,1,1,2,1,1,1,1,1,1,1,2,1,
-            2,2,2,2,2,2,1,2,1,1,1,1,1,1,2,1,
+            2,2,2,2,2,2,1,2,1,1,1,1,1,1,2,1, //0x7
             1,1,1,1,1,1,2,1,1,1,1,1,1,1,2,1,
             1,1,1,1,1,1,2,1,1,1,1,1,1,1,2,1,
             1,1,1,1,1,1,2,1,1,1,1,1,1,1,2,1,
@@ -1105,7 +577,7 @@ class Z80{
             2,3,3,4,3,4,2,4,2,4,3,1,3,6,2,4,
             2,3,3,0,3,4,2,4,2,4,3,0,3,0,2,4,
             3,3,2,0,0,4,2,4,4,1,4,0,0,0,2,4,
-            3,3,2,1,0,4,2,4,3,2,4,1,0,0,2,4
+            3,3,2,1,0,4,2,4,3,2,4,1,0,0,2,4  //0xF
             };
 
             uint8_t m_op_cycles_branched[256] =
@@ -1211,9 +683,537 @@ class Z80{
             
         }_timings;
 
-        MMU mmu;
-        //GPU gpu;
+	public:
 
+		Z80(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e,  uint8_t h,
+			uint8_t l, uint8_t f, uint8_t m, uint16_t t, uint16_t pc, uint16_t sp,
+			uint64_t cm, uint64_t ct); //Initial State
+
+		void exec();
+        void updateTiming(bool ext);
+
+		void reset();
+
+
+		//Debugging
+		void status();
+        void debug();
+
+		//OPs
+		void NOP();
+		void LDBCnn();
+		void LDmBCA();
+		void INCBC();
+		void INCB();
+		void DECB();
+		void LDBn();
+		void RLCA();
+		void LDmnnSP();
+		void ADDHLBC();
+		void LDAmBC();
+		void DECBC();
+		void INCC();
+		void DECC();
+		void LDCn();
+		void RRCA();
+		void STOP();
+		void LDDEnn();
+		void LDmDEA();
+		void INCDE();
+		void INCD();
+		void DECD();
+		void LDDn();
+		void RLA();
+		void JRn();
+		void ADDHLDE();
+		void LDAmDE();
+		void DECDE();
+		void INCE();
+		void DECE();
+		void LDEn();
+		void RRA();
+		void JRNZn();
+		void LDHLnn();
+		void LDImHLA();
+		void INCHL();
+		void INCH();
+		void DECH();
+		void LDHn();
+		void DAA();
+		void JRZn();
+		void ADDHLHL();
+		void LDIAmHL();
+		void DECHL();
+		void INCL();
+		void DECL();
+		void LDLn();
+		void NOT();
+		void JRNCn();
+		void LDSPnn();
+		void LDDmHLA();
+		void INCSP();
+		void INCmHL();
+		void DECmHL();
+		void LDmHLn();
+		void SCF();
+		void JRCn();
+		void ADDHLSP();
+		void LDDAmHL();
+		void DECSP();
+		void INCA();
+		void DECA();
+		void LDAn();
+		void CCF();
+		void LDBB();
+		void LDBC();
+		void LDBD();
+		void LDBE();
+		void LDBH();
+		void LDBL();
+		void LDBmHL();
+		void LDBA();
+		void LDCB();
+		void LDCC();
+		void LDCD();
+		void LDCE();
+		void LDCH();
+		void LDCL();
+		void LDCmHL();
+		void LDCA();
+		void LDDB();
+		void LDDC();
+		void LDDD();
+		void LDDE();
+		void LDDH();
+		void LDDL();
+		void LDDmHL();
+		void LDDA();
+		void LDEB();
+		void LDEC();
+		void LDED();
+		void LDEE();
+		void LDEH();
+		void LDEL();
+		void LDEmHL();
+		void LDEA();
+		void LDHB();
+		void LDHC();
+		void LDHD();
+		void LDHE();
+		void LDHH();
+		void LDHL();
+		void LDHmHL();
+		void LDHA();
+		void LDLB();
+		void LDLC();
+		void LDLD();
+		void LDLE();
+		void LDLH();
+		void LDLL();
+		void LDLmHL();
+		void LDLA();
+		void LDmHLB();
+		void LDmHLC();
+		void LDmHLD();
+		void LDmHLE();
+		void LDmHLH();
+		void LDmHLL();
+		void HALT();
+		void LDmHLA();
+		void LDAB();
+		void LDAC();
+		void LDAD();
+		void LDAE();
+		void LDAH();
+		void LDAL();
+		void LDAmHL();
+		void LDAA();
+		void ADDAB();
+		void ADDAC();
+		void ADDAD();
+		void ADDAE();
+		void ADDAH();
+		void ADDAL();
+		void ADDAmHL();
+		void ADDAA();
+		void ADCAB();
+		void ADCAC();
+		void ADCAD();
+		void ADCAE();
+		void ADCAH();
+		void ADCAL();
+		void ADCAmHL();
+		void ADCAA();
+		void SUBAB();
+		void SUBAC();
+		void SUBAD();
+		void SUBAE();
+		void SUBAH();
+		void SUBAL();
+		void SUBAmHL();
+		void SUBAA();
+		void SBCAB();
+		void SBCAC();
+		void SBCAD();
+		void SBCAE();
+		void SBCAH();
+		void SBCAL();
+		void SBCAmHL();
+		void SBCAA();
+		void ANDB();
+		void ANDC();
+		void ANDD();
+		void ANDE();
+		void ANDH();
+		void ANDL();
+		void ANDmHL();
+		void ANDA();
+		void XORB();
+		void XORC();
+		void XORD();
+		void XORE();
+		void XORH();
+		void XORL();
+		void XORmHL();
+		void XORA();
+		void ORB();
+		void ORC();
+		void ORD();
+		void ORE();
+		void ORH();
+		void ORL();
+		void ORmHL();
+		void ORA();
+		void CPB();
+		void CPC();
+		void CPD();
+		void CPE();
+		void CPH();
+		void CPL();
+		void CPmHL();
+		void CPA();
+		void RETNZ();
+		void POPBC();
+		void JPNZnn();
+		void JPnn();
+		void CALLNZnn();
+		void PUSHBC();
+		void ADDAn();
+		void RST0();
+		void RETZ();
+		void RET();
+		void JPZnn();
+		void Extops();
+		void CALLZnn();
+		void CALLnn();
+		void ADCAn();
+		void RST8();
+		void RETNC();
+		void POPDE();
+		void JPNCnn();
+		void XX1();
+		void CALLNCnn();
+		void PUSHDE();
+		void SUBAn();
+		void RST10();
+		void RETC();
+		void RETI();
+		void JPCnn();
+		void XX2();
+		void CALLCnn();
+		void XX3();
+		void SBCAn();
+		void RST18();
+		void LDHmnA();
+		void POPHL();
+		void LDHmCA();
+		void XX4();
+		void XX5();
+		void PUSHHL();
+		void ANDn();
+		void RST20();
+		void ADDSPd();
+		void JPmHL();
+		void LDmnnA();
+		void XX6();
+		void XX7();
+		void XX8();
+		void XORn();
+		void RST28();
+		void LDHAmn();
+		void POPAF();
+		void XX9();
+		void DI();
+		void XXA();
+		void PUSHAF();
+		void ORn();
+		void RST30();
+		void LDHLSPd();
+		void LDSPHL();
+		void LDAmnn();
+		void EI();
+		void XXB();
+		void XXC();
+		void CPn();
+		void RST38();
+
+        //Extension ops
+        void ERLCB(); //0x00
+        void ERLCC();
+        void ERLCD();
+        void ERLCE();
+        void ERLCH();
+        void ERLCL();
+        void ERLCmHL();
+        void ERLCA();
+        void ERRCB();
+        void ERRCC();
+        void ERRCD();
+        void ERRCE();
+        void ERRCH();
+        void ERRCL();
+        void ERRCmHL();
+        void ERRCA();
+        void ERLB(); //0x10
+        void ERLC();
+        void ERLD();
+        void ERLE();
+        void ERLH();
+        void ERLL();
+        void ERLmHL();
+        void ERLA();
+        void ERRB();
+        void ERRC();
+        void ERRD();
+        void ERRE();
+        void ERRH();
+        void ERRL();
+        void ERRmHL();
+        void ERRA();
+        void ESLAB(); //0x20
+        void ESLAC();
+        void ESLAD();
+        void ESLAE();
+        void ESLAH();
+        void ESLAL();
+        void ESLAmHL();
+        void ESLAA();
+        void ESRAB();
+        void ESRAC();
+        void ESRAD();
+        void ESRAE();
+        void ESRAH();
+        void ESRAL();
+        void ESRAmHL();
+        void ESRAA();
+        void ESWAPB(); //0x30
+        void ESWAPC();
+        void ESWAPD();
+        void ESWAPE();
+        void ESWAPH();
+        void ESWAPL();
+        void ESWAPmHL();
+        void ESWAPA();
+        void ESRLB();
+        void ESRLC();
+        void ESRLD();
+        void ESRLE();
+        void ESRLH();
+        void ESRLL();
+        void ESRLmHL();
+        void ESRLA();
+        void EBIT0B(); //0x40
+        void EBIT0C();
+        void EBIT0D();
+        void EBIT0E();
+        void EBIT0H();
+        void EBIT0L();
+        void EBIT0mHL();
+        void EBIT0A();
+        void EBIT1B(); //0x48
+        void EBIT1C();
+        void EBIT1D();
+        void EBIT1E();
+        void EBIT1H();
+        void EBIT1L();
+        void EBIT1mHL();
+        void EBIT1A();
+        void EBIT2B(); //0x50
+        void EBIT2C();
+        void EBIT2D();
+        void EBIT2E();
+        void EBIT2H();
+        void EBIT2L();
+        void EBIT2mHL();
+        void EBIT2A();
+        void EBIT3B(); //0x58
+        void EBIT3C();
+        void EBIT3D();
+        void EBIT3E();
+        void EBIT3H();
+        void EBIT3L();
+        void EBIT3mHL();
+        void EBIT3A();
+        void EBIT4B(); //0x60
+        void EBIT4C();
+        void EBIT4D();
+        void EBIT4E();
+        void EBIT4H();
+        void EBIT4L();
+        void EBIT4mHL();
+        void EBIT4A();
+        void EBIT5B(); //0x68
+        void EBIT5C();
+        void EBIT5D();
+        void EBIT5E();
+        void EBIT5H();
+        void EBIT5L();
+        void EBIT5mHL();
+        void EBIT5A();
+        void EBIT6B(); //0x70
+        void EBIT6C();
+        void EBIT6D();
+        void EBIT6E();
+        void EBIT6H();
+        void EBIT6L();
+        void EBIT6mHL();
+        void EBIT6A();
+        void EBIT7B(); //0x78
+        void EBIT7C();
+        void EBIT7D();
+        void EBIT7E();
+        void EBIT7H();
+        void EBIT7L();
+        void EBIT7mHL();
+        void EBIT7A(); //
+        void ERES0B(); //0x80
+        void ERES0C();
+        void ERES0D();
+        void ERES0E();
+        void ERES0H();
+        void ERES0L();
+        void ERES0mHL();
+        void ERES0A();
+        void ERES1B(); //0x88
+        void ERES1C();
+        void ERES1D();
+        void ERES1E();
+        void ERES1H();
+        void ERES1L();
+        void ERES1mHL();
+        void ERES1A();
+        void ERES2B(); //0x90
+        void ERES2C();
+        void ERES2D();
+        void ERES2E();
+        void ERES2H();
+        void ERES2L();
+        void ERES2mHL();
+        void ERES2A();
+        void ERES3B(); //0x98
+        void ERES3C();
+        void ERES3D();
+        void ERES3E();
+        void ERES3H();
+        void ERES3L();
+        void ERES3mHL();
+        void ERES3A();
+        void ERES4B(); //0xA0
+        void ERES4C();
+        void ERES4D();
+        void ERES4E();
+        void ERES4H();
+        void ERES4L();
+        void ERES4mHL();
+        void ERES4A();
+        void ERES5B(); //0xA8
+        void ERES5C();
+        void ERES5D();
+        void ERES5E();
+        void ERES5H();
+        void ERES5L();
+        void ERES5mHL();
+        void ERES5A();
+        void ERES6B(); //0xB0
+        void ERES6C();
+        void ERES6D();
+        void ERES6E();
+        void ERES6H();
+        void ERES6L();
+        void ERES6mHL();
+        void ERES6A();
+        void ERES7B(); //0xB8
+        void ERES7C();
+        void ERES7D();
+        void ERES7E();
+        void ERES7H();
+        void ERES7L();
+        void ERES7mHL();
+        void ERES7A();
+        void ESET0B(); //0xC0
+        void ESET0C();
+        void ESET0D();
+        void ESET0E();
+        void ESET0H();
+        void ESET0L();
+        void ESET0mHL();
+        void ESET0A();
+        void ESET1B(); //0xC8
+        void ESET1C();
+        void ESET1D();
+        void ESET1E();
+        void ESET1H();
+        void ESET1L();
+        void ESET1mHL();
+        void ESET1A();
+        void ESET2B(); //0xD0
+        void ESET2C();
+        void ESET2D();
+        void ESET2E();
+        void ESET2H();
+        void ESET2L();
+        void ESET2mHL();
+        void ESET2A();
+        void ESET3B(); //0xD8
+        void ESET3C();
+        void ESET3D();
+        void ESET3E();
+        void ESET3H();
+        void ESET3L();
+        void ESET3mHL();
+        void ESET3A();
+        void ESET4B(); //0xE0
+        void ESET4C();
+        void ESET4D();
+        void ESET4E();
+        void ESET4H();
+        void ESET4L();
+        void ESET4mHL();
+        void ESET4A();
+        void ESET5B(); //0xE8
+        void ESET5C();
+        void ESET5D();
+        void ESET5E();
+        void ESET5H();
+        void ESET5L();
+        void ESET5mHL();
+        void ESET5A();
+        void ESET6B(); //0xF0
+        void ESET6C();
+        void ESET6D();
+        void ESET6E();
+        void ESET6H();
+        void ESET6L();
+        void ESET6mHL();
+        void ESET6A();
+        void ESET7B(); //0xF8
+        void ESET7C();
+        void ESET7D();
+        void ESET7E();
+        void ESET7H();
+        void ESET7L();
+        void ESET7mHL();
+        void ESET7A();
 };
 //}z80(29,0,0,0,0,0,0,0,0,0,0,0x0000,0,0);
 #endif

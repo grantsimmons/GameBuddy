@@ -4,7 +4,8 @@ Z80::Z80(uint8_t a = 0x00, uint8_t b = 0x00, uint8_t c = 0x00, uint8_t d = 0x00,
          uint8_t e = 0x00, uint8_t h = 0x00, uint8_t l = 0x00, uint8_t f = 0x00,
          uint8_t m = 0x00, uint16_t t = 0x00, uint16_t pc = 0x0000,
          uint16_t sp = 0xfffe, uint64_t cm = 0x00, uint64_t ct = 0x00):
-        _r{a,b,c,d,e,h,l,f,m,t,pc,sp}, _clock{cm,ct}, mmu(1){
+        _r{a,b,c,d,e,h,l,f,m,t,pc,sp}, _clock{cm,ct}, gpu(0,0,0,0,0,0,0,0),
+        mmu(gpu, 1){
 
     mmu.loadBios();
     mmu.loadRom("Tetris.bin");
@@ -15,19 +16,9 @@ void Z80::exec(){
     int counter = 0;
     while(this->_r.pc < 0x100){
         printf("Executing function %x: %x\n", this->_r.pc, this->mmu.rb(this->_r.pc));
-        printf("updating t to %04x\n", _timings.t_op_cycles[this->mmu.rb(_r.pc)]);
-        this->_r.t = _timings.t_op_cycles[this->mmu.rb(_r.pc)];
-        printf("current ct: %08x\n", this->_clock.t);
-        this->_clock.t += this->_r.t;
-        printf("updated ct: %08x\n", this->_clock.t);
-        printf("updating m to %04x\n", _timings.m_op_cycles[this->mmu.rb(_r.pc)]);
-        this->_r.m = _timings.m_op_cycles[this->mmu.rb(_r.pc)];
-        printf("current cm: %08x\n", this->_clock.m);
-        this->_clock.m += this->_r.m;
-        printf("updated cm: %08x\n", this->_clock.m);
+        updateTiming(false);
         (this->*ops[mmu.rb(this->_r.pc++)].op_function)(); //Execute op at pc
-        //TODO: Update clocks here
-        //gpu.step();
+        gpu.step(this->_r.t);
         //if(this->_r.pc > 0x0a || this->_r.pc <= 0x06){
         if(true){
             this->status();
@@ -37,8 +28,6 @@ void Z80::exec(){
                     continue;
                 }
                 std::cout << "p = print mem, x = continue, # = # of steps to continue, n = next instruction\n";
-                //char* choice;
-                //std::cin >> *choice;
                 uint8_t choice;
                 std::cin >> choice;
                 //if(this->_debug){ //UNIMPLEMENTED
@@ -56,8 +45,7 @@ void Z80::exec(){
                             this->reset();
                             break;
                         default:
-                            counter = choice;
-                            //counter = atoi(choice);
+                            counter = (int)choice;
                     }
                 //}
             }
@@ -65,6 +53,14 @@ void Z80::exec(){
     }
     mmu.dump_mem();
     //this->debug();
+}
+
+void Z80::updateTiming(bool ext){
+    this->_r.t = ext ? _timings.t_ext_cycles[mmu.rb(this->_r.pc)] : _timings.t_op_cycles[mmu.rb(this->_r.pc)];
+    this->_clock.t += this->_r.t;
+    this->_r.m = ext ? _timings.m_ext_cycles[mmu.rb(this->_r.pc)] : _timings.m_op_cycles[mmu.rb(this->_r.pc)];
+    this->_clock.m += this->_r.m;
+    return;
 }
 
 void Z80::reset(){
@@ -101,6 +97,7 @@ void Z80::status(){
     printf("cm = %08x\n", _clock.m);
     printf("ct = %08x\n", _clock.t);
     printf("MMU = %01x\n", mmu._inbios);
+    gpu.status();
 }
 
 void Z80::debug(){

@@ -2,7 +2,7 @@
 
 #include <fstream>
 
-MMU::MMU(bool inbios = 0): _inbios(inbios)
+MMU::MMU(GPU& gpu, bool inbios = 0): gpu(gpu), _inbios(inbios)
 {
 
 }
@@ -33,6 +33,7 @@ uint8_t MMU::rb(uint16_t addr){ //Read byte from given address
             return this->_rom[addr];
 
         case 0x8000: //V-RAM (8k)
+            return 0;
             //return gpu._vram[addr & 0x1FFF];
 
         case 0xA000: //Switchable RAM (8k)
@@ -70,10 +71,16 @@ uint8_t MMU::rb(uint16_t addr){ //Read byte from given address
                     if(addr > 0xFF7F){
                         return this->_zram[addr & 0x7F];
                     }
-                    //else switch(addr&0xF0){
-                    //    //Unimplemented
-                    //}
-                    else return 0;
+                    else switch(addr & 0xF0){
+                        //GPU access
+                        case 0x40:
+                        case 0x50:
+                        case 0x60:
+                        case 0x70:
+                            return gpu.rb(addr);
+                            return 0;
+                    }
+                    return 0;
             }
         default:
             return 0x00;
@@ -86,9 +93,9 @@ uint16_t MMU::rw(uint16_t addr){ //Read word from given address
 }
 
 void MMU::wb(uint16_t addr, uint8_t val){ //Write byte to given address
-    switch(addr&0xF000){
+    switch(addr & 0xF000){
         case 0x0000:
-            if(this->_inbios && addr<0x0100) 
+            if(this->_inbios && addr < 0x0100) 
                 return; //Read-Only
         case 0x1000:
         case 0x2000:
@@ -112,11 +119,11 @@ void MMU::wb(uint16_t addr, uint8_t val){ //Write byte to given address
         case 0xD000:
         case 0xE000:
             //std::cout << "WRAM write" << std::endl;
-            this->_wram[addr&0x1FFF] = val;
+            this->_wram[addr & 0x1FFF] = val;
             break;
 
         case 0xF000:
-            switch(addr&0x0F00){
+            switch(addr & 0x0F00){
                 case 0x000:
                 case 0x100:
                 case 0x200:
@@ -132,20 +139,32 @@ void MMU::wb(uint16_t addr, uint8_t val){ //Write byte to given address
                 case 0xC00:
                 case 0xD00:
                     std::cout << "WRAM write" << std::endl;
-                    this->_wram[addr&0x1FF] = val;
+                    this->_wram[addr & 0x1FF] = val;
                     break;
 
                 case 0xE00:
                     //if((addr&0xFF)<0xA0) gpu._oam[addr&0xFF] = val;
+                    break;
 
                 case 0xF00:
                     std::cout << "ZRAM write" << std::endl;
-                    if(addr > 0xFF7F) this->_zram[addr&0x7F] = val;
-                    else this->_zram[addr&0xFF] = val;
-                    //else switch(addr&0xF0){
-                    //}
+                    if(addr > 0xFF7F){
+                        this->_zram[addr & 0x7F] = val;
+                    }
+                    else{
+                        switch(addr & 0xF0){
+                            //GPU access
+                            case 0x40:
+                            case 0x50:
+                            case 0x60:
+                            case 0x70:
+                                gpu.wb(addr, val);
+                            break;
+                        }
+                    }
+                    break;
                     
-                }
+            }
         break;
     }
     //this->dump_mem(); //Currently broken

@@ -6,12 +6,14 @@
 #include <cstdint>
 #include <string>
 
+#include "GPU.h"
+
 class MMU{
     public:
 
         bool _inbios;
-
-        MMU(bool inbios);
+        
+        MMU(GPU& gpu, bool inbios);
 
     //protected:
 
@@ -30,6 +32,8 @@ class MMU{
 		void dump_mem();
 
     private:
+
+        GPU& gpu;
 
         uint8_t _bios[0x0100]; //Bootstrapping program
 

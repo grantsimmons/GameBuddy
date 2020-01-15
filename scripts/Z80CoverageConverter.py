@@ -21,6 +21,7 @@ RLCA = re.compile('void\sZ80::RLCA')
 RLA = re.compile('void\sZ80::RLA')
 ADDA = re.compile('void\sZ80::ADDA([ABCDEFHLn]|mHL)')
 ADD16 = re.compile('void\sZ80::ADD(HL|SP)(B|D|d)(C|E)*\(')
+SUBA = re.compile('void\sZ80::SUBA([ABCDEFHLn]|mHL)')
 ADC = re.compile('void\sZ80::ADCA([ABCDEHLn]|mHL)')
 AND = re.compile('void\sZ80::AND([ABCDEFHLn]|mHL)')
 OR = re.compile('void\sZ80::OR([ABCDEFHLn]|mHL)')
@@ -296,6 +297,26 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                         out_file.write('    this->_r.pc += 1;\n')
                     counter += 1
 
+                suba = SUBA.search(line)
+                if suba:
+                    match = True
+                    print("Accumulator Subtract")
+                    if suba.group(1) != 'mHL' and suba.group(1) != 'n':
+                        val = '_r.{}'.format(suba.group(1).lower())
+                    elif suba.group(1) == 'mHL':
+                        val = 'mmu.rb(this->_r.h << 8 | this->_r.l)'
+                    elif suba.group(1) == 'n':
+                        val = 'mmu.rb(this->_r.pc)'
+                    out_file.write('    this->_r.f |= ADD_SUB; //Set Add_Sub flag;\n')
+                    out_file.write('    this->_r.f = ((this->_r.a & 0x0F) < (this->{} & 0x0F)) ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY));\n'.format(val))
+                    out_file.write('    this->_r.f = (this->_r.a < this->{}) ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY));\n'.format(val))
+                    out_file.write('    this->_r.a -= this->{};\n'.format(val))
+                    out_file.write('    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));\n')
+                    if suba.group(1) == 'n':
+                        out_file.write('    this->_r.pc += 1;\n')
+                    counter += 1
+
+
                 anda = AND.search(line)
                 if anda: #Flags
                     match = True
@@ -428,7 +449,9 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                 if ext:
                     match = True
                     print("CB Extension")
+                    out_file.write('    updateTiming(true);\n')
                     out_file.write('    (this->*ext_ops[mmu.rb(this->_r.pc++)].op_function)();\n')
+                    out_file.write('    gpu.step(this->_r.t);\n')
                     counter += 1
 
                 erlc = EXT_RLC.search(line)

@@ -884,42 +884,74 @@ void Z80::ADCAA(){
 
 void Z80::SUBAB(){
     std::cout << "SUBAB" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.f |= ADD_SUB; //Set Add_Sub flag;
+    this->_r.f = ((this->_r.a & 0x0F) < (this->_r.b & 0x0F)) ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY));
+    this->_r.f = (this->_r.a < this->_r.b) ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY));
+    this->_r.a -= this->_r.b;
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::SUBAC(){
     std::cout << "SUBAC" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.f |= ADD_SUB; //Set Add_Sub flag;
+    this->_r.f = ((this->_r.a & 0x0F) < (this->_r.c & 0x0F)) ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY));
+    this->_r.f = (this->_r.a < this->_r.c) ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY));
+    this->_r.a -= this->_r.c;
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::SUBAD(){
     std::cout << "SUBAD" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.f |= ADD_SUB; //Set Add_Sub flag;
+    this->_r.f = ((this->_r.a & 0x0F) < (this->_r.d & 0x0F)) ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY));
+    this->_r.f = (this->_r.a < this->_r.d) ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY));
+    this->_r.a -= this->_r.d;
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::SUBAE(){
     std::cout << "SUBAE" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.f |= ADD_SUB; //Set Add_Sub flag;
+    this->_r.f = ((this->_r.a & 0x0F) < (this->_r.e & 0x0F)) ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY));
+    this->_r.f = (this->_r.a < this->_r.e) ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY));
+    this->_r.a -= this->_r.e;
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::SUBAH(){
     std::cout << "SUBAH" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.f |= ADD_SUB; //Set Add_Sub flag;
+    this->_r.f = ((this->_r.a & 0x0F) < (this->_r.h & 0x0F)) ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY));
+    this->_r.f = (this->_r.a < this->_r.h) ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY));
+    this->_r.a -= this->_r.h;
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::SUBAL(){
     std::cout << "SUBAL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.f |= ADD_SUB; //Set Add_Sub flag;
+    this->_r.f = ((this->_r.a & 0x0F) < (this->_r.l & 0x0F)) ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY));
+    this->_r.f = (this->_r.a < this->_r.l) ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY));
+    this->_r.a -= this->_r.l;
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::SUBAmHL(){
     std::cout << "SUBAmHL" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.f |= ADD_SUB; //Set Add_Sub flag;
+    this->_r.f = ((this->_r.a & 0x0F) < (this->mmu.rb(this->_r.h << 8 | this->_r.l) & 0x0F)) ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY));
+    this->_r.f = (this->_r.a < this->mmu.rb(this->_r.h << 8 | this->_r.l)) ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY));
+    this->_r.a -= this->mmu.rb(this->_r.h << 8 | this->_r.l);
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::SUBAA(){
     std::cout << "SUBAA" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.f |= ADD_SUB; //Set Add_Sub flag;
+    this->_r.f = ((this->_r.a & 0x0F) < (this->_r.a & 0x0F)) ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY));
+    this->_r.f = (this->_r.a < this->_r.a) ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY));
+    this->_r.a -= this->_r.a;
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
 }
 
 void Z80::SBCAB(){
@@ -1234,17 +1266,9 @@ void Z80::JPZnn(){
 
 void Z80::Extops(){
     std::cout << "Extops" <<std::endl;
-    printf("updating t to %04x\n", _timings.t_op_cycles[this->_r.pc]);
-    this->_r.t = _timings.t_op_cycles[this->_r.pc];
-    printf("current ct: %08x\n", this->_clock.t);
-    this->_clock.t += this->_r.t;
-    printf("updated ct: %08x\n", this->_clock.t);
-    printf("updating m to %04x\n", _timings.m_op_cycles[this->_r.pc]);
-    this->_r.m = _timings.m_op_cycles[this->_r.pc];
-    printf("current cm: %08x\n", this->_clock.m);
-    this->_clock.m += this->_r.m;
-    printf("updated cm: %08x\n", this->_clock.m);
+    updateTiming(true);
     (this->*ext_ops[mmu.rb(this->_r.pc++)].op_function)();
+    gpu.step(this->_r.t);
 }
 
 void Z80::CALLZnn(){
@@ -1326,7 +1350,12 @@ void Z80::PUSHDE(){
 
 void Z80::SUBAn(){
     std::cout << "SUBAn" <<std::endl;
-    std::cout << "Uncovered Function" << std::endl;
+    this->_r.f |= ADD_SUB; //Set Add_Sub flag;
+    this->_r.f = ((this->_r.a & 0x0F) < (this->mmu.rb(this->_r.pc) & 0x0F)) ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY));
+    this->_r.f = (this->_r.a < this->mmu.rb(this->_r.pc)) ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY));
+    this->_r.a -= this->mmu.rb(this->_r.pc);
+    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));
+    this->_r.pc += 1;
 }
 
 void Z80::RST10(){

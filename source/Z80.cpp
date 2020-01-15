@@ -13,28 +13,34 @@ Z80::Z80(uint8_t a = 0x00, uint8_t b = 0x00, uint8_t c = 0x00, uint8_t d = 0x00,
 
 void Z80::exec(){
     static bool cont = false;
+    bool debug = true;
+    bool verbose = false;
     int counter = 0;
+    uint16_t pc_target = 0;
     while(this->_r.pc < 0x100){
-        printf("Executing function %x: %x\n", this->_r.pc, this->mmu.rb(this->_r.pc));
-        updateTiming(false);
+        if(verbose)
+            printf("Executing function %x: %x\n", this->_r.pc, this->mmu.rb(this->_r.pc));
+        updateTiming(false); //Increment timing registers for next instruction
         (this->*ops[mmu.rb(this->_r.pc++)].op_function)(); //Execute op at pc
-        gpu.step(this->_r.t);
-        //if(this->_r.pc > 0x0a || this->_r.pc <= 0x06){
-        if(true){
-            this->status();
-            if(!cont){
-                if (counter > 0){
-                    counter--;
-                    continue;
-                }
-                std::cout << "p = print mem, x = continue, # = # of steps to continue, n = next instruction\n";
-                uint8_t choice;
-                std::cin >> choice;
-                //if(this->_debug){ //UNIMPLEMENTED
+        gpu.step(this->_r.t); //Increment GPU timing registers
+        if(debug){
+            if(pc_target < this->_r.pc){
+                this->status();
+                if(!cont){
+                    if (counter > 0){
+                        counter--;
+                        continue;
+                    }
+                    std::cout << "p = print mem, x = continue, # = # of steps to continue, n = next instruction\n";
+                    uint8_t choice;
+                    std::cin >> choice;
                     switch(choice){
                         case 'p':
                             this->mmu.dump_mem();
                             std::cin >> choice;
+                        case 'c':
+                            std::cin >> std::hex >> pc_target;
+                            break;
                         case 'n':
                             break;
                         case 'x':
@@ -47,7 +53,7 @@ void Z80::exec(){
                         default:
                             counter = (int)choice;
                     }
-                //}
+                }
             }
         }
     }

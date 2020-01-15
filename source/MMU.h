@@ -1,6 +1,8 @@
 #ifndef _MMU_
 #define _MMU_
 
+#include <stdio.h>
+#include <iostream>
 #include <cstdint>
 #include <string>
 

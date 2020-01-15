@@ -1,11 +1,8 @@
-#include <cstdint>
-#include <fstream>
 #include "MMU.h"
-#include <string>
-#include <iostream>
-#include <stdio.h>
 
-MMU::MMU(bool inbios = 0): _inbios(inbios), _bios{0x31, 0xFE, 0xFF, 0xAF, 0x21, 0xFF, 0x9F, 0x32, 0xCB, 0x7C, 0x20, 0xFB, 0x21, 0x26, 0xFF, 0x0E}
+#include <fstream>
+
+MMU::MMU(bool inbios = 0): _inbios(inbios)
 {
 
 }
@@ -28,20 +25,25 @@ uint8_t MMU::rb(uint16_t addr){ //Read byte from given address
         case 0x2000:
         case 0x3000:
             return this->_rom[addr];
+
         case 0x4000: //Switchable ROM bank
         case 0x5000:
         case 0x6000:
         case 0x7000:
             return this->_rom[addr];
-        case 0x8000: //V-RAM
-            //return gpu._vram[addr&0x1FFF];
-        case 0xA000: //Switchable RAM
+
+        case 0x8000: //V-RAM (8k)
+            //return gpu._vram[addr & 0x1FFF];
+
+        case 0xA000: //Switchable RAM (8k)
         case 0xB000:
-            return this->_eram[addr&0x1FFF];
+            return this->_eram[addr & 0x1FFF];
+
         case 0xC000: //Internal RAM
         case 0xD000:
         case 0xE000: //Echo RAM
-            return this->_wram[addr&0x1FFF];
+            return this->_wram[addr & 0x1FFF];
+
         case 0xF000:
             switch (addr & 0x0F00){
                 case 0x000: //Continuation of Echo RAM
@@ -58,22 +60,25 @@ uint8_t MMU::rb(uint16_t addr){ //Read byte from given address
                 case 0xB00:
                 case 0xC00:
                 case 0xD00:
-                    return this->_wram[addr&0x1FFF];
+                    return this->_wram[addr & 0x1FFF];
+
                 case 0xE00: //Sprite attrib Mem (OAM)
-                    //return ((addr&0xFF)<0xA0) ? gpu._oam[addr&0xFF] : 0;
+                    //return ((addr & 0xFF) < 0xA0) ? gpu._oam[addr & 0xFF] : 0;
                     return 0; //GPU unimplemented
+
                 case 0xF00: //Zero-page and I/O
                     if(addr > 0xFF7F){
-                        return this->_zram[addr&0x7F];
+                        return this->_zram[addr & 0x7F];
                     }
                     //else switch(addr&0xF0){
-                        //Unimplemented
+                    //    //Unimplemented
                     //}
+                    else return 0;
             }
         default:
             return 0x00;
     }
-    return 1;
+    return 0;
 }
 
 uint16_t MMU::rw(uint16_t addr){ //Read word from given address

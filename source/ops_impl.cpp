@@ -1234,6 +1234,16 @@ void Z80::JPZnn(){
 
 void Z80::Extops(){
     std::cout << "Extops" <<std::endl;
+    printf("updating t to %04x\n", _timings.t_op_cycles[this->_r.pc]);
+    this->_r.t = _timings.t_op_cycles[this->_r.pc];
+    printf("current ct: %08x\n", this->_clock.t);
+    this->_clock.t += this->_r.t;
+    printf("updated ct: %08x\n", this->_clock.t);
+    printf("updating m to %04x\n", _timings.m_op_cycles[this->_r.pc]);
+    this->_r.m = _timings.m_op_cycles[this->_r.pc];
+    printf("current cm: %08x\n", this->_clock.m);
+    this->_clock.m += this->_r.m;
+    printf("updated cm: %08x\n", this->_clock.m);
     (this->*ext_ops[mmu.rb(this->_r.pc++)].op_function)();
 }
 

@@ -1,10 +1,8 @@
-#include <stdio.h>
-#include "MMU.h"
 #include "Z80.h"
 
 Z80::Z80(uint8_t a = 0x00, uint8_t b = 0x00, uint8_t c = 0x00, uint8_t d = 0x00,
          uint8_t e = 0x00, uint8_t h = 0x00, uint8_t l = 0x00, uint8_t f = 0x00,
-         uint8_t m = 0x00, uint8_t t = 0x00, uint16_t pc = 0x0000,
+         uint8_t m = 0x00, uint16_t t = 0x00, uint16_t pc = 0x0000,
          uint16_t sp = 0xfffe, uint64_t cm = 0x00, uint64_t ct = 0x00):
         _r{a,b,c,d,e,h,l,f,m,t,pc,sp}, _clock{cm,ct}, mmu(1){
 
@@ -16,30 +14,38 @@ void Z80::exec(){
     static bool cont = false;
     int counter = 0;
     while(this->_r.pc < 0x100){
-        printf("Executing function %x\n", this->_r.pc);
-        //std::cout << "Executing function " << this->_r.pc << std::endl;
+        printf("Executing function %x: %x\n", this->_r.pc, this->mmu.rb(this->_r.pc));
+        printf("updating t to %04x\n", _timings.t_op_cycles[this->mmu.rb(_r.pc)]);
+        this->_r.t = _timings.t_op_cycles[this->mmu.rb(_r.pc)];
+        printf("current ct: %08x\n", this->_clock.t);
+        this->_clock.t += this->_r.t;
+        printf("updated ct: %08x\n", this->_clock.t);
+        printf("updating m to %04x\n", _timings.m_op_cycles[this->mmu.rb(_r.pc)]);
+        this->_r.m = _timings.m_op_cycles[this->mmu.rb(_r.pc)];
+        printf("current cm: %08x\n", this->_clock.m);
+        this->_clock.m += this->_r.m;
+        printf("updated cm: %08x\n", this->_clock.m);
         (this->*ops[mmu.rb(this->_r.pc++)].op_function)(); //Execute op at pc
-        this->_r.pc &= 0xFFFF;
-        //if(mmu._inbios && this->_r.pc == 0x100){
-        //    mmu._inbios = 0;
-        //    std::cout << "Exiting BIOS" << std::endl;
-        //}
-        //std::cout << this->mmu.rb(this->_r.pc) << std::endl;
-        if(this->_r.pc > 0x0a || this->_r.pc <= 0x06){
-            //this->status();
+        //TODO: Update clocks here
+        //gpu.step();
+        //if(this->_r.pc > 0x0a || this->_r.pc <= 0x06){
+        if(true){
+            this->status();
             if(!cont){
                 if (counter > 0){
                     counter--;
                     continue;
                 }
                 std::cout << "p = print mem, x = continue, # = # of steps to continue, n = next instruction\n";
-                char* choice;
-                std::cin >> *choice;
+                //char* choice;
+                //std::cin >> *choice;
+                uint8_t choice;
+                std::cin >> choice;
                 //if(this->_debug){ //UNIMPLEMENTED
-                    switch(*choice){
+                    switch(choice){
                         case 'p':
                             this->mmu.dump_mem();
-                            std::cin >> *choice;
+                            std::cin >> choice;
                         case 'n':
                             break;
                         case 'x':
@@ -50,7 +56,8 @@ void Z80::exec(){
                             this->reset();
                             break;
                         default:
-                            counter = atoi(choice);
+                            counter = choice;
+                            //counter = atoi(choice);
                     }
                 //}
             }
@@ -91,8 +98,8 @@ void Z80::status(){
     printf("t = %02x\n", _r.t);
     printf("pc = %04x\n", _r.pc);
     printf("sp = %04x\n", _r.sp);
-    //printf("cm = %04x\n", _clock.m);
-    //printf("ct = %04x\n", _clock.t);
+    printf("cm = %08x\n", _clock.m);
+    printf("ct = %08x\n", _clock.t);
     printf("MMU = %01x\n", mmu._inbios);
 }
 

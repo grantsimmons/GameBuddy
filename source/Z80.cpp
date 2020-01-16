@@ -58,6 +58,7 @@ void Z80::exec(){
         }
     }
     mmu.dump_mem();
+    status();
     //this->debug();
 }
 
@@ -102,7 +103,7 @@ void Z80::status(){
     printf("sp = %04x\n", _r.sp);
     printf("cm = %08x\n", _clock.m);
     printf("ct = %08x\n", _clock.t);
-    printf("MMU = %01x\n", mmu._inbios);
+    printf("MMU = %01x\n\nGPU STATUS:\n", mmu._inbios);
     gpu.status();
 }
 

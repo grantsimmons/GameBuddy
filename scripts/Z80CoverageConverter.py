@@ -61,7 +61,7 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
 
                 print(counter)
                 out_file.write(line[0:-2] + "{\n")
-                out_file.write("    std::cout << \"{}\" <<std::endl;\n".format(line[10:-4]))
+                #out_file.write("    std::cout << \"{}\" <<std::endl;\n".format(line[10:-4]))
                 
                 basic = LDBasic.search(line)
                 if basic:

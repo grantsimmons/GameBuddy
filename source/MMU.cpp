@@ -280,7 +280,6 @@ void MMU::dump_mem(){
         }
     }
     printf("\n");
-    gpu.printFB();
     //counter = 0;
     //std::cout << "Memory" << std::endl;
     //for(uint8_t i : this->memory){

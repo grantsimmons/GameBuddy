@@ -5,6 +5,8 @@
 #include <time.h>
 #include <stdio.h>
 #include <string>
+#include <cstring> //memcpy
+#include "GPU.h"
 //#include "GPU.h"
 
 //Screen dimension constants
@@ -69,7 +71,7 @@ class LTexture{
 class DataStream{
 	public:
 		//Initializes internals
-		DataStream(int schemetype);
+        DataStream(uint8_t* gb_arr, int schemetype);
 
 		//Gets current frame data
         void updateBuffer();
@@ -83,8 +85,8 @@ class DataStream{
 
 	private:
 		//Internal data
-        Uint8 gb_arr[WINDOW_WIDTH*WINDOW_HEIGHT];
-        //uint8_t* gb_arr;
+        //Uint8 gb_arr[WINDOW_WIDTH*WINDOW_HEIGHT];
+        uint8_t* gb_arr;
         Uint32* scheme; //indexed color cheme
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -113,6 +115,6 @@ extern SDL_Window* gWindow;
 extern SDL_Renderer* gRenderer;
 
 //Animation stream
-extern DataStream gDataStream;
+extern DataStream* gDataStream;
 
 #endif

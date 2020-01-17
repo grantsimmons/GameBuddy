@@ -1,4 +1,5 @@
 #include "GPU.h"
+#include "blit.h"
 
 #define BG_MEM_SELECT (1<<3)
 #define TILE_SET_SELECT (1<<4)
@@ -32,7 +33,15 @@ void GPU::step(uint16_t ticks){
             if(this->_modeclock >= 172){
                 this->_modeclock = 0;
                 this->_mode = 0;
-                this->renderScan();
+
+                //TODO: Move SDL functiosn to VBLANK
+                
+                //Clear screen
+                SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+                SDL_RenderClear(gRenderer);
+
+                gStreamingTexture.lockTexture();
+                this->renderScan(); //Update Frame Buffer
             }
             break;
 
@@ -62,6 +71,15 @@ void GPU::step(uint16_t ticks){
                 this->_line++;
 
                 if(this->_line > 153){
+                    gDataStream->updateBuffer(); //Push Frame to SDL Surface
+                    gStreamingTexture.unlockTexture();
+
+                    //Render frame
+                    gStreamingTexture.render((SCREEN_WIDTH - gStreamingTexture.getWidth()) / 2, (SCREEN_HEIGHT - gStreamingTexture.getHeight()) / 2);
+
+                    //Update screen
+                    SDL_RenderPresent(gRenderer);
+                
                     //Restart scanning mode
                     this->_mode = 2;
                     this->_line = 0;
@@ -167,9 +185,6 @@ void GPU::renderScan(){
 
         //printf("Color: %x\n", getColor(color_num));
         this->_framebuffer[160 * _line + pixel] = (uint8_t) getColor(color_num); //from 0xFF47
-    }
-    if(_line == 143){
-        printFB();
     }
     return;
 }
@@ -283,6 +298,11 @@ void GPU::status(){
 
 void GPU::getTicks(){
     printf("Ticks: %d\n", _modeclock);
+}
+
+uint8_t* GPU::getFB(){
+    return this->_framebuffer;
+
 }
 
 void GPU::printFB(){

@@ -144,7 +144,7 @@ void MMU::wb(uint16_t addr, uint8_t val){ //Write byte to given address
                 case 0xB00:
                 case 0xC00:
                 case 0xD00:
-                    std::cout << "WRAM write" << std::endl;
+                    //std::cout << "WRAM write" << std::endl;
                     this->_wram[addr & 0x1FF] = val;
                     break;
 
@@ -153,7 +153,7 @@ void MMU::wb(uint16_t addr, uint8_t val){ //Write byte to given address
                     break;
 
                 case 0xF00:
-                    std::cout << "ZRAM write" << std::endl;
+                    //std::cout << "ZRAM write" << std::endl;
                     if(addr > 0xFF7F){
                         this->_zram[addr & 0x7F] = val;
                     }
@@ -184,7 +184,7 @@ void MMU::ww(uint16_t addr, uint16_t val){ //Write word to given address
 
 void MMU::loadRom(std::string file){
     printf("Loading Game ROM...\n");
-    std::ifstream in_file(file);
+    std::ifstream in_file(file, std::ifstream::binary);
     uint8_t c = in_file.get();
     uint16_t index = 0;
     while(in_file.good()){
@@ -193,6 +193,7 @@ void MMU::loadRom(std::string file){
         c = in_file.get();
         index++;
     }
+    printf("Exit Index: %x\n", index);
     printf("\n");
     in_file.close();
     std::cout << "Loaded Game ROM" << std::endl;
@@ -201,8 +202,7 @@ void MMU::loadRom(std::string file){
 
 void MMU::loadBios(){ //Hard-code at some point
     printf("Loading ROM...\n");
-    std::ifstream in_file("dmg_boot.bin");
-    //printf("Loaded file\n");
+    std::ifstream in_file("dmg_boot.bin", std::ifstream::binary);
     uint8_t c = in_file.get();
     uint16_t index = 0;
     while(in_file.good()){
@@ -211,6 +211,7 @@ void MMU::loadBios(){ //Hard-code at some point
         c = in_file.get();
         index++;
     }
+    printf("Exit Index: %x\n", index);
     printf("\n");
     in_file.close();
     std::cout << "Loaded file" << std::endl;

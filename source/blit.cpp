@@ -3,7 +3,7 @@
 Uint32 converter[WINDOW_WIDTH * WINDOW_HEIGHT];
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
-DataStream gDataStream(1);
+//DataStream gDataStream(1);
 LTexture gStreamingTexture;
 
 LTexture::LTexture(){
@@ -201,9 +201,9 @@ SDL_Surface* SDL_ScaleSurface(SDL_Surface* surface, Uint16 x_scale, Uint16 y_sca
     return ret;
 }
 
-//DataStream::DataStream(GPU& gpu, int schemetype = 0){
-//    gb_arr = gpu.getFB();
-DataStream::DataStream(int schemetype = 0){
+DataStream::DataStream(uint8_t* gb_arr, int schemetype = 0): gb_arr(gb_arr){
+    //gb_arr = gpu.getFB();
+//DataStream::DataStream(int schemetype = 0){
     srand(time(NULL));
     setScheme(schemetype);
 }

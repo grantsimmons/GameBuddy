@@ -4,6 +4,9 @@
 #include <stdio.h>
 #include <cstdint>
 
+#include "blit.h"
+//#include "SDL.h"
+
 class GPU{
     public:
 
@@ -28,7 +31,7 @@ class GPU{
 
         uint8_t getColor(uint8_t color_num);
 
-        uint8_t getFB();
+        uint8_t* getFB();
 
         void printFB();
 

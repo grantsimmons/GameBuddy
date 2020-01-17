@@ -269,7 +269,6 @@ void Z80::LDSPnn(){
 }
 
 void Z80::LDDmHLA(){
-    printf("Writing to address %04x", this->_r.h << 8 | this->_r.l);
     this->mmu.wb(this->_r.h << 8 | this->_r.l, this->_r.a);
     this->DECHL();
 }

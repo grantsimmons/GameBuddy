@@ -694,6 +694,7 @@ class Z80{
 
 		void reset();
 
+        uint8_t* getGPUFB();
 
 		//Debugging
 		void status();

@@ -54,6 +54,7 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
             counter = 0
             counter2 = 0
             match = False
+            verbose = False
             for line in in_file:
                 if define.search(line) or newline.search(line): #Skip define statements and newlines
                     out_file.write(line)
@@ -61,7 +62,8 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
 
                 print(counter)
                 out_file.write(line[0:-2] + "{\n")
-                #out_file.write("    std::cout << \"{}\" <<std::endl;\n".format(line[10:-4]))
+                if verbose:
+                    out_file.write("    std::cout << \"{}\" <<std::endl;\n".format(line[10:-4]))
                 
                 basic = LDBasic.search(line)
                 if basic:
@@ -95,7 +97,7 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     match = True
                     print("Dec Mem")
                     if dec.group(1) == 'mHLA':
-                        out_file.write('    printf(\"Writing to address %04x\", this->_r.h << 8 | this->_r.l);\n')
+                        #out_file.write('    printf(\"Writing to address %04x\n\", this->_r.h << 8 | this->_r.l);\n')
                         out_file.write('    this->mmu.wb(this->_r.h << 8 | this->_r.l, this->_r.a);\n')
                         out_file.write('    this->DECHL();\n')
                     if dec.group(1) == 'AmHL':

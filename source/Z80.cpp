@@ -13,7 +13,7 @@ Z80::Z80(uint8_t a = 0x00, uint8_t b = 0x00, uint8_t c = 0x00, uint8_t d = 0x00,
 
 void Z80::exec(){
     static bool cont = false;
-    bool debug = true;
+    bool debug = false;
     bool verbose = false;
     int counter = 0;
     uint16_t pc_target = 0;
@@ -24,8 +24,8 @@ void Z80::exec(){
         (this->*ops[mmu.rb(this->_r.pc++)].op_function)(); //Execute op at pc
         gpu.step(this->_r.t); //Increment GPU timing registers
         if(debug){
+            //this->status();
             if(pc_target < this->_r.pc){
-                this->status();
                 if(!cont){
                     if (counter > 0){
                         counter--;
@@ -57,9 +57,9 @@ void Z80::exec(){
             }
         }
     }
-    gpu.printFB();
+    //gpu.printFB();
     //mmu.dump_mem();
-    status();
+    //status();
     //this->debug();
 }
 
@@ -87,6 +87,10 @@ void Z80::reset(){
     this->_clock.m = 0x00;
     this->_clock.t = 0x00;
     this->mmu._inbios = 1;
+}
+
+uint8_t* Z80::getGPUFB(){
+    return gpu.getFB();
 }
 
 void Z80::status(){

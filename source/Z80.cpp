@@ -57,7 +57,8 @@ void Z80::exec(){
             }
         }
     }
-    mmu.dump_mem();
+    gpu.printFB();
+    //mmu.dump_mem();
     status();
     //this->debug();
 }

@@ -168,6 +168,9 @@ void GPU::renderScan(){
         //printf("Color: %x\n", getColor(color_num));
         this->_framebuffer[160 * _line + pixel] = (uint8_t) getColor(color_num); //from 0xFF47
     }
+    if(_line == 143){
+        printFB();
+    }
     return;
 }
 
@@ -284,7 +287,7 @@ void GPU::getTicks(){
 
 void GPU::printFB(){
     printf("FRAME BUFFER\n");
-    for(uint32_t i = 0; i < 160 * 140; i++){
+    for(uint32_t i = 0; i < 160 * 144; i++){
             printf("%02x ", this->_framebuffer[i]);
             if (i % 160 == 159)
                 printf("\n");

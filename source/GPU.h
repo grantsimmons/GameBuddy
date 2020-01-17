@@ -57,7 +57,7 @@ class GPU{
         uint16_t _wx; //0xFF4B
 
         //uint8_t* _framebuffer = new uint8_t[160*140];
-        uint8_t _framebuffer[256 * 256];
+        uint8_t _framebuffer[160 * 144];
 };
 
 #endif

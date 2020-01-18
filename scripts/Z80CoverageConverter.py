@@ -54,7 +54,7 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
             counter = 0
             counter2 = 0
             match = False
-            verbose = False
+            verbose = True
             for line in in_file:
                 if define.search(line) or newline.search(line): #Skip define statements and newlines
                     out_file.write(line)
@@ -195,7 +195,8 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     match = True
                     print("Rotate A left")
                     out_file.write('    bool orig_carry = this->_r.f & CARRY ? 1 : 0;\n')
-                    out_file.write('    this->_r.f &= (this->_r.a & 0x80) ? 0xFF : ~CARRY;\n')
+                    out_file.write('    this->_r.f &= (this->_r.a & 0x80) ? 0xFF : ~CARRY; //Clear Carry\n')
+                    out_file.write('    this->_r.f |= (this->_r.a & 0x80) ? CARRY : 0x00;\n')
                     out_file.write('    this->_r.a = ((this->_r.a << 1) | (int) orig_carry) & 0xFF;\n')
 
                 ldn = LDn.search(line)

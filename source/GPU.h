@@ -16,6 +16,8 @@ class GPU{
         void step(uint16_t ticks);
 
         void renderScan();
+        
+        void renderScan2();
 
         uint8_t rb(uint16_t addr);
 

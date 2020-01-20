@@ -41,7 +41,8 @@ void GPU::step(uint16_t ticks){
                 SDL_RenderClear(gRenderer);
 
                 gStreamingTexture.lockTexture();
-                this->renderScan(); //Update Frame Buffer
+                this->renderScan2(); //Update Frame Buffer
+                //this->renderScan2(); //Update Frame Buffer
             }
             break;
 
@@ -130,18 +131,18 @@ void GPU::renderScan(){
 
     uint16_t ypos = 0;
     if(!window_en){
-        ypos = _scy + _line;
+        ypos = _scy + _line; //Y position on BG map
     }
     else{
         ypos = _line - _wy;
     }
 
     //get vertical pixels of scanline
-    uint16_t tile_row = (ypos << 2); // * 32 / 8
+    uint16_t tile_row = (ypos << 2); // * 32 / 8 //XXX
     uint16_t xpos;
 
     for(uint16_t pixel = 0; pixel < 160; pixel++){
-        xpos = pixel + _scx;
+        xpos = pixel + this->_scx; //Get x position on BG map
         //translate to window space if needed
         if(window_en){
             if(pixel >= _wx - 7){
@@ -150,9 +151,10 @@ void GPU::renderScan(){
         }
 
         //which of 32 horizontal tiles
-        uint16_t tile_col = (uint16_t) (xpos >> 3); // / 8
+        uint16_t tile_col = (uint16_t) (xpos >> 3); // / 8 XXX
         int16_t tile_num;
         uint16_t tile_addr = bg_mem + tile_row + tile_col; //multiply row by line length?
+        //FIXME: Could be the culprit?
 
         if(!sig){
             tile_num = (uint8_t) this->readVram(tile_addr);
@@ -180,6 +182,94 @@ void GPU::renderScan(){
         color_bit *= -1;
         int color_num = data2 & (1 << color_bit) ? 1 : 0;
         color_num |= data1 & (1 << color_bit) ? 1 : 0;
+        //color_num &= 0xF;
+        //printf("Color num: %x\n", color_num);
+
+        //printf("Color: %x\n", getColor(color_num));
+        this->_framebuffer[160 * _line + pixel] = (uint8_t) getColor(color_num); //from 0xFF47
+    }
+    return;
+}
+
+void GPU::renderScan2(){
+    bool window_en = false;
+    bool sig = false;
+    uint16_t base_addr = 0x8000;
+    uint16_t bg_mem = 0x9800;
+
+    if(_lcdc & LCD_EN){
+        if(_wy <= _line){
+            window_en = true;
+        }
+    }
+
+    if(_lcdc & TILE_SET_SELECT){
+        base_addr = 0x8000; //Unsigned 0x8000-0x8FFF
+        sig = false;
+    }
+    else{
+        base_addr = 0x8800; //Signed 0x8800-0x97FF, 0x9000 at center
+        sig = true;
+    }
+
+    if(!window_en){
+        if(_lcdc & BG_MEM_SELECT){
+            bg_mem = 0x9c00;
+        }
+        else{
+            bg_mem = 0x9800;
+        }
+    }
+    else{
+        if(_lcdc & (1<<6)){
+            bg_mem = 0x9C00;
+        }
+        else{
+            bg_mem = 0x9800;
+        }
+    }
+
+    //Which row of tiles to use
+
+    uint16_t tile_to_use_y = (this->_line + this->_scy) >> 3; //corresponds to row of vram
+
+    //Which tile to start with in map line
+    //uint16_t tile_to_use_x = (this->_scx >> 3);
+
+    //Which line of pixels to use in the tiles
+    uint16_t tile_coord_y = (this->_line + this->_scy) & 7;
+
+    //Where in the tile line to start
+    //uint16_t tile_coord_x = this->_scx & 7;
+
+    //uint32_t canvasoffs = this->_line * 160 * 4;
+
+    //uint32_t tile_index = readVram(bg_mem + tile_to_use_x + 32 * tile_to_use_y);
+
+    //if(this->_bgtile == 1 && tile < 128) tile += 256;
+    uint16_t xpos;
+
+    for(uint16_t pixel = 0; pixel < 160; pixel++){
+        xpos = pixel + _scx; //Get x position on BG map
+        //translate to window space if needed
+        if(window_en){
+            if(pixel >= _wx - 7){
+                xpos = pixel - (_wx - 7);
+            }
+        }
+
+        uint16_t tile_to_use_x = xpos >> 3;
+        uint16_t tile_coord_x = xpos & 7;
+
+        uint32_t tile_index = readVram(bg_mem + tile_to_use_x + 32 * tile_to_use_y);
+
+        int color_bit = xpos & 7;
+        color_bit -= 7;
+        color_bit *= -1;
+        uint8_t color_num = this->readVram((tile_index * 16 + tile_coord_y)) & (1 << color_bit) ? 1 : 0;
+        color_num <<= 1;
+        color_num |= this->readVram((tile_index * 16 + tile_coord_y + 1)) & (1 << color_bit) ? 1 : 0;
+
         //color_num &= 0xF;
         //printf("Color num: %x\n", color_num);
 
@@ -279,7 +369,12 @@ uint8_t GPU::readVram(uint16_t addr){
 }
 
 void GPU::writeVram(uint16_t addr, uint8_t val){
-    _vram[addr & 0x1FFF] = val;
+    //if(addr < 0x9800){
+    //    _vram[(addr & 0x1FFF) + 2] = val; 
+    //}
+    //else{
+        _vram[(addr & 0x1FFF) + 1] = val;
+    //}
 }
 
 void GPU::status(){
@@ -302,7 +397,6 @@ void GPU::getTicks(){
 
 uint8_t* GPU::getFB(){
     return this->_framebuffer;
-
 }
 
 void GPU::printFB(){
@@ -312,5 +406,4 @@ void GPU::printFB(){
             if (i % 160 == 159)
                 printf("\n");
     }
-    
 }

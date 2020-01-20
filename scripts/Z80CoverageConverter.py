@@ -17,8 +17,8 @@ INC16 = re.compile('void\sZ80::INC(([ABCDEFHL])([ABCDEFHL])|(SP))')
 DEC16 = re.compile('void\sZ80::DEC(([ABCDEFHL])([ABCDEFHL])|(SP))')
 INCmem = re.compile('void\sZ80::INCmHL')
 DECmem = re.compile('void\sZ80::DECmHL')
-RLCA = re.compile('void\sZ80::RLCA')
-RLA = re.compile('void\sZ80::RLA')
+RLCA = re.compile('void\sZ80::RLCA\(')
+RLA = re.compile('void\sZ80::RLA\(')
 ADDA = re.compile('void\sZ80::ADDA([ABCDEFHLn]|mHL)')
 ADD16 = re.compile('void\sZ80::ADD(HL|SP)(B|D|d)(C|E)*\(')
 SUBA = re.compile('void\sZ80::SUBA([ABCDEFHLn]|mHL)')
@@ -31,10 +31,10 @@ POP = re.compile('void\sZ80::POP([ABDH])([FCEL])')
 JP = re.compile('void\sZ80::JP(N)?(Cnn|Znn|mHL|nn)')
 JR = re.compile('void\sZ80::JR(N)?(Cn|Zn|n)')
 EXT = re.compile('void\sZ80::Extops')
-EXT_RLC = re.compile('void\sZ80::ERLC([ABCDEHL]|mHL)') #Rotate Left w/ carry
-EXT_RRC = re.compile('void\sZ80::ERRC([ABCDEHL]|mHL)') #Rotate right w/ carry
-EXT_RL = re.compile('void\sZ80::ERL([ABCDEHL]|mHL)') #Rotate left, no carry #FIXME: Conflicts with ERLC*
-EXT_RR = re.compile('void\sZ80::ERR([ABCDEHL]|mHL)') #Rotate Right, no carry
+EXT_RLC = re.compile('void\sZ80::ERLC([ABCDEHL]|mHL)\(') #Rotate Left w/ carry
+EXT_RRC = re.compile('void\sZ80::ERRC([ABCDEHL]|mHL)\(') #Rotate right w/ carry
+EXT_RL = re.compile('void\sZ80::ERL([ABCDEHL]|mHL)\(') #Rotate left, no carry #FIXME: Conflicts with ERLC*
+EXT_RR = re.compile('void\sZ80::ERR([ABCDEHL]|mHL)\(') #Rotate Right, no carry
 EXT_SLA = re.compile('void\sZ80::ESLA([ABCDEHL]|mHL)') #Shift left preserving sign
 EXT_SRA = re.compile('void\sZ80::ESRA([ABCDEHL]|mHL)') #Shift right preserving sign
 EXT_SRL = re.compile('void\sZ80::ESRL([ABCDEHL]|mHL)') #Shift right no preserve
@@ -54,7 +54,7 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
             counter = 0
             counter2 = 0
             match = False
-            verbose = True
+            verbose = False
             for line in in_file:
                 if define.search(line) or newline.search(line): #Skip define statements and newlines
                     out_file.write(line)
@@ -488,9 +488,13 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     match = True
                     print("Extension Rotate Left, no carry")
                     if erl.group(1) != 'mHL':
-                        out_file.write('    this->_r.{} = (this->_r.{} << 1) | ((this->_r.{} & 0x80) >> 7);\n'.format(erl.group(1).lower(), erl.group(1).lower(), erl.group(1).lower()))
+                        out_file.write('    bool orig_carry = this->_r.f & CARRY ? 1 : 0;\n')
+                        out_file.write('    this->_r.f &= (this->_r.{} & 0x80) ? 0xFF : ~CARRY; //Clear Carry\n'.format(erl.group(1).lower()))
+                        out_file.write('    this->_r.f |= (this->_r.{} & 0x80) ? CARRY : 0x00;\n'.format(erl.group(1).lower()))
+                        out_file.write('    this->_r.{} = ((this->_r.{} << 1) | (int) orig_carry) & 0xFF;\n'.format(erl.group(1).lower(), erl.group(1).lower()))
+                        #out_file.write('    this->_r.{} = (this->_r.{} << 1) | ((this->_r.{} & 0x80) >> 7);\n'.format(erl.group(1).lower(), erl.group(1).lower(), erl.group(1).lower()))
                     else:
-                        out_file.write('    this->mmu.wb((this->_r.h << 8) | this->_r.l, (this->mmu.rb((this->_r.h << 8) | this->_r.l)) << 1 | ((this->mmu.rb((this->_r.h << 8) | this->_r.l) & 0x80) >> 7));\n')
+                        out_file.write('    this->mmu.wb((this->_r.h << 8) | this->_r.l, (this->mmu.rb((this->_r.h << 8) | this->_r.l)) << 1 | ((this->mmu.rb((this->_r.h << 8) | this->_r.l) & 0x80) >> 7));\n') #FIXME
                     counter2 += 1
 
                 err = EXT_RR.search(line)

@@ -3,6 +3,7 @@
 OUT = test.exe
 RUN = run.exe
 CC = g++.exe
+#CC = mingw32-g++.exe
 
 #OUT = test.out
 CPU = Z80.cpp
@@ -20,8 +21,8 @@ SDL_MAIN = SDL_main.cpp
 OP_GEN = ../scripts/Z80CoverageConverter.py
 FUNCS = ../scripts/functions.cpp
 
-WIN_CFLAGS = -Wall -Wextra -w -static-libgcc -static-libstdc++
-WIN_LFLAGS = -LC:\MinGW\lib -lmingw32 -lSDL2main -lSDL2 -mwindows -IC:\MinGW\include -Dmain=SDL_main
+WIN_CFLAGS = -Wall -Wextra -w -static-libgcc -static-libstdc++ -m32
+WIN_LFLAGS = -LD:\MinGW\lib -lmingw32 -lSDL2main -lSDL2 -mwindows -ID:\MinGW\include -Dmain=SDL_main
 
 all: ops obj
 	$(CC) $(OBJS) $(SDL_MAIN) $(WIN_CFLAGS) $(WIN_LFLAGS) -o $(RUN)

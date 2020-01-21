@@ -16,6 +16,7 @@ uint8_t MMU::rb(uint16_t addr){ //Read byte from given address
                 else if(addr == 0x0100){ //Z80._r.pc == 0x0100
                     printf("Exiting BIOS. Addr: %02x\n", addr);
                     this->_inbios = 0;
+                    return this->_rom[addr];
                 }
                 else if(addr > 0x100){ //Cart ROM reads from BIOS
                     return this->_rom[addr];
@@ -93,7 +94,7 @@ uint8_t MMU::rb(uint16_t addr){ //Read byte from given address
 }
 
 uint16_t MMU::rw(uint16_t addr){ //Read word from given address
-    return this->rb(addr) + (this->rb(addr+1) << 8);
+    return this->rb(addr) | (this->rb(addr+1) << 8);
 }
 
 void MMU::wb(uint16_t addr, uint8_t val){ //Write byte to given address

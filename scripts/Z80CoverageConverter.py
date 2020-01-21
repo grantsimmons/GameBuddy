@@ -392,13 +392,15 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     print("Absolute Jump")
                     if jp.group(2) == 'Cnn':
                         out_file.write('    this->_r.pc = (this->_r.f & CARRY) ? {} : {};\n'.format('this->_r.pc' if jp.group(1) == 'N' else 'this->mmu.rw(this->_r.pc)', 'this->mmu.rw(this->_r.pc)' if jp.group(1) == 'N' else 'this->_r.pc'))
-                        out_file.write('    this->_r.pc += (this->_r.f & CARRY) ? {} : {};\n'.format(0 if jp.group(1) == 'N' else 2, 2 if jp.group(1) == 'N' else 0))
+                        out_file.write('    this->_r.pc += (this->_r.f & CARRY) ? {} : {};\n'.format(0 if jp.group(1) == 'N' else 2, 2 if jp.group(1) == 'N' else 0)) #FIXME: I think order is backwards
                     elif jp.group(2) == 'Znn':
                         out_file.write('    this->_r.pc = (this->_r.f & ZERO) ? {} : {};\n'.format('this->_r.pc' if jp.group(1) == 'N' else 'this->mmu.rw(this->_r.pc)', 'this->mmu.rw(this->_r.pc)' if jp.group(1) == 'N' else 'this->_r.pc'))
                         out_file.write('    this->_r.pc += (this->_r.f & ZERO) ? {} : {};\n'.format(0 if jp.group(1) == 'N' else 2, 2 if jp.group(1) == 'N' else 0))
                     elif jp.group(2) == 'mHL':
                         out_file.write('    this->_r.pc = this->mmu.rw(this->_r.h << 8 | this->_r.l);\n')
                         out_file.write('    this->_r.pc += 2;\n')
+                    elif jp.group(2) == 'nn':
+                        out_file.write('    this->_r.pc = this->mmu.rw(this->_r.pc);\n')
                     counter += 1
 
                 jr = JR.search(line)
@@ -421,7 +423,7 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     if call.group(2) is not None:
                         out_file.write('    if(this->_r.f & {} == {})'.format('CARRY' if call.group(2) == 'C' else 'ZERO', 0 if call.group(1) == 'N' else 1))
                         out_file.write('{\n')
-                    out_file.write('        this->mmu.wb(this->_r.sp - 1, (this->_r.pc + 2) & 0xFF00);\n') #Push pc MSB to stack
+                    out_file.write('        this->mmu.wb(this->_r.sp - 1, ((this->_r.pc + 2) & 0xFF00) >> 8);\n') #Push pc MSB to stack
                     out_file.write('        this->mmu.wb(this->_r.sp - 2, (this->_r.pc + 2) & 0x00FF);\n') #Push pc LSB to stack
                     out_file.write('        this->_r.sp -= 2;\n')
                     out_file.write('        this->_r.pc = this->mmu.rw(this->_r.pc);\n')
@@ -437,7 +439,9 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                         if ret.group(2) is not None: 
                             out_file.write('    if(this->_r.f & {} == {})'.format('CARRY' if ret.group(2) == 'C' else 'ZERO', 0 if ret.group(1) == 'N' else 1))
                             out_file.write('{\n')
-                        out_file.write('        this->_r.pc = this->mmu.rb(this->_r.sp) | this->mmu.rb(this->_r.sp + 1);\n')
+                        #out_file.write('        this->_r.pc = this->mmu.rb(this->_r.sp) | this->mmu.rb(this->_r.sp + 1);\n')
+                        #out_file.write('        this->_r.pc = this->mmu.rb(this->_r.sp) | this->mmu.rb(this->_r.sp + 1) << 8;\n')
+                        out_file.write('        this->_r.pc = this->mmu.rw(this->_r.sp);\n')
                         out_file.write('        this->_r.sp += 2;\n')
                         if ret.group(2) is not None:
                             out_file.write('    }\n')

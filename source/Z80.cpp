@@ -8,7 +8,8 @@ Z80::Z80(uint8_t a = 0x00, uint8_t b = 0x00, uint8_t c = 0x00, uint8_t d = 0x00,
         mmu(gpu, 1){
 
     mmu.loadBios();
-    mmu.loadRom("Tetris.bin");
+    //mmu.loadRom("Tetris.bin");
+    mmu.loadRom("..\\..\\gb-test-roms\\cpu_instrs\\cpu_instrs.gb");
 }
 
 void Z80::exec(){
@@ -17,14 +18,15 @@ void Z80::exec(){
     bool verbose = false;
     int counter = 0;
     uint16_t pc_target = 0;
-    while(this->_r.pc < 0x100){
+    while(true){
         if(verbose)
             printf("Executing function %x: %x\n", this->_r.pc, this->mmu.rb(this->_r.pc));
         updateTiming(false); //Increment timing registers for next instruction
         (this->*ops[mmu.rb(this->_r.pc++)].op_function)(); //Execute op at pc
         gpu.step(this->_r.t); //Increment GPU timing registers
+        if(verbose)
+            this->status();
         if(debug){
-            //this->status();
             if(pc_target < this->_r.pc){
                 if(!cont){
                     if (counter > 0){

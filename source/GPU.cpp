@@ -237,7 +237,8 @@ void GPU::renderScan2(){
     //uint16_t tile_to_use_x = (this->_scx >> 3);
 
     //Which line of pixels to use in the tiles
-    uint16_t tile_coord_y = (this->_line + this->_scy) & 7;
+    //uint16_t tile_coord_y = (this->_line + this->_scy) & 0x7;
+    uint16_t tile_coord_y = ((this->_line + this->_scy) & 0x7) << 1;
 
     //Where in the tile line to start
     //uint16_t tile_coord_x = this->_scx & 7;
@@ -293,6 +294,7 @@ uint8_t GPU::getColor(uint8_t color_num){
 			printf("ERROR: invalid color");
 			return 0;
 	}
+    //return (_pal & (0x3 << (2 * color_num))) >> (2 * color_num);
 }
 
 uint8_t GPU::rb(uint16_t addr){

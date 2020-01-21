@@ -129,7 +129,8 @@ void Z80::LDDn(){
 
 void Z80::RLA(){
     bool orig_carry = this->_r.f & CARRY ? 1 : 0;
-    this->_r.f &= (this->_r.a & 0x80) ? 0xFF : ~CARRY;
+    this->_r.f &= (this->_r.a & 0x80) ? 0xFF : ~CARRY; //Clear Carry
+    this->_r.f |= (this->_r.a & 0x80) ? CARRY : 0x00;
     this->_r.a = ((this->_r.a << 1) | (int) orig_carry) & 0xFF;
 }
 
@@ -995,7 +996,7 @@ void Z80::CPA(){
 
 void Z80::RETNZ(){
     if(this->_r.f & ZERO == 0){
-        this->_r.pc = this->mmu.rb(this->_r.sp) | this->mmu.rb(this->_r.sp + 1);
+        this->_r.pc = this->mmu.rw(this->_r.sp);
         this->_r.sp += 2;
     }
 }
@@ -1012,11 +1013,12 @@ void Z80::JPNZnn(){
 }
 
 void Z80::JPnn(){
+    this->_r.pc = this->mmu.rw(this->_r.pc);
 }
 
 void Z80::CALLNZnn(){
     if(this->_r.f & ZERO == 0){
-        this->mmu.wb(this->_r.sp - 1, (this->_r.pc + 2) & 0xFF00);
+        this->mmu.wb(this->_r.sp - 1, ((this->_r.pc + 2) & 0xFF00) >> 8);
         this->mmu.wb(this->_r.sp - 2, (this->_r.pc + 2) & 0x00FF);
         this->_r.sp -= 2;
         this->_r.pc = this->mmu.rw(this->_r.pc);
@@ -1045,13 +1047,13 @@ void Z80::RST0(){
 
 void Z80::RETZ(){
     if(this->_r.f & ZERO == 1){
-        this->_r.pc = this->mmu.rb(this->_r.sp) | this->mmu.rb(this->_r.sp + 1);
+        this->_r.pc = this->mmu.rw(this->_r.sp);
         this->_r.sp += 2;
     }
 }
 
 void Z80::RET(){
-        this->_r.pc = this->mmu.rb(this->_r.sp) | this->mmu.rb(this->_r.sp + 1);
+        this->_r.pc = this->mmu.rw(this->_r.sp);
         this->_r.sp += 2;
 }
 
@@ -1068,7 +1070,7 @@ void Z80::Extops(){
 
 void Z80::CALLZnn(){
     if(this->_r.f & ZERO == 1){
-        this->mmu.wb(this->_r.sp - 1, (this->_r.pc + 2) & 0xFF00);
+        this->mmu.wb(this->_r.sp - 1, ((this->_r.pc + 2) & 0xFF00) >> 8);
         this->mmu.wb(this->_r.sp - 2, (this->_r.pc + 2) & 0x00FF);
         this->_r.sp -= 2;
         this->_r.pc = this->mmu.rw(this->_r.pc);
@@ -1076,7 +1078,7 @@ void Z80::CALLZnn(){
 }
 
 void Z80::CALLnn(){
-        this->mmu.wb(this->_r.sp - 1, (this->_r.pc + 2) & 0xFF00);
+        this->mmu.wb(this->_r.sp - 1, ((this->_r.pc + 2) & 0xFF00) >> 8);
         this->mmu.wb(this->_r.sp - 2, (this->_r.pc + 2) & 0x00FF);
         this->_r.sp -= 2;
         this->_r.pc = this->mmu.rw(this->_r.pc);
@@ -1098,7 +1100,7 @@ void Z80::RST8(){
 
 void Z80::RETNC(){
     if(this->_r.f & CARRY == 0){
-        this->_r.pc = this->mmu.rb(this->_r.sp) | this->mmu.rb(this->_r.sp + 1);
+        this->_r.pc = this->mmu.rw(this->_r.sp);
         this->_r.sp += 2;
     }
 }
@@ -1120,7 +1122,7 @@ void Z80::XX1(){
 
 void Z80::CALLNCnn(){
     if(this->_r.f & CARRY == 0){
-        this->mmu.wb(this->_r.sp - 1, (this->_r.pc + 2) & 0xFF00);
+        this->mmu.wb(this->_r.sp - 1, ((this->_r.pc + 2) & 0xFF00) >> 8);
         this->mmu.wb(this->_r.sp - 2, (this->_r.pc + 2) & 0x00FF);
         this->_r.sp -= 2;
         this->_r.pc = this->mmu.rw(this->_r.pc);
@@ -1148,7 +1150,7 @@ void Z80::RST10(){
 
 void Z80::RETC(){
     if(this->_r.f & CARRY == 1){
-        this->_r.pc = this->mmu.rb(this->_r.sp) | this->mmu.rb(this->_r.sp + 1);
+        this->_r.pc = this->mmu.rw(this->_r.sp);
         this->_r.sp += 2;
     }
 }
@@ -1167,7 +1169,7 @@ void Z80::XX2(){
 
 void Z80::CALLCnn(){
     if(this->_r.f & CARRY == 1){
-        this->mmu.wb(this->_r.sp - 1, (this->_r.pc + 2) & 0xFF00);
+        this->mmu.wb(this->_r.sp - 1, ((this->_r.pc + 2) & 0xFF00) >> 8);
         this->mmu.wb(this->_r.sp - 2, (this->_r.pc + 2) & 0x00FF);
         this->_r.sp -= 2;
         this->_r.pc = this->mmu.rw(this->_r.pc);
@@ -1339,121 +1341,123 @@ void Z80::RST38(){
 void Z80::ERLCB(){
     this->_r.f = ((this->_r.b & 0x80) >> 7) | (this->_r.f & 0xFE);
     this->_r.b = (this->_r.b << 1) | ((this->_r.b & 0x80) >> 7);
-    this->_r.c = (this->_r.c << 1) | ((this->_r.c & 0x80) >> 7);
 }
 
 void Z80::ERLCC(){
     this->_r.f = ((this->_r.c & 0x80) >> 7) | (this->_r.f & 0xFE);
-    this->_r.c = (this->_r.c << 1) | ((this->_r.c & 0x80) >> 7);
     this->_r.c = (this->_r.c << 1) | ((this->_r.c & 0x80) >> 7);
 }
 
 void Z80::ERLCD(){
     this->_r.f = ((this->_r.d & 0x80) >> 7) | (this->_r.f & 0xFE);
     this->_r.d = (this->_r.d << 1) | ((this->_r.d & 0x80) >> 7);
-    this->_r.c = (this->_r.c << 1) | ((this->_r.c & 0x80) >> 7);
 }
 
 void Z80::ERLCE(){
     this->_r.f = ((this->_r.e & 0x80) >> 7) | (this->_r.f & 0xFE);
     this->_r.e = (this->_r.e << 1) | ((this->_r.e & 0x80) >> 7);
-    this->_r.c = (this->_r.c << 1) | ((this->_r.c & 0x80) >> 7);
 }
 
 void Z80::ERLCH(){
     this->_r.f = ((this->_r.h & 0x80) >> 7) | (this->_r.f & 0xFE);
     this->_r.h = (this->_r.h << 1) | ((this->_r.h & 0x80) >> 7);
-    this->_r.c = (this->_r.c << 1) | ((this->_r.c & 0x80) >> 7);
 }
 
 void Z80::ERLCL(){
     this->_r.f = ((this->_r.l & 0x80) >> 7) | (this->_r.f & 0xFE);
     this->_r.l = (this->_r.l << 1) | ((this->_r.l & 0x80) >> 7);
-    this->_r.c = (this->_r.c << 1) | ((this->_r.c & 0x80) >> 7);
 }
 
 void Z80::ERLCmHL(){
     this->_r.f = ((this->mmu.rb((this->_r.h << 8) | this->_r.l) & 0x80) >> 7) | this->_r.f & 0xFE;
     this->mmu.wb((this->_r.h << 8) | this->_r.l, (this->mmu.rb((this->_r.h << 8) | this->_r.l)) << 1 | ((this->mmu.rb((this->_r.h << 8) | this->_r.l) & 0x80) >> 7));
-    this->_r.c = (this->_r.c << 1) | ((this->_r.c & 0x80) >> 7);
 }
 
 void Z80::ERLCA(){
     this->_r.f = ((this->_r.a & 0x80) >> 7) | (this->_r.f & 0xFE);
     this->_r.a = (this->_r.a << 1) | ((this->_r.a & 0x80) >> 7);
-    this->_r.c = (this->_r.c << 1) | ((this->_r.c & 0x80) >> 7);
 }
 
 void Z80::ERRCB(){
     this->_r.f = (this->_r.b & 0x1) | (this->_r.f & 0xFE);
     this->_r.b = (this->_r.b >> 1) | ((this->_r.b & 0x1) << 7);
-    this->_r.c = (this->_r.c >> 1) | ((this->_r.c & 0x1) << 7);
 }
 
 void Z80::ERRCC(){
     this->_r.f = (this->_r.c & 0x1) | (this->_r.f & 0xFE);
-    this->_r.c = (this->_r.c >> 1) | ((this->_r.c & 0x1) << 7);
     this->_r.c = (this->_r.c >> 1) | ((this->_r.c & 0x1) << 7);
 }
 
 void Z80::ERRCD(){
     this->_r.f = (this->_r.d & 0x1) | (this->_r.f & 0xFE);
     this->_r.d = (this->_r.d >> 1) | ((this->_r.d & 0x1) << 7);
-    this->_r.c = (this->_r.c >> 1) | ((this->_r.c & 0x1) << 7);
 }
 
 void Z80::ERRCE(){
     this->_r.f = (this->_r.e & 0x1) | (this->_r.f & 0xFE);
     this->_r.e = (this->_r.e >> 1) | ((this->_r.e & 0x1) << 7);
-    this->_r.c = (this->_r.c >> 1) | ((this->_r.c & 0x1) << 7);
 }
 
 void Z80::ERRCH(){
     this->_r.f = (this->_r.h & 0x1) | (this->_r.f & 0xFE);
     this->_r.h = (this->_r.h >> 1) | ((this->_r.h & 0x1) << 7);
-    this->_r.c = (this->_r.c >> 1) | ((this->_r.c & 0x1) << 7);
 }
 
 void Z80::ERRCL(){
     this->_r.f = (this->_r.l & 0x1) | (this->_r.f & 0xFE);
     this->_r.l = (this->_r.l >> 1) | ((this->_r.l & 0x1) << 7);
-    this->_r.c = (this->_r.c >> 1) | ((this->_r.c & 0x1) << 7);
 }
 
 void Z80::ERRCmHL(){
     this->_r.f = (this->mmu.rb((this->_r.h << 8) | this->_r.l) & 0x1) | this->_r.f & 0xFE;
     this->mmu.wb((this->_r.h << 8) | this->_r.l, (this->mmu.rb((this->_r.h << 8) | this->_r.l)) >> 1 | ((this->mmu.rb((this->_r.h << 8) | this->_r.l) & 0x1) << 7));
-    this->_r.c = (this->_r.c >> 1) | ((this->_r.c & 0x1) << 7);
 }
 
 void Z80::ERRCA(){
     this->_r.f = (this->_r.a & 0x1) | (this->_r.f & 0xFE);
     this->_r.a = (this->_r.a >> 1) | ((this->_r.a & 0x1) << 7);
-    this->_r.c = (this->_r.c >> 1) | ((this->_r.c & 0x1) << 7);
 }
 
 void Z80::ERLB(){
-    this->_r.b = (this->_r.b << 1) | ((this->_r.b & 0x80) >> 7);
+    bool orig_carry = this->_r.f & CARRY ? 1 : 0;
+    this->_r.f &= (this->_r.b & 0x80) ? 0xFF : ~CARRY; //Clear Carry
+    this->_r.f |= (this->_r.b & 0x80) ? CARRY : 0x00;
+    this->_r.b = ((this->_r.b << 1) | (int) orig_carry) & 0xFF;
 }
 
 void Z80::ERLC(){
-    this->_r.c = (this->_r.c << 1) | ((this->_r.c & 0x80) >> 7);
+    bool orig_carry = this->_r.f & CARRY ? 1 : 0;
+    this->_r.f &= (this->_r.c & 0x80) ? 0xFF : ~CARRY; //Clear Carry
+    this->_r.f |= (this->_r.c & 0x80) ? CARRY : 0x00;
+    this->_r.c = ((this->_r.c << 1) | (int) orig_carry) & 0xFF;
 }
 
 void Z80::ERLD(){
-    this->_r.d = (this->_r.d << 1) | ((this->_r.d & 0x80) >> 7);
+    bool orig_carry = this->_r.f & CARRY ? 1 : 0;
+    this->_r.f &= (this->_r.d & 0x80) ? 0xFF : ~CARRY; //Clear Carry
+    this->_r.f |= (this->_r.d & 0x80) ? CARRY : 0x00;
+    this->_r.d = ((this->_r.d << 1) | (int) orig_carry) & 0xFF;
 }
 
 void Z80::ERLE(){
-    this->_r.e = (this->_r.e << 1) | ((this->_r.e & 0x80) >> 7);
+    bool orig_carry = this->_r.f & CARRY ? 1 : 0;
+    this->_r.f &= (this->_r.e & 0x80) ? 0xFF : ~CARRY; //Clear Carry
+    this->_r.f |= (this->_r.e & 0x80) ? CARRY : 0x00;
+    this->_r.e = ((this->_r.e << 1) | (int) orig_carry) & 0xFF;
 }
 
 void Z80::ERLH(){
-    this->_r.h = (this->_r.h << 1) | ((this->_r.h & 0x80) >> 7);
+    bool orig_carry = this->_r.f & CARRY ? 1 : 0;
+    this->_r.f &= (this->_r.h & 0x80) ? 0xFF : ~CARRY; //Clear Carry
+    this->_r.f |= (this->_r.h & 0x80) ? CARRY : 0x00;
+    this->_r.h = ((this->_r.h << 1) | (int) orig_carry) & 0xFF;
 }
 
 void Z80::ERLL(){
-    this->_r.l = (this->_r.l << 1) | ((this->_r.l & 0x80) >> 7);
+    bool orig_carry = this->_r.f & CARRY ? 1 : 0;
+    this->_r.f &= (this->_r.l & 0x80) ? 0xFF : ~CARRY; //Clear Carry
+    this->_r.f |= (this->_r.l & 0x80) ? CARRY : 0x00;
+    this->_r.l = ((this->_r.l << 1) | (int) orig_carry) & 0xFF;
 }
 
 void Z80::ERLmHL(){
@@ -1461,7 +1465,10 @@ void Z80::ERLmHL(){
 }
 
 void Z80::ERLA(){
-    this->_r.a = (this->_r.a << 1) | ((this->_r.a & 0x80) >> 7);
+    bool orig_carry = this->_r.f & CARRY ? 1 : 0;
+    this->_r.f &= (this->_r.a & 0x80) ? 0xFF : ~CARRY; //Clear Carry
+    this->_r.f |= (this->_r.a & 0x80) ? CARRY : 0x00;
+    this->_r.a = ((this->_r.a << 1) | (int) orig_carry) & 0xFF;
 }
 
 void Z80::ERRB(){

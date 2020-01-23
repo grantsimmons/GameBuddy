@@ -232,8 +232,13 @@ void DataStream::updateBuffer(){
         atop();
 
         SDL_memcpy(loadedSurface->pixels, converter, sizeof(Uint32) * WINDOW_WIDTH * WINDOW_HEIGHT); //Copy from newly created pixel array
+        SDL_Surface* scaledSurface = SDL_ScaleSurface(loadedSurface, SCALE_WIDTH, SCALE_HEIGHT);
 
-        loadedSurface = SDL_ConvertSurfaceFormat(SDL_ScaleSurface(loadedSurface, SCALE_WIDTH, SCALE_HEIGHT), SDL_PIXELFORMAT_RGBA8888, 0);
+        SDL_FreeSurface(loadedSurface);
+
+        loadedSurface = SDL_ConvertSurfaceFormat(scaledSurface, SDL_PIXELFORMAT_RGBA8888, 0);
+        //loadedSurface = SDL_ConvertSurfaceFormat(SDL_ScaleSurface(loadedSurface, SCALE_WIDTH, SCALE_HEIGHT), SDL_PIXELFORMAT_RGBA8888, 0);
+        SDL_FreeSurface(scaledSurface);
         gStreamingTexture.copyPixels(loadedSurface->pixels);
     }
     SDL_FreeSurface(loadedSurface);

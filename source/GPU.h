@@ -4,7 +4,9 @@
 #include <stdio.h>
 #include <cstdint>
 
+#ifndef VERIF
 #include "blit.h"
+#endif
 //#include "SDL.h"
 
 class GPU{

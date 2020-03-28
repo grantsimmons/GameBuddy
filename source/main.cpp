@@ -19,7 +19,8 @@
 #include "Z80.h"
 #include <iostream>
 
-int main(){
+int main(int argc, char* args[]){
+
     Z80 z80(0,0,0,0,0,0,0,0,0,0,0,0,0,0);
     z80.status();
     z80.exec();

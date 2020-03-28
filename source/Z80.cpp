@@ -1,4 +1,7 @@
 #include "Z80.h"
+#include <fstream>
+#include <bitset>
+#include <String>
 
 Z80::Z80(uint8_t a = 0x00, uint8_t b = 0x00, uint8_t c = 0x00, uint8_t d = 0x00,
          uint8_t e = 0x00, uint8_t h = 0x00, uint8_t l = 0x00, uint8_t f = 0x00,
@@ -18,12 +21,36 @@ void Z80::exec(){
     bool verbose = false;
     int counter = 0;
     uint16_t pc_target = 0;
+
+#ifdef VERIF
+    std::ofstream outfile;
+    outfile.open("stim.tv", std::ios_base::out);
+#endif
+
     while(true){
         if(verbose)
             printf("Executing function %x: %x\n", this->_r.pc, this->mmu.rb(this->_r.pc));
         updateTiming(false); //Increment timing registers for next instruction
+
+#ifdef VERIF
+        std::string s = std::bitset<8>(this->mmu.rb(this->_r.pc)).to_string();
+        outfile << s;
+        outfile << "_";
+#endif
+
         (this->*ops[mmu.rb(this->_r.pc++)].op_function)(); //Execute op at pc
         gpu.step(this->_r.t); //Increment GPU timing registers
+
+#ifdef VERIF
+        outfile << std::bitset<8>(this->_r.a).to_string() << "_"
+                << std::bitset<8>(this->_r.b).to_string() << "_"
+                << std::bitset<8>(this->_r.c).to_string() << "_"
+                << std::bitset<8>(this->_r.d).to_string() << "_"
+                << std::bitset<8>(this->_r.h).to_string() << "_"
+                << std::bitset<8>(this->_r.l).to_string() << "_"
+                << std::bitset<8>(this->_r.f).to_string() << "\n";
+#endif
+
         if(verbose)
             this->status();
         if(debug){
@@ -59,6 +86,9 @@ void Z80::exec(){
             }
         }
     }
+#ifdef VERIF
+    outfile.close();
+#endif
     //gpu.printFB();
     //mmu.dump_mem();
     //status();

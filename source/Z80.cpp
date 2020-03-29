@@ -12,13 +12,14 @@ Z80::Z80(uint8_t a = 0x00, uint8_t b = 0x00, uint8_t c = 0x00, uint8_t d = 0x00,
 
     mmu.loadBios();
     //mmu.loadRom("Tetris.bin");
-    mmu.loadRom("..\\..\\gb-test-roms\\cpu_instrs\\cpu_instrs.gb");
+    //mmu.loadRom("..\\..\\gb-test-roms\\cpu_instrs\\cpu_instrs.gb");
+    mmu.loadRom("..\\..\\gb-test-roms\\cpu_instrs\\individual\\06-ld\ r,r.gb");
 }
 
 void Z80::exec(){
     static bool cont = false;
     bool debug = false;
-    bool verbose = false;
+    int verbose = 1;
     int counter = 0;
     uint16_t pc_target = 0;
 
@@ -27,8 +28,9 @@ void Z80::exec(){
     outfile.open("stim.tv", std::ios_base::out);
 #endif
 
+    //while(this->_r.pc < 0x100){
     while(true){
-        if(verbose)
+        if(verbose > 0)
             printf("Executing function %x: %x\n", this->_r.pc, this->mmu.rb(this->_r.pc));
         updateTiming(false); //Increment timing registers for next instruction
 
@@ -51,7 +53,7 @@ void Z80::exec(){
                 << std::bitset<8>(this->_r.f).to_string() << "\n";
 #endif
 
-        if(verbose)
+        if(verbose > 2)
             this->status();
         if(debug){
             if(pc_target < this->_r.pc){

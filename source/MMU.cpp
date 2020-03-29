@@ -125,8 +125,9 @@ void MMU::wb(uint16_t addr, uint8_t val){ //Write byte to given address
         case 0xC000:
         case 0xD000:
         case 0xE000:
-            //std::cout << "WRAM write" << std::endl;
+            std::cout << "WRAM write: " << std::hex << addr << ", " << std::hex << (int) val << std::endl;
             this->_wram[addr & 0x1FFF] = val;
+            std::cout << "Read back: " << std::hex << addr << ", " << (int) this->rb(addr) << std::endl;
             break;
 
         case 0xF000:
@@ -160,6 +161,19 @@ void MMU::wb(uint16_t addr, uint8_t val){ //Write byte to given address
                     }
                     else{
                         switch(addr & 0xF0){
+							case 0x00:
+								if(addr & 0x1){
+									std::cout << "Writing " << (int) val <<
+										" to Serial" << std::endl;
+								}
+								if(addr & 0x2){
+									std::cout << "Writing " << (int) val <<
+										" to SC" << std::endl;
+								}
+								if(addr & 0x3){
+									std::cout << "That wasn't supposed to happen" << std::endl;
+								}
+								break;
                             //GPU access
                             case 0x40:
                             case 0x50:

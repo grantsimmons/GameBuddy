@@ -5,7 +5,6 @@ void Z80::RRA();
 void Z80::DAA();
 void Z80::ADDHLHL();
 void Z80::NOT();
-void Z80::SCF();
 void Z80::ADDHLSP();
 void Z80::CCF();
 void Z80::HALT();

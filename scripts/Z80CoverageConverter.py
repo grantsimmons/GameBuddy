@@ -45,6 +45,7 @@ EXT_SET = re.compile('void\sZ80::ESET([0-7])([ABCDEHL]|mHL)') #Set bit
 CALL = re.compile('void\sZ80::CALL(N)?(C|Z)?nn') #Function Call
 RET = re.compile('void\sZ80::RET(N)?(I|C|Z)?')
 CP = re.compile('void\sZ80::CP([ABCDEHLn]|mHL)')
+SCF = re.compile('void\sZ80::SCF\(')
 
 
 
@@ -54,7 +55,7 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
             counter = 0
             counter2 = 0
             match = False
-            verbose = False
+            verbose = True
             for line in in_file:
                 if define.search(line) or newline.search(line): #Skip define statements and newlines
                     out_file.write(line)
@@ -574,8 +575,15 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     if eset.group(2) != 'mHL':
                         out_file.write('    this->_r.{} |= (1<<{});\n'.format(eset.group(2).lower(), eset.group(1).lower()))
                     else:
-                        out_file.write('    this->mmu.wb((this->_r.h << 8 | this->_r.l), (this->mmu.rb(this->_r.h << 8 | this->_r.l) | (1<<{})));\n'.format(eset.group(1).lower()))                        
+                        out_file.write('    this->mmu.wb((this->_r.h << 8 | this->_r.l), (this->mmu.rb(this->_r.h << 8 | this->_r.l) | (1<<{})));\n'.format(eset.group(1).lower())) 
                     counter2 += 1
+
+                scf = SCF.search(line)
+                if scf:
+                    match = True
+                    print("Set Carry Flag")
+                    out_file.write('    this->_r.f = this->_r.f & ~ADD_SUB & ~HALF_CARRY | CARRY;\n')
+                    counter += 1
 
                 if not match:    
                     out_file.write('    std::cout << "Uncovered Function" << std::endl;\n')

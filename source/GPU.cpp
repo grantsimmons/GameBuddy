@@ -1,5 +1,4 @@
 #include "GPU.h"
-#include "blit.h"
 
 #define BG_MEM_SELECT (1<<3)
 #define TILE_SET_SELECT (1<<4)
@@ -37,10 +36,12 @@ void GPU::step(uint16_t ticks){
                 //TODO: Move SDL functiosn to VBLANK
                 
                 //Clear screen
+#ifndef VERIF
                 SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
                 SDL_RenderClear(gRenderer);
 
                 gStreamingTexture.lockTexture();
+#endif
                 this->renderScan2(); //Update Frame Buffer
                 //this->renderScan2(); //Update Frame Buffer
             }
@@ -72,6 +73,7 @@ void GPU::step(uint16_t ticks){
                 this->_line++;
 
                 if(this->_line > 153){
+#ifndef VERIF
                     gDataStream->updateBuffer(); //Push Frame to SDL Surface
                     gStreamingTexture.unlockTexture();
 
@@ -80,6 +82,7 @@ void GPU::step(uint16_t ticks){
 
                     //Update screen
                     SDL_RenderPresent(gRenderer);
+#endif
                 
                     //Restart scanning mode
                     this->_mode = 2;
@@ -375,7 +378,7 @@ void GPU::writeVram(uint16_t addr, uint8_t val){
     //    _vram[(addr & 0x1FFF) + 2] = val; 
     //}
     //else{
-        _vram[(addr & 0x1FFF) + 1] = val;
+        _vram[(addr & 0x1FFF)] = val;
     //}
 }
 

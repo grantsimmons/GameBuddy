@@ -4,6 +4,7 @@
 #define TILE_SET_SELECT (1<<4)
 #define LCD_EN (1<<5)
 
+#include <iostream>
 
 GPU::GPU(uint8_t mode = 0, uint64_t modeclock = 0, uint16_t scy = 0, 
          uint16_t scx = 0, uint16_t line = 0, uint16_t lyc = 0, uint16_t wy = 0,
@@ -42,6 +43,7 @@ void GPU::step(uint16_t ticks){
 
                 gStreamingTexture.lockTexture();
 #endif
+                std::cout << "Rendering Scanline " << _line << '\n';
                 this->renderScan2(); //Update Frame Buffer
                 //this->renderScan2(); //Update Frame Buffer
             }
@@ -56,6 +58,7 @@ void GPU::step(uint16_t ticks){
 
                 if(this->_line == 143){
                     //VBLANK
+                    std::cout << "Beginning of VBLANK" << '\n';
                     this->_mode = 1;
                     //TODO: Pass image data here
                 }
@@ -73,6 +76,7 @@ void GPU::step(uint16_t ticks){
                 this->_line++;
 
                 if(this->_line > 153){
+                    std::cout << "End of VBLANK" << '\n';
 #ifndef VERIF
                     gDataStream->updateBuffer(); //Push Frame to SDL Surface
                     gStreamingTexture.unlockTexture();

@@ -7,7 +7,6 @@
 #ifndef VERIF
 #include "blit.h"
 #endif
-//#include "SDL.h"
 
 class GPU{
     public:

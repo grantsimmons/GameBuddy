@@ -697,7 +697,7 @@ class Z80{
         uint8_t* getGPUFB();
 
 		//Debugging
-		void status();
+		void status(int verbose);
         void debug();
 
 		//OPs

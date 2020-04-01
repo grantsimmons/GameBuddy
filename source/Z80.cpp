@@ -11,15 +11,16 @@ Z80::Z80(uint8_t a = 0x00, uint8_t b = 0x00, uint8_t c = 0x00, uint8_t d = 0x00,
         mmu(gpu, 1){
 
     mmu.loadBios();
-    //mmu.loadRom("Tetris.bin");
+    mmu.loadRom("Tetris.bin");
     //mmu.loadRom("..\\..\\gb-test-roms\\cpu_instrs\\cpu_instrs.gb");
-    mmu.loadRom("..\\..\\gb-test-roms\\cpu_instrs\\individual\\06-ld\ r,r.gb");
+    //mmu.loadRom("..\\..\\gb-test-roms\\cpu_instrs\\individual\\06-ld\ r,r.gb");
+    //mmu.loadRom("..\\..\\gb-test-roms\\cpu_instrs\\individual\\10-bit\ ops.gb");
 }
 
 void Z80::exec(){
     static bool cont = false;
     bool debug = false;
-    int verbose = 1;
+    int verbose = 0;
     int counter = 0;
     uint16_t pc_target = 0;
 
@@ -28,10 +29,12 @@ void Z80::exec(){
     outfile.open("stim.tv", std::ios_base::out);
 #endif
 
+    //while(this->_r.pc < 0xd801){
     //while(this->_r.pc < 0x100){
+    //while(this->_clock.t < 0x172e598){
     while(true){
         if(verbose > 0)
-            printf("Executing function %x: %x\n", this->_r.pc, this->mmu.rb(this->_r.pc));
+            std::cout << "Executing function " << std::hex << this->_r.pc << ": " << std::hex << (int) this->mmu.rb(this->_r.pc) << '\n' << this->ops[mmu.rb(this->_r.pc)].op << '\n';
         updateTiming(false); //Increment timing registers for next instruction
 
 #ifdef VERIF
@@ -53,8 +56,8 @@ void Z80::exec(){
                 << std::bitset<8>(this->_r.f).to_string() << "\n";
 #endif
 
-        if(verbose > 2)
-            this->status();
+        if(verbose > 1)
+            this->status(verbose);
         if(debug){
             if(pc_target < this->_r.pc){
                 if(!cont){
@@ -88,6 +91,8 @@ void Z80::exec(){
             }
         }
     }
+    gpu.printFB();
+    mmu.dump_mem();
 #ifdef VERIF
     outfile.close();
 #endif
@@ -127,23 +132,36 @@ uint8_t* Z80::getGPUFB(){
     return gpu.getFB();
 }
 
-void Z80::status(){
-    printf("a = %02x\n", _r.a);
-    printf("b = %02x\n", _r.b);
-    printf("c = %02x\n", _r.c);
-    printf("d = %02x\n", _r.d);
-    printf("e = %02x\n", _r.e);
-    printf("h = %02x\n", _r.h);
-    printf("l = %02x\n", _r.l);
-    printf("f = %02x\n", _r.f);
-    printf("m = %02x\n", _r.m);
-    printf("t = %02x\n", _r.t);
-    printf("pc = %04x\n", _r.pc);
-    printf("sp = %04x\n", _r.sp);
-    printf("cm = %08x\n", _clock.m);
-    printf("ct = %08x\n", _clock.t);
-    printf("MMU = %01x\n\nGPU STATUS:\n", mmu._inbios);
-    gpu.status();
+void Z80::status(int verbose){
+    if(verbose == 2 || verbose == 4){
+        printf("a = %02x\n", _r.a);
+        printf("b = %02x\n", _r.b);
+        printf("c = %02x\n", _r.c);
+        printf("d = %02x\n", _r.d);
+        printf("e = %02x\n", _r.e);
+        printf("h = %02x\n", _r.h);
+        printf("l = %02x\n", _r.l);
+        printf("f = %02x", _r.f);
+        if(_r.f & 1<<4)
+            printf(" CARRY");
+        if(_r.f & 1<<5)
+            printf(" HALF_CARRY");
+        if(_r.f & 1<<6)
+            printf(" ADD_SUB");
+        if(_r.f & 1<<7)
+            printf(" ZERO");
+        printf("\n");
+        printf("m = %02x\n", _r.m);
+        printf("t = %02x\n", _r.t);
+        printf("pc = %04x\n", _r.pc);
+        printf("sp = %04x\n", _r.sp);
+        printf("cm = %08x\n", _clock.m);
+        printf("ct = %08x\n", _clock.t);
+    }
+    if(verbose == 3 || verbose == 4){
+        printf("MMU = %01x\n\nGPU STATUS:\n", mmu._inbios);
+        gpu.status();
+    }
 }
 
 void Z80::debug(){

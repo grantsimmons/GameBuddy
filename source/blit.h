@@ -7,7 +7,6 @@
 #include <string>
 #include <cstring> //memcpy
 #include "GPU.h"
-//#include "GPU.h"
 
 //Screen dimension constants
 const int WINDOW_WIDTH = 160;

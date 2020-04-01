@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <fstream>
 #include <cstdint>
 #include <string>
 
@@ -11,10 +12,10 @@
 class MMU{
     public:
 
-        bool _inbios;
-        
         MMU(GPU& gpu, bool inbios);
 
+        bool _inbios;
+        
     //protected:
 
         uint8_t rb(uint16_t addr); //Read byte from given address

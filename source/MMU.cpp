@@ -1,9 +1,12 @@
 #include "MMU.h"
 
-#include <fstream>
+#include <iomanip>
+
+std::ofstream mmu_outfile;
 
 MMU::MMU(GPU& gpu, bool inbios = 0): gpu(gpu), _inbios(inbios)
 {
+    mmu_outfile.open("serial.txt");
 
 }
 
@@ -116,6 +119,7 @@ void MMU::wb(uint16_t addr, uint8_t val){ //Write byte to given address
 
         case 0x8000: //VRAM
         case 0x9000:
+            std::cout << "VRAM write: " << std::hex << addr << ", " << std::hex << (int) val << '\n';
             gpu.writeVram(addr, val);
             break;
 
@@ -125,9 +129,9 @@ void MMU::wb(uint16_t addr, uint8_t val){ //Write byte to given address
         case 0xC000:
         case 0xD000:
         case 0xE000:
-            std::cout << "WRAM write: " << std::hex << addr << ", " << std::hex << (int) val << std::endl;
+            std::cout << "WRAM write: " << std::hex << addr << ", " << std::hex << (int) val << '\n';
             this->_wram[addr & 0x1FFF] = val;
-            std::cout << "Read back: " << std::hex << addr << ", " << (int) this->rb(addr) << std::endl;
+            std::cout << "Read back: " << std::hex << addr << ", " << (int) this->rb(addr) << '\n';
             break;
 
         case 0xF000:
@@ -164,14 +168,15 @@ void MMU::wb(uint16_t addr, uint8_t val){ //Write byte to given address
 							case 0x00:
 								if(addr & 0x1){
 									std::cout << "Writing " << (int) val <<
-										" to Serial" << std::endl;
+										" to Serial" << '\n';
+                                        mmu_outfile << (int) val;
 								}
 								if(addr & 0x2){
 									std::cout << "Writing " << (int) val <<
-										" to SC" << std::endl;
+										" to SC" << '\n';
 								}
 								if(addr & 0x3){
-									std::cout << "That wasn't supposed to happen" << std::endl;
+									std::cout << "That wasn't supposed to happen" << '\n';
 								}
 								break;
                             //GPU access
@@ -237,63 +242,63 @@ void MMU::dump_mem(){
     std::cout << "Dumping mem" << std::endl;
     //for(uint16_t i = 0; i < 0x0100; i++){
     int counter = 0;
+    /*
     std::cout << "BIOS" << std::endl;
     for(uint8_t i : _bios){
         printf("%02x ", i);
         counter++;
         if (counter % 16 == 0)
-            std::cout << std::endl;
+            std::cout << '\n';
     }
     printf("\n");
     counter = 0;
-    std::cout << "WRAM" << std::endl;
+    std::cout << "WRAM\n";
     for(uint8_t i : _wram){
         //if (i != 0){
             printf("%02x ", i);
             counter++;
             if (counter % 16 == 0)
-                std::cout << std::endl;
+                std::cout << '\n';
         //}
     }
     printf("\n");
     counter = 0;
-    std::cout << "ZRAM" << std::endl;
+    std::cout << "ZRAM\n";
     for(uint8_t i : _zram){
         printf("%02x ", i);
         counter++;
         if (counter % 16 == 0)
-            std::cout << std::endl;
+            std::cout << '\n';
     }
     printf("\n");
     counter = 0;
-    std::cout << "ROM" << std::endl;
+    std::cout << "ROM\n";
     for(uint8_t i : this->_rom){
         //if (i != 0){
             printf("%02x ", i);
             counter++;
             if (counter % 16 == 0)
-                std::cout << std::endl;
+                std::cout << '\n';
         //}
     }
     printf("\n");
     counter = 0;
-    std::cout << "ERAM" << std::endl;
+    std::cout << "ERAM\n";
     for(uint8_t i : this->_eram){
         //if (i != 0){
             printf("%02x ", i);
             counter++;
             if (counter % 16 == 0)
-                std::cout << std::endl;
+                std::cout << '\n';
         //}
     }
+    */
     printf("\n");
-    std::cout << "VRAM" << std::endl;
+    std::cout << "VRAM\n";
     for(uint16_t i = 0; i < 0x2000; i++){
-        if (i != 0){
-            printf("%02x ", gpu.readVram(i));
             if (i % 16 == 0)
-                std::cout << std::endl;
-        }
+                std::cout << "\n0x" << std::setfill('0') << std::setw(4) << std::right << std::hex << counter++ * 16 << ": ";
+            printf("%02x ", gpu.readVram(i));
     }
     printf("\n");
     //counter = 0;
@@ -308,3 +313,4 @@ void MMU::dump_mem(){
     //}
 
 }
+

@@ -35,3 +35,7 @@ void Z80::EI();
 void Z80::XXB();
 void Z80::XXC();
 void Z80::RST38();
+void Z80::ESLAmHL();
+void Z80::ESRAmHL();
+void Z80::ESWAPmHL();
+void Z80::ESRLmHL();

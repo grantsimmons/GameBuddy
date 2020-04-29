@@ -222,7 +222,11 @@ void MMU::loadRom(std::string file){
 
 void MMU::loadBios(){ //Hard-code at some point
     printf("Loading ROM...\n");
+//#ifndef VERIF
     std::ifstream in_file("dmg_boot.bin", std::ifstream::binary);
+//#else
+//    std::ifstream in_file("..\\..\\GameBuddy-Verilog\\scripts\\stim.bin", std::ifstream::binary);
+//#endif
     uint8_t c = in_file.get();
     uint16_t index = 0;
     while(in_file.good()){

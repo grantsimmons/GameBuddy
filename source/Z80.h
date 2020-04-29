@@ -7,6 +7,9 @@
 class Z80{
 	private:
 
+        bool running;
+        bool verif_write;
+
         GPU gpu;
         MMU mmu;
 

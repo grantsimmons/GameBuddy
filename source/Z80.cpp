@@ -2,25 +2,40 @@
 #include <fstream>
 #include <bitset>
 #include <String>
+#include <stdio.h>
 
+#ifndef VERIF
 Z80::Z80(uint8_t a = 0x00, uint8_t b = 0x00, uint8_t c = 0x00, uint8_t d = 0x00,
          uint8_t e = 0x00, uint8_t h = 0x00, uint8_t l = 0x00, uint8_t f = 0x00,
          uint8_t m = 0x00, uint16_t t = 0x00, uint16_t pc = 0x0000,
          uint16_t sp = 0xfffe, uint64_t cm = 0x00, uint64_t ct = 0x00):
         _r{a,b,c,d,e,h,l,f,m,t,pc,sp}, _clock{cm,ct}, gpu(0,0,0,0,0,0,0,0),
-        mmu(gpu, 1){
+        mmu(gpu, 1), running(true){
 
     mmu.loadBios();
-    mmu.loadRom("Tetris.bin");
+    //mmu.loadRom("Tetris.bin");
     //mmu.loadRom("..\\..\\gb-test-roms\\cpu_instrs\\cpu_instrs.gb");
-    //mmu.loadRom("..\\..\\gb-test-roms\\cpu_instrs\\individual\\06-ld\ r,r.gb");
+    mmu.loadRom("..\\..\\gb-test-roms\\cpu_instrs\\individual\\06-ld\ r,r.gb");
     //mmu.loadRom("..\\..\\gb-test-roms\\cpu_instrs\\individual\\10-bit\ ops.gb");
 }
 
+#else
+Z80::Z80(uint8_t a = 0x00, uint8_t b = 0x00, uint8_t c = 0x00, uint8_t d = 0x00,
+         uint8_t e = 0x00, uint8_t h = 0x00, uint8_t l = 0x00, uint8_t f = 0x00,
+         uint8_t m = 0x00, uint16_t t = 0x00, uint16_t pc = 0x0100,
+         uint16_t sp = 0xfffe, uint64_t cm = 0x00, uint64_t ct = 0x00):
+        _r{a,b,c,d,e,h,l,f,m,t,pc,sp}, _clock{cm,ct}, gpu(0,0,0,0,0,0,0,0),
+        mmu(gpu, 0), running(true), verif_write(true){
+
+    mmu.loadBios();
+    mmu.loadRom("..\\..\\GameBuddy-Verilog\\scripts\\stim.bin");
+}
+#endif
+
 void Z80::exec(){
     static bool cont = false;
-    bool debug = false;
-    int verbose = 0;
+    bool debug = true;
+    int verbose = 1;
     int counter = 0;
     uint16_t pc_target = 0;
 
@@ -32,28 +47,36 @@ void Z80::exec(){
     //while(this->_r.pc < 0xd801){
     //while(this->_r.pc < 0x100){
     //while(this->_clock.t < 0x172e598){
-    while(true){
+    while(running){
         if(verbose > 0)
             std::cout << "Executing function " << std::hex << this->_r.pc << ": " << std::hex << (int) this->mmu.rb(this->_r.pc) << '\n' << this->ops[mmu.rb(this->_r.pc)].op << '\n';
         updateTiming(false); //Increment timing registers for next instruction
 
 #ifdef VERIF
-        std::string s = std::bitset<8>(this->mmu.rb(this->_r.pc)).to_string();
-        outfile << s;
-        outfile << "_";
+        if(this->mmu.rb(this->_r.pc) == 0x10){ //Don't include STOP command in test vector generation
+            verif_write = false;
+        }
+        if(verif_write){
+            std::string s = std::bitset<8>(this->mmu.rb(this->_r.pc)).to_string();
+            outfile << s;
+            outfile << "_";
+        }
 #endif
 
         (this->*ops[mmu.rb(this->_r.pc++)].op_function)(); //Execute op at pc
         gpu.step(this->_r.t); //Increment GPU timing registers
 
 #ifdef VERIF
-        outfile << std::bitset<8>(this->_r.a).to_string() << "_"
-                << std::bitset<8>(this->_r.b).to_string() << "_"
-                << std::bitset<8>(this->_r.c).to_string() << "_"
-                << std::bitset<8>(this->_r.d).to_string() << "_"
-                << std::bitset<8>(this->_r.h).to_string() << "_"
-                << std::bitset<8>(this->_r.l).to_string() << "_"
-                << std::bitset<8>(this->_r.f).to_string() << "\n";
+        if(verif_write){
+            outfile << std::bitset<8>(this->_r.a).to_string() << "_"
+                    << std::bitset<8>(this->_r.b).to_string() << "_"
+                    << std::bitset<8>(this->_r.c).to_string() << "_"
+                    << std::bitset<8>(this->_r.d).to_string() << "_"
+                    << std::bitset<8>(this->_r.e).to_string() << "_"
+                    << std::bitset<8>(this->_r.h).to_string() << "_"
+                    << std::bitset<8>(this->_r.l).to_string() << "_"
+                    << std::bitset<8>(this->_r.f).to_string() << "\n";
+        }
 #endif
 
         if(verbose > 1)
@@ -65,7 +88,8 @@ void Z80::exec(){
                         counter--;
                         continue;
                     }
-                    std::cout << "p = print mem, x = continue, # = # of steps to continue, n = next instruction\n";
+                    this->status(2);
+                    std::cout << "p = print mem, x = continue, # = # of steps to continue, n = next instruction, r = reset, s = CPU status\n";
                     uint8_t choice;
                     std::cin >> choice;
                     switch(choice){
@@ -84,8 +108,11 @@ void Z80::exec(){
                             std::cout << "Resetting..." << std::endl;
                             this->reset();
                             break;
-                        default:
-                            counter = (int)choice;
+                        case 's':
+                            this->status(2);
+                            break;
+                        //default:
+                            //counter = (int)choice;
                     }
                 }
             }

@@ -52,6 +52,7 @@ RET = re.compile('void\sZ80::RET(N)?(I|C|Z)?')
 NOP = re.compile('void\sZ80::NOP\(')
 CP = re.compile('void\sZ80::CP([ABCDEHLn]|mHL)')
 XCF = re.compile('void\sZ80::([SC])CF\(')
+STOP = re.compile('void\sZ80::STOP')
 
 
 
@@ -146,9 +147,9 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                 if inc8: #Flags
                     match = True
                     print("Inc 8 bit")
+                    out_file.write('    this->_r.f = (this->_r.{} & 0xF) + 1 == 0x10 ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY));\n'.format(inc8.group(1).lower()))
                     out_file.write('    this->_r.{} += 1;\n'.format(inc8.group(1).lower()))
                     out_file.write('    this->_r.f = this->_r.{} == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);\n'.format(inc8.group(1).lower()))
-                    out_file.write('    this->_r.f = this->_r.{} & 0x1F == 0x10 ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY));\n'.format(inc8.group(1).lower()))
                     out_file.write('    this->_r.f &= ~(ADD_SUB);\n')
                     counter += 1
 
@@ -156,9 +157,10 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                 if dec8: #Flags
                     match = True
                     print("Dec 8 bit")
+                    out_file.write('    this->_r.f = (this->_r.{} & 0xF) == 0x0 ? this->_r.f | HALF_CARRY : this->_r.f & ~(HALF_CARRY);\n'.format(dec8.group(1).lower()))
                     out_file.write('    this->_r.{} -= 1;\n'.format(dec8.group(1).lower()))
                     out_file.write('    this->_r.f = this->_r.{} == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);\n'.format(dec8.group(1).lower()))
-                    out_file.write('    this->_r.f = this->_r.{} & 0x1F == 0x0F ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY));\n'.format(dec8.group(1).lower()))
+                    #out_file.write('    this->_r.f = this->_r.{} & 0x1F == 0x0F ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY));\n'.format(dec8.group(1).lower()))
                     out_file.write('    this->_r.f |= ADD_SUB;\n')
                     counter += 1
 
@@ -212,7 +214,7 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     print("Rotate A left w/ carry")
                     out_file.write('    this->_r.f = (this->_r.a & 0x80) ? this->_r.f | CARRY : this->_r.f & ~(CARRY);\n')
                     out_file.write('    this->_r.a = this->_r.a << 1 | ((this->_r.a & 0x80) ? 1 : 0);\n')
-                    out_file.write('    this->_r.f = ~(ZERO | ADD_SUB | HALF_CARRY);\n')
+                    out_file.write('    this->_r.f &= ~(ZERO | ADD_SUB | HALF_CARRY);\n')
                     counter += 1
 
                 rla = RLA.search(line)
@@ -220,11 +222,9 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     match = True
                     print("Rotate A left through carry")
                     out_file.write('    bool orig_carry = this->_r.f & CARRY ? 1 : 0;\n')
-                    out_file.write('    this->_r.f &= (this->_r.a & 0x80) ? 0xFF : ~CARRY;\n')
-                    out_file.write('    this->_r.f |= (this->_r.a & 0x80) ? CARRY : 0x00;\n')
-                    #out_file.write('    this->_r.f = (this->_r.a & 0x80) ? this->_r.f | CARRY : this->_r.f & ~(CARRY);\n')
+                    out_file.write('    this->_r.f = (this->_r.a & 0x80) ? this->_r.f | CARRY : this->_r.f & ~CARRY;\n')
                     out_file.write('    this->_r.a = ((this->_r.a << 1) | (int) orig_carry) & 0xFF;\n')
-                    #out_file.write('    this->_r.f = ~(ZERO | ADD_SUB | HALF_CARRY);\n')
+                    out_file.write('    this->_r.f &= ~(ZERO | ADD_SUB | HALF_CARRY);\n')
                     counter += 1
 
                 rrca = RRCA.search(line)
@@ -233,7 +233,7 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     print("Rotate A left w/ carry")
                     out_file.write('    this->_r.f = (this->_r.a & 0x01) ? this->_r.f | CARRY : this->_r.f & ~(CARRY);\n')
                     out_file.write('    this->_r.a = this->_r.a >> 1 | ((this->_r.a & 0x01) ? 1 << 7 : 0);\n')
-                    out_file.write('    this->_r.f = ~(ZERO | ADD_SUB | HALF_CARRY);\n')
+                    out_file.write('    this->_r.f &= ~(ZERO | ADD_SUB | HALF_CARRY);\n')
                     counter += 1
 
                 rra = RRA.search(line)
@@ -243,7 +243,7 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     out_file.write('    bool orig_carry = this->_r.f & CARRY ? 1 : 0;\n')
                     out_file.write('    this->_r.f = (this->_r.a & 0x01) ? this->_r.f | CARRY : this->_r.f & ~(CARRY);\n')
                     out_file.write('    this->_r.a = ((this->_r.a >> 1) | (int) orig_carry << 7) & 0xFF;\n')
-                    out_file.write('    this->_r.f = ~(ZERO | ADD_SUB | HALF_CARRY);\n')
+                    out_file.write('    this->_r.f &= ~(ZERO | ADD_SUB | HALF_CARRY);\n')
                     counter += 1
 
                 ldn = LDn.search(line)
@@ -348,11 +348,13 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                         val = 'mmu.rb(this->_r.h << 8 | this->_r.l)'
                     elif adc.group(1) == 'n':
                         val = 'mmu.rb(this->_r.pc)'
-                    out_file.write('    this->_r.f = this->_r.a + this->{} + (this->_r.f & CARRY ? 1 : 0) > 0xFF ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY)); //Carry flag\n'.format(val))
+                    out_file.write('    bool temp_carry = (this->_r.a + this->{} + (this->_r.f & CARRY ? 1 : 0)) > 0xFF ? true : false; //Carry flag\n'.format(val))
                     out_file.write('    this->_r.f = ((this->_r.a & 0xF) + (this->{} & 0xF) + (this->_r.f & CARRY ? 1 : 0)) & 0x10 ? (this->_r.f | HALF_CARRY) : (this->_r.f & ~(HALF_CARRY)); //Half-Carry flag\n'.format(val))
-                    out_file.write('    this->_r.f &= ~(ADD_SUB); //Clear Add_Sub flag;\n')
+                    #out_file.write('    this->_r.f = this->_r.a + this->{} + (this->_r.f & CARRY ? 1 : 0) > 0xFF ? (this->_r.f | CARRY) : (this->_r.f & ~(CARRY)); //Carry flag\n'.format(val))
                     out_file.write('    this->_r.a += this->{} + (this->_r.f & CARRY ? 1 : 0);\n'.format(val))
+                    out_file.write('    this->_r.f &= ~(ADD_SUB); //Clear Add_Sub flag;\n')
                     out_file.write('    this->_r.f = this->_r.a == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));\n')
+                    out_file.write('    this->_r.f = temp_carry ? this->_r.f | CARRY : this->_r.f & ~(CARRY);\n')
                     if adc.group(1) == 'n':
                         out_file.write('    this->_r.pc += 1;\n')
                     counter += 1
@@ -388,7 +390,7 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     elif anda.group(1) == 'n':
                         val = 'mmu.rb(this->_r.pc)'
                     out_file.write('    this->_r.a &= this->{};\n'.format(val))
-                    out_file.write('    this->_r.f = HALF_CARRY | this->_r.a == 0 ? ZERO : 0;\n')
+                    out_file.write('    this->_r.f = HALF_CARRY | (this->_r.a == 0 ? ZERO : 0);\n')
                     if anda.group(1) == 'n':
                         out_file.write('    this->_r.pc += 1;\n')
                     counter += 1
@@ -430,7 +432,7 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     match = True
                     print("Accumulator not")
                     out_file.write('    this->_r.a = ~this->_r.a;\n')
-                    out_file.write('    this->_r.f = ~(ADD_SUB | HALF_CARRY);\n')
+                    out_file.write('    this->_r.f |= ADD_SUB | HALF_CARRY;\n')
                     counter += 1
 
                 push = PUSH.search(line)
@@ -517,6 +519,12 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                             out_file.write('    }\n')
                         counter += 1
 
+                stop = STOP.search(line)
+                if stop:
+                    out_file.write('#ifdef VERIF\n')
+                    out_file.write('    this->running = false;\n')
+                    out_file.write('#endif\n')
+
 
 
 
@@ -527,7 +535,6 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     match = True
                     print("CB Extension")
                     out_file.write('    updateTiming(true);\n')
-                    #out_file.write('    std::cout << \"Executing function \" << std::hex << this->_r.pc << \": \" << std::hex << (int) this->mmu.rb(this->_r.pc) << \'\\n\' << this->ext_ops[mmu.rb(this->_r.pc)].op << \'\\n\';\n')
                     out_file.write('    (this->*ext_ops[mmu.rb(this->_r.pc++)].op_function)();\n')
                     out_file.write('    gpu.step(this->_r.t);\n')
                     counter += 1
@@ -537,17 +544,13 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     print("Extension Rotate Left with carry")
                     match = True
                     if erlc.group(1) != 'mHL':
-                        reg = erlc.group(1).lower()
-                        out_file.write('    this->_r.f = (this->_r.{} & 0x80) ? this->_r.f | CARRY : this->_r.f & ~(CARRY);\n'.format(reg))
-                        out_file.write('    this->_r.{} = this->_r.{} << 1 | ((this->_r.{} & 0x80) ? 1 : 0);\n'.format(reg, reg, reg))
-                        out_file.write('    this->_r.f = (this->_r.{} == 0) ? this->_r.f | ZERO : this->_r.f & ~(ZERO);\n'.format(reg))
-                        out_file.write('    this->_r.f = ~(ADD_SUB | HALF_CARRY);\n')
+                        out_file.write('    this->_r.f = ((this->_r.{} & 0x80) >> 7) | (this->_r.f & 0xFE);\n'.format(erlc.group(1).lower()))
+                        #FIXME: Hardcoded carry position                          ^
+                        out_file.write('    this->_r.{} = (this->_r.{} << 1) | ((this->_r.{} & 0x80) >> 7);\n'.format(erlc.group(1).lower(), erlc.group(1).lower(), erlc.group(1).lower()))
                     else:
-                        reg = 'this->mmu.rb((this->_r.h << 8) | this->_r.l)'
-                        out_file.write('    this->_r.f = ({} & 0x80) ? this->_r.f | CARRY : this->_r.f & ~(CARRY);\n'.format(reg))
-                        out_file.write('    this->mmu.wb((this->_r.h << 8) | this->_r.l, ({} << 1) | (({}) & 0x80) ? 1 : 0);\n'.format(reg,reg))
-                        out_file.write('    this->_r.f = ({} == 0) ? this->_r.f | ZERO : this->_r.f & ~(ZERO);\n'.format(reg))
-                        out_file.write('    this->_r.f = ~(ADD_SUB | HALF_CARRY);\n')
+                        out_file.write('    this->_r.f = ((this->mmu.rb((this->_r.h << 8) | this->_r.l) & 0x80) >> 7) | this->_r.f & 0xFE;\n')
+                        out_file.write('    this->mmu.wb((this->_r.h << 8) | this->_r.l, (this->mmu.rb((this->_r.h << 8) | this->_r.l)) << 1 | ((this->mmu.rb((this->_r.h << 8) | this->_r.l) & 0x80) >> 7));\n')
+                        #FIXME: Make all mHL accesses | instead of +
                     counter2 += 1
 
                 errc = EXT_RRC.search(line)
@@ -555,131 +558,71 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     print("Extension Rotate Right with carry")
                     match = True
                     if errc.group(1) != 'mHL':
-                        reg = errc.group(1).lower()
-                        out_file.write('    this->_r.f = (this->_r.{} & 0x01) ? this->_r.f | CARRY : this->_r.f & ~(CARRY);\n'.format(reg))
-                        out_file.write('    this->_r.{} = this->_r.{} >> 1 | ((this->_r.{} & 0x01) ? 1 << 7 : 0);\n'.format(reg, reg, reg))
-                        out_file.write('    this->_r.f = (this->_r.{} == 0) ? this->_r.f | ZERO : this->_r.f & ~(ZERO);\n'.format(reg))
-                        out_file.write('    this->_r.f = ~(ADD_SUB | HALF_CARRY);\n')
+                        out_file.write('    this->_r.f = (this->_r.{} & 0x1) | (this->_r.f & 0xFE);\n'.format(errc.group(1).lower()))
+                        out_file.write('    this->_r.{} = (this->_r.{} >> 1) | ((this->_r.{} & 0x1) << 7);\n'.format(errc.group(1).lower(), errc.group(1).lower(), errc.group(1).lower()))
                     else:
-                        reg = 'this->mmu.rb((this->_r.h << 8) | this->_r.l)'
-                        out_file.write('    this->_r.f = ({} & 0x01) ? this->_r.f | CARRY : this->_r.f & ~(CARRY);\n'.format(reg))
-                        out_file.write('    this->mmu.wb((this->_r.h << 8) | this->_r.l, ({}) >> 1 | (({}) & 0x01) ? 1 << 7 : 0);\n'.format(reg,reg))
-                        out_file.write('    this->_r.f = ({} == 0) ? this->_r.f | ZERO : this->_r.f & ~(ZERO);\n'.format(reg))
-                        out_file.write('    this->_r.f = ~(ADD_SUB | HALF_CARRY);\n')
+                        out_file.write('    this->_r.f = (this->mmu.rb((this->_r.h << 8) | this->_r.l) & 0x1) | this->_r.f & 0xFE;\n')
+                        out_file.write('    this->mmu.wb((this->_r.h << 8) | this->_r.l, (this->mmu.rb((this->_r.h << 8) | this->_r.l)) >> 1 | ((this->mmu.rb((this->_r.h << 8) | this->_r.l) & 0x1) << 7));\n')
                     counter2 += 1
 
                 erl = EXT_RL.search(line)
                 if erl:
                     match = True
-                    print("Extension Rotate Left, through carry")
+                    print("Extension Rotate Left, no carry")
                     if erl.group(1) != 'mHL':
-                        reg = erl.group(1).lower()
                         out_file.write('    bool orig_carry = this->_r.f & CARRY ? 1 : 0;\n')
-                        out_file.write('    this->_r.f &= (this->_r.{} & 0x80) ? 0xFF : ~CARRY;\n'.format(reg))
-                        out_file.write('    this->_r.f |= (this->_r.{} & 0x80) ? CARRY : 0x00;\n'.format(reg))
-                        out_file.write('    this->_r.{} = ((this->_r.{} << 1) | (int) orig_carry) & 0xFF;\n'.format(reg, reg))
-                        #out_file.write('    this->_r.f = (this->_r.{} & 0x80) ? this->_r.f | CARRY : this->_r.f & ~(CARRY);\n'.format(reg))
-                        #out_file.write('    this->_r.{} = ((this->_r.{} << 1) | (int) orig_carry);\n'.format(reg, reg))
-                        #out_file.write('    this->_r.f = this->_r.{} == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);\n'.format(reg))
-                        #out_file.write('    this->_r.f = ~(ADD_SUB | HALF_CARRY);\n')
+                        out_file.write('    this->_r.f &= (this->_r.{} & 0x80) ? 0xFF : ~CARRY; //Clear Carry\n'.format(erl.group(1).lower()))
+                        out_file.write('    this->_r.f |= (this->_r.{} & 0x80) ? CARRY : 0x00;\n'.format(erl.group(1).lower()))
+                        out_file.write('    this->_r.{} = ((this->_r.{} << 1) | (int) orig_carry) & 0xFF;\n'.format(erl.group(1).lower(), erl.group(1).lower()))
+                        #out_file.write('    this->_r.{} = (this->_r.{} << 1) | ((this->_r.{} & 0x80) >> 7);\n'.format(erl.group(1).lower(), erl.group(1).lower(), erl.group(1).lower()))
                     else:
-                        reg = 'this->mmu.rb((this->_r.h << 8) | this->_r.l)'
-                        out_file.write('    bool orig_carry = this->_r.f & CARRY ? 1 : 0;\n')
-                        out_file.write('    this->_r.f = ({} & 0x80) ? this->_r.f | CARRY : this->_r.f & ~(CARRY);\n'.format(reg))
-                        out_file.write('    this->mmu.wb((this->_r.h << 8) | this->_r.l, ({}) << 1 | (int) orig_carry);\n'.format(reg))
-                        out_file.write('    this->_r.f = {} == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);\n'.format(reg))
-                        out_file.write('    this->_r.f = ~(ADD_SUB | HALF_CARRY);\n')
+                        out_file.write('    this->mmu.wb((this->_r.h << 8) | this->_r.l, (this->mmu.rb((this->_r.h << 8) | this->_r.l)) << 1 | ((this->mmu.rb((this->_r.h << 8) | this->_r.l) & 0x80) >> 7));\n') #FIXME
                     counter2 += 1
 
                 err = EXT_RR.search(line)
                 if err:
                     match = True
-                    print("Extension Rotate Right, through carry")
+                    print("Extension Rotate Right, no carry")
                     if err.group(1) != 'mHL':
-                        reg = err.group(1).lower()
-                        out_file.write('    bool orig_carry = this->_r.f & CARRY ? 1 : 0;\n')
-                        out_file.write('    this->_r.f = (this->_r.{} & 0x01) ? this->_r.f | CARRY : this->_r.f & ~(CARRY);\n'.format(reg))
-                        out_file.write('    this->_r.{} = ((this->_r.{} >> 1) | (int) orig_carry << 7);\n'.format(reg, reg))
-                        out_file.write('    this->_r.f = this->_r.{} == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);\n'.format(reg))
-                        out_file.write('    this->_r.f = ~(ADD_SUB | HALF_CARRY);\n')
+                        out_file.write('    this->_r.{} = (this->_r.{} >> 1) | ((this->_r.{} & 0x1) << 7);\n'.format(err.group(1).lower(), err.group(1).lower(), err.group(1).lower()))
                     else:
-                        reg = 'this->mmu.rb((this->_r.h << 8) | this->_r.l)'
-                        out_file.write('    bool orig_carry = this->_r.f & CARRY ? 1 : 0;\n')
-                        out_file.write('    this->_r.f = ({} & 0x01) ? this->_r.f | CARRY : this->_r.f & ~(CARRY);\n'.format(reg))
-                        out_file.write('    this->mmu.wb((this->_r.h << 8) | this->_r.l, ({}) >> 1 | ((int) orig_carry) << 7);\n'.format(reg))
-                        out_file.write('    this->_r.f = {} == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);\n'.format(reg))
-                        out_file.write('    this->_r.f = ~(ADD_SUB | HALF_CARRY);\n')
+                        out_file.write('    this->mmu.wb((this->_r.h << 8) | this->_r.l, (this->mmu.rb((this->_r.h << 8) | this->_r.l)) >> 1 | ((this->mmu.rb((this->_r.h << 8) | this->_r.l) & 0x1) << 7));\n')
                     counter2 += 1
 
                 esla = EXT_SLA.search(line)
                 if esla:
-                    print("Extension Shift Left Preserving Sign")
-                    match = True
                     if esla.group(1) != 'mHL':
-                        reg = esla.group(1).lower()
-                        out_file.write('    this->_r.f = this->_r.{} & 0x80 ? this->_r.f | CARRY : this->_r.f & ~(CARRY);\n'.format(reg))
-                        out_file.write('    this->_r.{} <<= 1;\n'.format(reg))
-                        out_file.write('    this->_r.f = this->_r.{} == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);\n'.format(reg))
-                        out_file.write('    this->_r.f = ~(ADD_SUB | HALF_CARRY);\n')
-                    else:
-                        reg = 'this->mmu.rb((this->_r.h << 8) | this->_r.l)'
-                        out_file.write('    this->_r.f = ({} & 0x80) ? this->_r.f | CARRY : this->_r.f & ~(CARRY);\n'.format(reg))
-                        out_file.write('    this->mmu.wb((this->_r.h << 8) | this->_r.l, ({}) << 1);\n'.format(reg))
-                        out_file.write('    this->_r.f = {} == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);\n'.format(reg))
-                        out_file.write('    this->_r.f = ~(ADD_SUB | HALF_CARRY);\n')
-                    counter2 += 1
+                        print("Extension Shift Left Preserving Sign")
+                        match = True
+                        out_file.write('    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.{} & 0x80) >> 7 ? CARRY : 0x0);\n'.format(esla.group(1).lower()))
+                        out_file.write('    this->_r.{} <<= 1;\n'.format(esla.group(1).lower()))
+                        counter2 += 1
 
                 esra = EXT_SRA.search(line)
                 if esra:
-                    print("Extension Shift Right Preserving Sign")
-                    match = True
                     if esra.group(1) != 'mHL':
-                        reg = esra.group(1).lower()
-                        out_file.write('    this->_r.f = this->_r.{} & 0x01 ? this->_r.f | CARRY : this->_r.f & ~(CARRY);\n'.format(reg))
-                        out_file.write('    this->_r.{} = this->_r.{} >> 1 | (this->_r.{} & 0x80);\n'.format(reg, reg, reg))
-                        out_file.write('    this->_r.f = this->_r.{} == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);\n'.format(reg))
-                        out_file.write('    this->_r.f = ~(ADD_SUB | HALF_CARRY);\n')
-                    else:
-                        reg = 'this->mmu.rb((this->_r.h << 8) | this->_r.l)'
-                        out_file.write('    this->_r.f = {} & 0x01 ? this->_r.f | CARRY : this->_r.f & ~(CARRY);\n'.format(reg))
-                        out_file.write('    this->mmu.wb((this->_r.h << 8) | this->_r.l, ({}) >> 1 | ({} & 0x80));\n'.format(reg, reg))
-                        out_file.write('    this->_r.f = {} == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);\n'.format(reg))
-                        out_file.write('    this->_r.f = ~(ADD_SUB | HALF_CARRY);\n')
-                    counter2 += 1
+                        print("Extension Shift Right Preserving Sign")
+                        match = True
+                        out_file.write('    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.{} & 0x1) ? CARRY : 0);\n'.format(esra.group(1).lower()))
+                        out_file.write('    this->_r.{} >>= 1;\n'.format(esra.group(1).lower()))
+                        counter2 += 1
 
                 esrl = EXT_SRL.search(line)
                 if esrl:
-                    print("Extension Shift Right, no sign preservation")
-                    match = True
                     if esrl.group(1) != 'mHL':
-                        reg = esrl.group(1).lower()
-                        out_file.write('    this->_r.f = this->_r.{} & 0x01 ? this->_r.f | CARRY : this->_r.f & ~(CARRY);\n'.format(reg))
-                        out_file.write('    this->_r.{} = this->_r.{} >> 1 & ~(0x80);\n'.format(reg, reg, reg))
-                        out_file.write('    this->_r.f = this->_r.{} == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);\n'.format(reg))
-                        out_file.write('    this->_r.f = ~(ADD_SUB | HALF_CARRY);\n')
-                    else:
-                        reg = 'this->mmu.rb((this->_r.h << 8) | this->_r.l)'
-                        out_file.write('    this->_r.f = {} & 0x01 ? this->_r.f | CARRY : this->_r.f & ~(CARRY);\n'.format(reg))
-                        out_file.write('    this->mmu.wb((this->_r.h << 8) | this->_r.l, ({}) >> 1 & ~(0x80));\n'.format(reg, reg))
-                        out_file.write('    this->_r.f = {} == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);\n'.format(reg))
-                        out_file.write('    this->_r.f = ~(ADD_SUB | HALF_CARRY);\n')
-                    counter2 += 1
+                        print("Extension Shift Right, no sign preservation")
+                        match = True
+                        out_file.write('    this->_r.f = this->_r.f & ~(CARRY) | ((this->_r.{} & 0x1) ? CARRY : 0);\n'.format(esrl.group(1).lower()))
+                        out_file.write('    this->_r.{} = (this->_r.{} >> 1) & 0x7F;\n'.format(esrl.group(1).lower(), esrl.group(1).lower()))
+                        counter2 += 1
 
                 eswap = EXT_SWAP.search(line)
                 if eswap:
-                    match = True
-                    print("Extension Swap nibbles in byte")
                     if eswap.group(1) != 'mHL':
-                        reg = eswap.group(1).lower()
-                        out_file.write('    this->_r.{} = (((this->_r.{} & 0xF0) >> 4) & 0x0F) | (((this->_r.{} & 0x0F) << 4) & 0xF0);\n'.format(reg, reg, reg))
-                        out_file.write('    this->_r.f = this->_r.{} == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);\n'.format(reg))
-                        out_file.write('    this->_r.f &= ~(ADD_SUB | HALF_CARRY | CARRY);\n')
-                    else:
-                        reg = 'this->mmu.rb((this->_r.h << 8) | this->_r.l)'
-                        out_file.write('    this->mmu.wb((this->_r.h << 8) | this->_r.l,((({} & 0xF0) >> 4) & 0x0F) | ((({} & 0x0F) << 4) & 0xF0));\n'.format(reg, reg, reg))
-                        out_file.write('    this->_r.f = {} == 0 ? this->_r.f | ZERO : this->_r.f & ~(ZERO);\n'.format(reg))
-                        out_file.write('    this->_r.f &= ~(ADD_SUB | HALF_CARRY | CARRY);\n')
-                    counter2 += 1
+                        match = True
+                        print("Extension Swap nibbles in byte")
+                        out_file.write('    this->_r.{} = (((this->_r.{} & 0xF0) >> 4) & 0x0F) | (((this->_r.{} & 0x0F) << 4) & 0xF0);\n'.format(eswap.group(1).lower(), eswap.group(1).lower(), eswap.group(1).lower()))
+                        counter2 += 1
 
                 ebit = EXT_BIT.search(line)
                 if ebit:
@@ -689,8 +632,6 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                         out_file.write('    this->_r.f = (this->_r.{} & (1<<{})) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));\n'.format(ebit.group(2).lower(), ebit.group(1)))
                     else:
                         out_file.write('    this->_r.f = (this->mmu.rb(this->_r.h << 8 | this->_r.l) & (1<<{})) == 0 ? (this->_r.f | ZERO) : (this->_r.f & ~(ZERO));\n'.format(ebit.group(1).lower()))
-                    out_file.write('    this->_r.f |= HALF_CARRY;\n')
-                    out_file.write('    this->_r.f &= ~(ADD_SUB);\n')
                     counter2 += 1
 
                 eres = EXT_RES.search(line)
@@ -702,6 +643,7 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                     else:
                         out_file.write('    this->mmu.wb((this->_r.h << 8 | this->_r.l), (this->mmu.rb(this->_r.h << 8 | this->_r.l) & ~(1<<{})));\n'.format(eres.group(1).lower()))                        
                     counter2 += 1
+                
 
                 eset = EXT_SET.search(line)
                 if eset:
@@ -721,13 +663,14 @@ with open("../scripts/uncovered.cpp", 'w') as uncovered:
                         out_file.write('    this->_r.f = this->_r.f & ~ADD_SUB & ~HALF_CARRY | CARRY;\n')
                     elif xcf.group(1).lower() == 'c':
                         print("Invert Carry Flag")
-                        out_file.write('    this->_r.f = (this->_r.f & CARRY) ? this->_r.f & ~(CARRY) : this->_r.f & CARRY;\n')
+                        out_file.write('    this->_r.f = (this->_r.f & CARRY) ? this->_r.f & ~(CARRY) : this->_r.f | CARRY;\n')
                         out_file.write('    this->_r.f &= ~(ADD_SUB | HALF_CARRY);\n')
                     counter += 1
 
                 if not match:    
                     out_file.write('    std::cout << "Uncovered Function" << std::endl;\n')
                     uncovered.write(line)
+                out_file.write('    this->_r.f &= 0xF0;\n')
                 out_file.write("}\n\n")
                 match = False
                 print(line[0:-2])

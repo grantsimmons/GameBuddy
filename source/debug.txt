@@ -1,0 +1,1526 @@
+GNU Make 4.1
+Built for x86_64-pc-linux-gnu
+Copyright (C) 1988-2014 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Reading makefiles...
+Updating goal targets....
+ File 'verif' does not exist.
+   File 'verif.exe' does not exist.
+    Must remake target 'Z80.o'.
+echo "verif"
+verif
+g++.exe -c -Wall -Wextra -w -static-libgcc -static-libstdc++ -m32 Z80.cpp
+    Successfully remade target file 'Z80.o'.
+    Must remake target 'MMU.o'.
+g++.exe -c -Wall -Wextra -w -static-libgcc -static-libstdc++ -m32 MMU.cpp
+    Successfully remade target file 'MMU.o'.
+      Must remake target 'ops_impl.cpp'.
+python3 ../scripts/Z80CoverageConverter.py
+0
+void Z80::NOP()
+0
+Load 16-bit immediate
+void Z80::LDBCnn()
+1
+To Mem
+void Z80::LDmBCA()
+2
+Inc 16 bit
+BC
+void Z80::INCBC()
+3
+Inc 8 bit
+void Z80::INCB()
+4
+Dec 8 bit
+void Z80::DECB()
+5
+Load 8-bit immediate
+void Z80::LDBn()
+6
+Rotate A left w/ carry
+void Z80::RLCA()
+7
+To Mem
+void Z80::LDmnnSP()
+8
+16-bit add
+void Z80::ADDHLBC()
+9
+From Mem
+void Z80::LDAmBC()
+10
+Dec 16 bit
+void Z80::DECBC()
+11
+Inc 8 bit
+void Z80::INCC()
+12
+Dec 8 bit
+void Z80::DECC()
+13
+Load 8-bit immediate
+void Z80::LDCn()
+14
+void Z80::RRCA()
+14
+void Z80::STOP()
+14
+Load 16-bit immediate
+void Z80::LDDEnn()
+15
+To Mem
+void Z80::LDmDEA()
+16
+Inc 16 bit
+DE
+void Z80::INCDE()
+17
+Inc 8 bit
+void Z80::INCD()
+18
+Dec 8 bit
+void Z80::DECD()
+19
+Load 8-bit immediate
+void Z80::LDDn()
+20
+Rotate A left
+void Z80::RLA()
+20
+Relative Jump
+void Z80::JRn()
+21
+16-bit add
+void Z80::ADDHLDE()
+22
+From Mem
+void Z80::LDAmDE()
+23
+Dec 16 bit
+void Z80::DECDE()
+24
+Inc 8 bit
+void Z80::INCE()
+25
+Dec 8 bit
+void Z80::DECE()
+26
+Load 8-bit immediate
+void Z80::LDEn()
+27
+void Z80::RRA()
+27
+Relative Jump
+void Z80::JRNZn()
+28
+Load 16-bit immediate
+void Z80::LDHLnn()
+29
+Inc Mem
+void Z80::LDImHLA()
+30
+Inc 16 bit
+HL
+void Z80::INCHL()
+31
+Inc 8 bit
+void Z80::INCH()
+32
+Dec 8 bit
+void Z80::DECH()
+33
+Load 8-bit immediate
+void Z80::LDHn()
+34
+void Z80::DAA()
+34
+Relative Jump
+void Z80::JRZn()
+35
+void Z80::ADDHLHL()
+35
+Inc Mem
+void Z80::LDIAmHL()
+36
+Dec 16 bit
+void Z80::DECHL()
+37
+Inc 8 bit
+void Z80::INCL()
+38
+Dec 8 bit
+void Z80::DECL()
+39
+Load 8-bit immediate
+void Z80::LDLn()
+40
+void Z80::NOT()
+40
+Relative Jump
+void Z80::JRNCn()
+41
+Load 16-bit immediate
+void Z80::LDSPnn()
+42
+Dec Mem
+void Z80::LDDmHLA()
+43
+Inc 16 bit
+SP
+void Z80::INCSP()
+44
+Inc mem location
+void Z80::INCmHL()
+45
+Dec mem location
+void Z80::DECmHL()
+46
+To Mem
+void Z80::LDmHLn()
+47
+Set Carry Flag
+void Z80::SCF()
+48
+Relative Jump
+void Z80::JRCn()
+49
+void Z80::ADDHLSP()
+49
+Dec Mem
+void Z80::LDDAmHL()
+50
+Dec 16 bit
+void Z80::DECSP()
+51
+Inc 8 bit
+void Z80::INCA()
+52
+Dec 8 bit
+void Z80::DECA()
+53
+Load 8-bit immediate
+void Z80::LDAn()
+54
+void Z80::CCF()
+54
+Basic
+void Z80::LDBB()
+55
+Basic
+void Z80::LDBC()
+56
+Basic
+void Z80::LDBD()
+57
+Basic
+void Z80::LDBE()
+58
+Basic
+void Z80::LDBH()
+59
+Basic
+void Z80::LDBL()
+60
+From Mem
+void Z80::LDBmHL()
+61
+Basic
+void Z80::LDBA()
+62
+Basic
+void Z80::LDCB()
+63
+Basic
+void Z80::LDCC()
+64
+Basic
+void Z80::LDCD()
+65
+Basic
+void Z80::LDCE()
+66
+Basic
+void Z80::LDCH()
+67
+Basic
+void Z80::LDCL()
+68
+From Mem
+void Z80::LDCmHL()
+69
+Basic
+void Z80::LDCA()
+70
+Basic
+void Z80::LDDB()
+71
+Basic
+void Z80::LDDC()
+72
+Basic
+void Z80::LDDD()
+73
+Basic
+void Z80::LDDE()
+74
+Basic
+void Z80::LDDH()
+75
+Basic
+void Z80::LDDL()
+76
+From Mem
+void Z80::LDDmHL()
+77
+Basic
+void Z80::LDDA()
+78
+Basic
+void Z80::LDEB()
+79
+Basic
+void Z80::LDEC()
+80
+Basic
+void Z80::LDED()
+81
+Basic
+void Z80::LDEE()
+82
+Basic
+void Z80::LDEH()
+83
+Basic
+void Z80::LDEL()
+84
+From Mem
+void Z80::LDEmHL()
+85
+Basic
+void Z80::LDEA()
+86
+Basic
+void Z80::LDHB()
+87
+Basic
+void Z80::LDHC()
+88
+Basic
+void Z80::LDHD()
+89
+Basic
+void Z80::LDHE()
+90
+Basic
+void Z80::LDHH()
+91
+Basic
+void Z80::LDHL()
+92
+From Mem
+void Z80::LDHmHL()
+93
+Basic
+void Z80::LDHA()
+94
+Basic
+void Z80::LDLB()
+95
+Basic
+void Z80::LDLC()
+96
+Basic
+void Z80::LDLD()
+97
+Basic
+void Z80::LDLE()
+98
+Basic
+void Z80::LDLH()
+99
+Basic
+void Z80::LDLL()
+100
+From Mem
+void Z80::LDLmHL()
+101
+Basic
+void Z80::LDLA()
+102
+To Mem
+void Z80::LDmHLB()
+103
+To Mem
+void Z80::LDmHLC()
+104
+To Mem
+void Z80::LDmHLD()
+105
+To Mem
+void Z80::LDmHLE()
+106
+To Mem
+void Z80::LDmHLH()
+107
+To Mem
+void Z80::LDmHLL()
+108
+void Z80::HALT()
+108
+To Mem
+void Z80::LDmHLA()
+109
+Basic
+void Z80::LDAB()
+110
+Basic
+void Z80::LDAC()
+111
+Basic
+void Z80::LDAD()
+112
+Basic
+void Z80::LDAE()
+113
+Basic
+void Z80::LDAH()
+114
+Basic
+void Z80::LDAL()
+115
+From Mem
+void Z80::LDAmHL()
+116
+Basic
+void Z80::LDAA()
+117
+Accumulator add
+void Z80::ADDAB()
+118
+Accumulator add
+void Z80::ADDAC()
+119
+Accumulator add
+void Z80::ADDAD()
+120
+Accumulator add
+void Z80::ADDAE()
+121
+Accumulator add
+void Z80::ADDAH()
+122
+Accumulator add
+void Z80::ADDAL()
+123
+Accumulator add
+void Z80::ADDAmHL()
+124
+Accumulator add
+void Z80::ADDAA()
+125
+Add with carry
+void Z80::ADCAB()
+126
+Add with carry
+void Z80::ADCAC()
+127
+Add with carry
+void Z80::ADCAD()
+128
+Add with carry
+void Z80::ADCAE()
+129
+Add with carry
+void Z80::ADCAH()
+130
+Add with carry
+void Z80::ADCAL()
+131
+Add with carry
+void Z80::ADCAmHL()
+132
+Add with carry
+void Z80::ADCAA()
+133
+Accumulator Subtract
+void Z80::SUBAB()
+134
+Accumulator Subtract
+void Z80::SUBAC()
+135
+Accumulator Subtract
+void Z80::SUBAD()
+136
+Accumulator Subtract
+void Z80::SUBAE()
+137
+Accumulator Subtract
+void Z80::SUBAH()
+138
+Accumulator Subtract
+void Z80::SUBAL()
+139
+Accumulator Subtract
+void Z80::SUBAmHL()
+140
+Accumulator Subtract
+void Z80::SUBAA()
+141
+void Z80::SBCAB()
+141
+void Z80::SBCAC()
+141
+void Z80::SBCAD()
+141
+void Z80::SBCAE()
+141
+void Z80::SBCAH()
+141
+void Z80::SBCAL()
+141
+void Z80::SBCAmHL()
+141
+void Z80::SBCAA()
+141
+Accumulator and
+void Z80::ANDB()
+142
+Accumulator and
+void Z80::ANDC()
+143
+Accumulator and
+void Z80::ANDD()
+144
+Accumulator and
+void Z80::ANDE()
+145
+Accumulator and
+void Z80::ANDH()
+146
+Accumulator and
+void Z80::ANDL()
+147
+Accumulator and
+void Z80::ANDmHL()
+148
+Accumulator and
+void Z80::ANDA()
+149
+Accumulator xor
+void Z80::XORB()
+150
+Accumulator xor
+void Z80::XORC()
+151
+Accumulator xor
+void Z80::XORD()
+152
+Accumulator xor
+void Z80::XORE()
+153
+Accumulator xor
+void Z80::XORH()
+154
+Accumulator xor
+void Z80::XORL()
+155
+Accumulator xor
+void Z80::XORmHL()
+156
+Accumulator xor
+void Z80::XORA()
+157
+Accumulator xor
+void Z80::ORB()
+158
+Accumulator xor
+void Z80::ORC()
+159
+Accumulator xor
+void Z80::ORD()
+160
+Accumulator xor
+void Z80::ORE()
+161
+Accumulator xor
+void Z80::ORH()
+162
+Accumulator xor
+void Z80::ORL()
+163
+Accumulator xor
+void Z80::ORmHL()
+164
+Accumulator xor
+void Z80::ORA()
+165
+Compare
+void Z80::CPB()
+166
+Compare
+void Z80::CPC()
+167
+Compare
+void Z80::CPD()
+168
+Compare
+void Z80::CPE()
+169
+Compare
+void Z80::CPH()
+170
+Compare
+void Z80::CPL()
+171
+Compare
+void Z80::CPmHL()
+172
+Compare
+void Z80::CPA()
+173
+Function Return
+void Z80::RETNZ()
+174
+Pop from stack
+void Z80::POPBC()
+175
+Absolute Jump
+void Z80::JPNZnn()
+176
+Absolute Jump
+void Z80::JPnn()
+177
+Function Call
+void Z80::CALLNZnn()
+178
+Push to stack
+void Z80::PUSHBC()
+179
+Accumulator add
+void Z80::ADDAn()
+180
+void Z80::RST0()
+180
+Function Return
+void Z80::RETZ()
+181
+Function Return
+void Z80::RET()
+182
+Absolute Jump
+void Z80::JPZnn()
+183
+CB Extension
+void Z80::Extops()
+184
+Function Call
+void Z80::CALLZnn()
+185
+Function Call
+void Z80::CALLnn()
+186
+Add with carry
+void Z80::ADCAn()
+187
+void Z80::RST8()
+187
+Function Return
+void Z80::RETNC()
+188
+Pop from stack
+void Z80::POPDE()
+189
+Absolute Jump
+void Z80::JPNCnn()
+190
+void Z80::XX1()
+190
+Function Call
+void Z80::CALLNCnn()
+191
+Push to stack
+void Z80::PUSHDE()
+192
+Accumulator Subtract
+void Z80::SUBAn()
+193
+void Z80::RST10()
+193
+Function Return
+void Z80::RETC()
+194
+Function Return
+void Z80::RETI()
+194
+Absolute Jump
+void Z80::JPCnn()
+195
+void Z80::XX2()
+195
+Function Call
+void Z80::CALLCnn()
+196
+void Z80::XX3()
+196
+void Z80::SBCAn()
+196
+void Z80::RST18()
+196
+Load to FF00 w/ Offset
+void Z80::LDHmnA()
+197
+Pop from stack
+void Z80::POPHL()
+198
+Load to FF00 w/ Offset
+void Z80::LDHmCA()
+199
+void Z80::XX4()
+199
+void Z80::XX5()
+199
+Push to stack
+void Z80::PUSHHL()
+200
+Accumulator and
+void Z80::ANDn()
+201
+void Z80::RST20()
+201
+16-bit add
+void Z80::ADDSPd()
+202
+Absolute Jump
+void Z80::JPmHL()
+203
+To Mem
+void Z80::LDmnnA()
+204
+void Z80::XX6()
+204
+void Z80::XX7()
+204
+void Z80::XX8()
+204
+Accumulator xor
+void Z80::XORn()
+205
+void Z80::RST28()
+205
+Load to FF00 w/ Offset
+void Z80::LDHAmn()
+206
+Pop from stack
+void Z80::POPAF()
+207
+void Z80::XX9()
+207
+void Z80::DI()
+207
+void Z80::XXA()
+207
+Push to stack
+void Z80::PUSHAF()
+208
+Accumulator xor
+void Z80::ORn()
+209
+void Z80::RST30()
+209
+void Z80::LDHLSPd()
+209
+void Z80::LDSPHL()
+209
+void Z80::LDAmnn()
+209
+void Z80::EI()
+209
+void Z80::XXB()
+209
+void Z80::XXC()
+209
+Compare
+void Z80::CPn()
+210
+void Z80::RST38()
+210
+Extension Rotate Left with carry
+void Z80::ERLCB()
+210
+Extension Rotate Left with carry
+void Z80::ERLCC()
+210
+Extension Rotate Left with carry
+void Z80::ERLCD()
+210
+Extension Rotate Left with carry
+void Z80::ERLCE()
+210
+Extension Rotate Left with carry
+void Z80::ERLCH()
+210
+Extension Rotate Left with carry
+void Z80::ERLCL()
+210
+Extension Rotate Left with carry
+void Z80::ERLCmHL()
+210
+Extension Rotate Left with carry
+void Z80::ERLCA()
+210
+Extension Rotate Right with carry
+void Z80::ERRCB()
+210
+Extension Rotate Right with carry
+void Z80::ERRCC()
+210
+Extension Rotate Right with carry
+void Z80::ERRCD()
+210
+Extension Rotate Right with carry
+void Z80::ERRCE()
+210
+Extension Rotate Right with carry
+void Z80::ERRCH()
+210
+Extension Rotate Right with carry
+void Z80::ERRCL()
+210
+Extension Rotate Right with carry
+void Z80::ERRCmHL()
+210
+Extension Rotate Right with carry
+void Z80::ERRCA()
+210
+Extension Rotate Left, no carry
+void Z80::ERLB()
+210
+Extension Rotate Left, no carry
+void Z80::ERLC()
+210
+Extension Rotate Left, no carry
+void Z80::ERLD()
+210
+Extension Rotate Left, no carry
+void Z80::ERLE()
+210
+Extension Rotate Left, no carry
+void Z80::ERLH()
+210
+Extension Rotate Left, no carry
+void Z80::ERLL()
+210
+Extension Rotate Left, no carry
+void Z80::ERLmHL()
+210
+Extension Rotate Left, no carry
+void Z80::ERLA()
+210
+Extension Rotate Right, no carry
+void Z80::ERRB()
+210
+Extension Rotate Right, no carry
+void Z80::ERRC()
+210
+Extension Rotate Right, no carry
+void Z80::ERRD()
+210
+Extension Rotate Right, no carry
+void Z80::ERRE()
+210
+Extension Rotate Right, no carry
+void Z80::ERRH()
+210
+Extension Rotate Right, no carry
+void Z80::ERRL()
+210
+Extension Rotate Right, no carry
+void Z80::ERRmHL()
+210
+Extension Rotate Right, no carry
+void Z80::ERRA()
+210
+Extension Shift Left Preserving Sign
+void Z80::ESLAB()
+210
+Extension Shift Left Preserving Sign
+void Z80::ESLAC()
+210
+Extension Shift Left Preserving Sign
+void Z80::ESLAD()
+210
+Extension Shift Left Preserving Sign
+void Z80::ESLAE()
+210
+Extension Shift Left Preserving Sign
+void Z80::ESLAH()
+210
+Extension Shift Left Preserving Sign
+void Z80::ESLAL()
+210
+void Z80::ESLAmHL()
+210
+Extension Shift Left Preserving Sign
+void Z80::ESLAA()
+210
+Extension Shift Right Preserving Sign
+void Z80::ESRAB()
+210
+Extension Shift Right Preserving Sign
+void Z80::ESRAC()
+210
+Extension Shift Right Preserving Sign
+void Z80::ESRAD()
+210
+Extension Shift Right Preserving Sign
+void Z80::ESRAE()
+210
+Extension Shift Right Preserving Sign
+void Z80::ESRAH()
+210
+Extension Shift Right Preserving Sign
+void Z80::ESRAL()
+210
+void Z80::ESRAmHL()
+210
+Extension Shift Right Preserving Sign
+void Z80::ESRAA()
+210
+Extension Swap nibbles in byte
+void Z80::ESWAPB()
+210
+Extension Swap nibbles in byte
+void Z80::ESWAPC()
+210
+Extension Swap nibbles in byte
+void Z80::ESWAPD()
+210
+Extension Swap nibbles in byte
+void Z80::ESWAPE()
+210
+Extension Swap nibbles in byte
+void Z80::ESWAPH()
+210
+Extension Swap nibbles in byte
+void Z80::ESWAPL()
+210
+void Z80::ESWAPmHL()
+210
+Extension Swap nibbles in byte
+void Z80::ESWAPA()
+210
+Extension Shift Right, no sign preservation
+void Z80::ESRLB()
+210
+Extension Shift Right, no sign preservation
+void Z80::ESRLC()
+210
+Extension Shift Right, no sign preservation
+void Z80::ESRLD()
+210
+Extension Shift Right, no sign preservation
+void Z80::ESRLE()
+210
+Extension Shift Right, no sign preservation
+void Z80::ESRLH()
+210
+Extension Shift Right, no sign preservation
+void Z80::ESRLL()
+210
+void Z80::ESRLmHL()
+210
+Extension Shift Right, no sign preservation
+void Z80::ESRLA()
+210
+Extension Test Bit
+void Z80::EBIT0B()
+210
+Extension Test Bit
+void Z80::EBIT0C()
+210
+Extension Test Bit
+void Z80::EBIT0D()
+210
+Extension Test Bit
+void Z80::EBIT0E()
+210
+Extension Test Bit
+void Z80::EBIT0H()
+210
+Extension Test Bit
+void Z80::EBIT0L()
+210
+Extension Test Bit
+void Z80::EBIT0mHL()
+210
+Extension Test Bit
+void Z80::EBIT0A()
+210
+Extension Test Bit
+void Z80::EBIT1B()
+210
+Extension Test Bit
+void Z80::EBIT1C()
+210
+Extension Test Bit
+void Z80::EBIT1D()
+210
+Extension Test Bit
+void Z80::EBIT1E()
+210
+Extension Test Bit
+void Z80::EBIT1H()
+210
+Extension Test Bit
+void Z80::EBIT1L()
+210
+Extension Test Bit
+void Z80::EBIT1mHL()
+210
+Extension Test Bit
+void Z80::EBIT1A()
+210
+Extension Test Bit
+void Z80::EBIT2B()
+210
+Extension Test Bit
+void Z80::EBIT2C()
+210
+Extension Test Bit
+void Z80::EBIT2D()
+210
+Extension Test Bit
+void Z80::EBIT2E()
+210
+Extension Test Bit
+void Z80::EBIT2H()
+210
+Extension Test Bit
+void Z80::EBIT2L()
+210
+Extension Test Bit
+void Z80::EBIT2mHL()
+210
+Extension Test Bit
+void Z80::EBIT2A()
+210
+Extension Test Bit
+void Z80::EBIT3B()
+210
+Extension Test Bit
+void Z80::EBIT3C()
+210
+Extension Test Bit
+void Z80::EBIT3D()
+210
+Extension Test Bit
+void Z80::EBIT3E()
+210
+Extension Test Bit
+void Z80::EBIT3H()
+210
+Extension Test Bit
+void Z80::EBIT3L()
+210
+Extension Test Bit
+void Z80::EBIT3mHL()
+210
+Extension Test Bit
+void Z80::EBIT3A()
+210
+Extension Test Bit
+void Z80::EBIT4B()
+210
+Extension Test Bit
+void Z80::EBIT4C()
+210
+Extension Test Bit
+void Z80::EBIT4D()
+210
+Extension Test Bit
+void Z80::EBIT4E()
+210
+Extension Test Bit
+void Z80::EBIT4H()
+210
+Extension Test Bit
+void Z80::EBIT4L()
+210
+Extension Test Bit
+void Z80::EBIT4mHL()
+210
+Extension Test Bit
+void Z80::EBIT4A()
+210
+Extension Test Bit
+void Z80::EBIT5B()
+210
+Extension Test Bit
+void Z80::EBIT5C()
+210
+Extension Test Bit
+void Z80::EBIT5D()
+210
+Extension Test Bit
+void Z80::EBIT5E()
+210
+Extension Test Bit
+void Z80::EBIT5H()
+210
+Extension Test Bit
+void Z80::EBIT5L()
+210
+Extension Test Bit
+void Z80::EBIT5mHL()
+210
+Extension Test Bit
+void Z80::EBIT5A()
+210
+Extension Test Bit
+void Z80::EBIT6B()
+210
+Extension Test Bit
+void Z80::EBIT6C()
+210
+Extension Test Bit
+void Z80::EBIT6D()
+210
+Extension Test Bit
+void Z80::EBIT6E()
+210
+Extension Test Bit
+void Z80::EBIT6H()
+210
+Extension Test Bit
+void Z80::EBIT6L()
+210
+Extension Test Bit
+void Z80::EBIT6mHL()
+210
+Extension Test Bit
+void Z80::EBIT6A()
+210
+Extension Test Bit
+void Z80::EBIT7B()
+210
+Extension Test Bit
+void Z80::EBIT7C()
+210
+Extension Test Bit
+void Z80::EBIT7D()
+210
+Extension Test Bit
+void Z80::EBIT7E()
+210
+Extension Test Bit
+void Z80::EBIT7H()
+210
+Extension Test Bit
+void Z80::EBIT7L()
+210
+Extension Test Bit
+void Z80::EBIT7mHL()
+210
+Extension Test Bit
+void Z80::EBIT7A()
+210
+Extension Reset Bit
+void Z80::ERES0B()
+210
+Extension Reset Bit
+void Z80::ERES0C()
+210
+Extension Reset Bit
+void Z80::ERES0D()
+210
+Extension Reset Bit
+void Z80::ERES0E()
+210
+Extension Reset Bit
+void Z80::ERES0H()
+210
+Extension Reset Bit
+void Z80::ERES0L()
+210
+Extension Reset Bit
+void Z80::ERES0mHL()
+210
+Extension Reset Bit
+void Z80::ERES0A()
+210
+Extension Reset Bit
+void Z80::ERES1B()
+210
+Extension Reset Bit
+void Z80::ERES1C()
+210
+Extension Reset Bit
+void Z80::ERES1D()
+210
+Extension Reset Bit
+void Z80::ERES1E()
+210
+Extension Reset Bit
+void Z80::ERES1H()
+210
+Extension Reset Bit
+void Z80::ERES1L()
+210
+Extension Reset Bit
+void Z80::ERES1mHL()
+210
+Extension Reset Bit
+void Z80::ERES1A()
+210
+Extension Reset Bit
+void Z80::ERES2B()
+210
+Extension Reset Bit
+void Z80::ERES2C()
+210
+Extension Reset Bit
+void Z80::ERES2D()
+210
+Extension Reset Bit
+void Z80::ERES2E()
+210
+Extension Reset Bit
+void Z80::ERES2H()
+210
+Extension Reset Bit
+void Z80::ERES2L()
+210
+Extension Reset Bit
+void Z80::ERES2mHL()
+210
+Extension Reset Bit
+void Z80::ERES2A()
+210
+Extension Reset Bit
+void Z80::ERES3B()
+210
+Extension Reset Bit
+void Z80::ERES3C()
+210
+Extension Reset Bit
+void Z80::ERES3D()
+210
+Extension Reset Bit
+void Z80::ERES3E()
+210
+Extension Reset Bit
+void Z80::ERES3H()
+210
+Extension Reset Bit
+void Z80::ERES3L()
+210
+Extension Reset Bit
+void Z80::ERES3mHL()
+210
+Extension Reset Bit
+void Z80::ERES3A()
+210
+Extension Reset Bit
+void Z80::ERES4B()
+210
+Extension Reset Bit
+void Z80::ERES4C()
+210
+Extension Reset Bit
+void Z80::ERES4D()
+210
+Extension Reset Bit
+void Z80::ERES4E()
+210
+Extension Reset Bit
+void Z80::ERES4H()
+210
+Extension Reset Bit
+void Z80::ERES4L()
+210
+Extension Reset Bit
+void Z80::ERES4mHL()
+210
+Extension Reset Bit
+void Z80::ERES4A()
+210
+Extension Reset Bit
+void Z80::ERES5B()
+210
+Extension Reset Bit
+void Z80::ERES5C()
+210
+Extension Reset Bit
+void Z80::ERES5D()
+210
+Extension Reset Bit
+void Z80::ERES5E()
+210
+Extension Reset Bit
+void Z80::ERES5H()
+210
+Extension Reset Bit
+void Z80::ERES5L()
+210
+Extension Reset Bit
+void Z80::ERES5mHL()
+210
+Extension Reset Bit
+void Z80::ERES5A()
+210
+Extension Reset Bit
+void Z80::ERES6B()
+210
+Extension Reset Bit
+void Z80::ERES6C()
+210
+Extension Reset Bit
+void Z80::ERES6D()
+210
+Extension Reset Bit
+void Z80::ERES6E()
+210
+Extension Reset Bit
+void Z80::ERES6H()
+210
+Extension Reset Bit
+void Z80::ERES6L()
+210
+Extension Reset Bit
+void Z80::ERES6mHL()
+210
+Extension Reset Bit
+void Z80::ERES6A()
+210
+Extension Reset Bit
+void Z80::ERES7B()
+210
+Extension Reset Bit
+void Z80::ERES7C()
+210
+Extension Reset Bit
+void Z80::ERES7D()
+210
+Extension Reset Bit
+void Z80::ERES7E()
+210
+Extension Reset Bit
+void Z80::ERES7H()
+210
+Extension Reset Bit
+void Z80::ERES7L()
+210
+Extension Reset Bit
+void Z80::ERES7mHL()
+210
+Extension Reset Bit
+void Z80::ERES7A()
+210
+Extension Set Bit
+void Z80::ESET0B()
+210
+Extension Set Bit
+void Z80::ESET0C()
+210
+Extension Set Bit
+void Z80::ESET0D()
+210
+Extension Set Bit
+void Z80::ESET0E()
+210
+Extension Set Bit
+void Z80::ESET0H()
+210
+Extension Set Bit
+void Z80::ESET0L()
+210
+Extension Set Bit
+void Z80::ESET0mHL()
+210
+Extension Set Bit
+void Z80::ESET0A()
+210
+Extension Set Bit
+void Z80::ESET1B()
+210
+Extension Set Bit
+void Z80::ESET1C()
+210
+Extension Set Bit
+void Z80::ESET1D()
+210
+Extension Set Bit
+void Z80::ESET1E()
+210
+Extension Set Bit
+void Z80::ESET1H()
+210
+Extension Set Bit
+void Z80::ESET1L()
+210
+Extension Set Bit
+void Z80::ESET1mHL()
+210
+Extension Set Bit
+void Z80::ESET1A()
+210
+Extension Set Bit
+void Z80::ESET2B()
+210
+Extension Set Bit
+void Z80::ESET2C()
+210
+Extension Set Bit
+void Z80::ESET2D()
+210
+Extension Set Bit
+void Z80::ESET2E()
+210
+Extension Set Bit
+void Z80::ESET2H()
+210
+Extension Set Bit
+void Z80::ESET2L()
+210
+Extension Set Bit
+void Z80::ESET2mHL()
+210
+Extension Set Bit
+void Z80::ESET2A()
+210
+Extension Set Bit
+void Z80::ESET3B()
+210
+Extension Set Bit
+void Z80::ESET3C()
+210
+Extension Set Bit
+void Z80::ESET3D()
+210
+Extension Set Bit
+void Z80::ESET3E()
+210
+Extension Set Bit
+void Z80::ESET3H()
+210
+Extension Set Bit
+void Z80::ESET3L()
+210
+Extension Set Bit
+void Z80::ESET3mHL()
+210
+Extension Set Bit
+void Z80::ESET3A()
+210
+Extension Set Bit
+void Z80::ESET4B()
+210
+Extension Set Bit
+void Z80::ESET4C()
+210
+Extension Set Bit
+void Z80::ESET4D()
+210
+Extension Set Bit
+void Z80::ESET4E()
+210
+Extension Set Bit
+void Z80::ESET4H()
+210
+Extension Set Bit
+void Z80::ESET4L()
+210
+Extension Set Bit
+void Z80::ESET4mHL()
+210
+Extension Set Bit
+void Z80::ESET4A()
+210
+Extension Set Bit
+void Z80::ESET5B()
+210
+Extension Set Bit
+void Z80::ESET5C()
+210
+Extension Set Bit
+void Z80::ESET5D()
+210
+Extension Set Bit
+void Z80::ESET5E()
+210
+Extension Set Bit
+void Z80::ESET5H()
+210
+Extension Set Bit
+void Z80::ESET5L()
+210
+Extension Set Bit
+void Z80::ESET5mHL()
+210
+Extension Set Bit
+void Z80::ESET5A()
+210
+Extension Set Bit
+void Z80::ESET6B()
+210
+Extension Set Bit
+void Z80::ESET6C()
+210
+Extension Set Bit
+void Z80::ESET6D()
+210
+Extension Set Bit
+void Z80::ESET6E()
+210
+Extension Set Bit
+void Z80::ESET6H()
+210
+Extension Set Bit
+void Z80::ESET6L()
+210
+Extension Set Bit
+void Z80::ESET6mHL()
+210
+Extension Set Bit
+void Z80::ESET6A()
+210
+Extension Set Bit
+void Z80::ESET7B()
+210
+Extension Set Bit
+void Z80::ESET7C()
+210
+Extension Set Bit
+void Z80::ESET7D()
+210
+Extension Set Bit
+void Z80::ESET7E()
+210
+Extension Set Bit
+void Z80::ESET7H()
+210
+Extension Set Bit
+void Z80::ESET7L()
+210
+Extension Set Bit
+void Z80::ESET7mHL()
+210
+Extension Set Bit
+void Z80::ESET7A()
+Single-Byte Coverage: 82%
+Two-Byte Coverage: 98%
+Total Coverage: 90%
+      Successfully remade target file 'ops_impl.cpp'.
+     Prerequisite 'ops_impl.cpp' is newer than target 'ops_impl.o'.
+    Must remake target 'ops_impl.o'.
+g++.exe -c -Wall -Wextra -w -static-libgcc -static-libstdc++ -m32 ops_impl.cpp
+    Successfully remade target file 'ops_impl.o'.
+    Must remake target 'GPU.o'.
+g++.exe -c -Wall -Wextra -w -static-libgcc -static-libstdc++ -m32 GPU.cpp
+    Successfully remade target file 'GPU.o'.
+  Must remake target 'verif.exe'.
+g++.exe Z80.o MMU.o ops_impl.o GPU.o main.cpp -Wall -Wextra -w -static-libgcc -static-libstdc++ -m32 -LC:\MinGW\lib -lmingw32 -lSDL2main -lSDL2 -mwindows -IC:\MinGW\include -Dmain=SDL_main -o verif.exe
+makefile:42: recipe for target 'verif.exe' failed

@@ -24,6 +24,6 @@ int main(int argc, char* args[]){
     Z80 z80(0,0,0,0,0,0,0,0,0,0,0,0,0,0);
     z80.status(0);
     z80.exec();
-    return 1;
+    return 0;
 }
 

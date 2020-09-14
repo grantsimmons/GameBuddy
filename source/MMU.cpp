@@ -1,6 +1,7 @@
 #include "MMU.h"
 
 #include <iomanip>
+#include <bitset>
 
 std::ofstream mmu_outfile;
 
@@ -26,12 +27,14 @@ uint8_t MMU::rb(uint16_t addr){ //Read byte from given address
                 }
             }
             else //BIOS reassigned after use
+                std::cout << "ROM Read " << std::hex << addr << ", " << std::bitset<8>(_rom[addr]) << "\n";
                 return this->_rom[addr];
             break;
 
         case 0x1000:
         case 0x2000:
         case 0x3000:
+            std::cout << "ROM Read " << std::hex << addr << ", " << std::bitset<8>(_rom[addr]) << "\n";
             return this->_rom[addr];
 
         case 0x4000: //Switchable ROM bank
@@ -51,6 +54,7 @@ uint8_t MMU::rb(uint16_t addr){ //Read byte from given address
         case 0xC000: //Internal RAM
         case 0xD000:
         case 0xE000: //Echo RAM
+            std::cout << "WRAM Read " << std::hex << addr << " (Masked = " << std::hex << (addr & 0x1FFF) << "), " << std::bitset<8>(_wram[addr & 0x1FFF]) << "\n";
             return this->_wram[addr & 0x1FFF];
 
         case 0xF000:
@@ -125,6 +129,7 @@ void MMU::wb(uint16_t addr, uint8_t val){ //Write byte to given address
 
         case 0xA000:
         case 0xB000:
+            this->_eram[addr & 0x1FFF] = val; //FIXME: Is this right?
 
         case 0xC000:
         case 0xD000:

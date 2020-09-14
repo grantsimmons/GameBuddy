@@ -28,20 +28,20 @@ Z80::Z80(uint8_t a = 0x00, uint8_t b = 0x00, uint8_t c = 0x00, uint8_t d = 0x00,
         mmu(gpu, 0), running(true), verif_write(true){
 
     mmu.loadBios();
-    mmu.loadRom("..\\..\\GameBuddy-Verilog\\scripts\\stim.bin");
+    mmu.loadRom("D:\\Git\\GameBuddy-Verilog\\sim\\stim\\rand_stim_1600016999_v0.3_s2000\\stim.bin");
 }
 #endif
 
 void Z80::exec(){
     static bool cont = false;
-    bool debug = true;
+    bool debug = false;
     int verbose = 1;
     int counter = 0;
     uint16_t pc_target = 0;
 
 #ifdef VERIF
     std::ofstream outfile;
-    outfile.open("stim.tv", std::ios_base::out);
+    outfile.open("D:\\Git\\GameBuddy\\source\\stim.tv", std::ios_base::out);
 #endif
 
     //while(this->_r.pc < 0xd801){
@@ -54,7 +54,8 @@ void Z80::exec(){
 
 #ifdef VERIF
         if(this->mmu.rb(this->_r.pc) == 0x10){ //Don't include STOP command in test vector generation
-            verif_write = false;
+            //verif_write = false;
+            running = false;
         }
         if(verif_write){
             std::string s = std::bitset<8>(this->mmu.rb(this->_r.pc)).to_string();
